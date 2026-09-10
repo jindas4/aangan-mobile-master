@@ -1,0 +1,21 @@
+appId: in.aangan.app
+tags:
+  - smoke
+  - search
+---
+# Verify search screen opens and accepts input
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    id: "search-bar"
+
+# Type a search query
+- inputText: "Manali"
+
+# Wait for results
+- waitForAnimationToEnd
+
+# Go back
+- pressKey: back

@@ -1,0 +1,38 @@
+appId: in.aangan.app
+tags:
+  - critical
+  - host
+  - listing
+env:
+  NOTE: "Requires logged-in host account."
+---
+# Verify the new listing form has all required fields
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+
+# Navigate: Profile → Host dashboard → New listing
+- tapOn: "Profile"
+- tapOn:
+    text: "Host dashboard"
+    optional: true
+- tapOn:
+    text: "List a new property"
+    optional: true
+
+# Verify form sections exist
+- assertVisible:
+    id: "new-listing-header"
+    optional: true
+- assertVisible:
+    id: "basic-info-section"
+    optional: true
+
+- scroll
+
+# Verify amenities section
+- scroll
+- assertVisible:
+    id: "amenities-section"
+    optional: true

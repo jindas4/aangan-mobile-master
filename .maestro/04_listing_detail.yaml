@@ -1,0 +1,37 @@
+appId: in.aangan.app
+tags:
+  - critical
+  - listing
+---
+# Open a listing and verify all sections render
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+- assertVisible:
+    id: "search-bar"
+
+# Tap a listing card (first visible one)
+- tapOn:
+    id: "listing-card"
+    index: 0
+
+# Wait for detail page to load
+- waitForAnimationToEnd
+
+# Scroll down to reveal the Reserve section
+- scroll
+- scroll
+- scroll
+
+# Verify listing detail sections
+- assertVisible:
+    id: "reserve-title"
+
+# Tap date picker to open it
+- tapOn:
+    id: "date-picker-btn"
+
+# Date picker should appear — close it
+- waitForAnimationToEnd
+- pressKey: back

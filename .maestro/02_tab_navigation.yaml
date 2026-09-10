@@ -1,0 +1,29 @@
+appId: in.aangan.app
+tags:
+  - smoke
+  - navigation
+---
+# Verify all tabs are accessible and load correctly
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+- assertVisible:
+    id: "search-bar"
+
+# Switch to Wishlist tab
+- tapOn: "Wishlist"
+
+# Switch to Trips tab
+- tapOn: "Trips"
+
+# Switch to Messages tab
+- tapOn: "Messages"
+
+# Switch to Profile tab
+- tapOn: "Profile"
+
+# Go back to Explore
+- tapOn: "Explore"
+- assertVisible:
+    id: "search-bar"

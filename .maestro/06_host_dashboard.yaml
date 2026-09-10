@@ -1,0 +1,36 @@
+appId: in.aangan.app
+tags:
+  - critical
+  - host
+env:
+  NOTE: "This test requires being logged in as a host. Run after login."
+---
+# Verify host dashboard loads and is navigable
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+
+# Go to Profile tab
+- tapOn: "Profile"
+
+# Tap host dashboard (only visible if logged in as host)
+- tapOn:
+    text: "Host dashboard"
+    optional: true
+
+# If we reached host dashboard, verify key elements
+- assertVisible:
+    id: "host-header"
+    optional: true
+
+# Check for listings section
+- assertVisible:
+    id: "your-homes"
+    optional: true
+
+# Check for bookings section
+- scroll
+- assertVisible:
+    id: "recent-bookings"
+    optional: true

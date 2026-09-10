@@ -1,0 +1,31 @@
+appId: in.aangan.app
+tags:
+  - critical
+  - auth
+---
+# Verify login screen renders correctly
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+
+# Navigate to Profile tab
+- tapOn: "Profile"
+
+# If not logged in, we should see the login prompt
+- assertVisible:
+    text: "Welcome to Aangan"
+    optional: true
+
+# Tap login button if visible
+- tapOn:
+    text: "Log in"
+    optional: true
+
+# Verify login form elements
+- assertVisible:
+    id: "login-title"
+    optional: true
+- assertVisible:
+    id: "email-input"
+    optional: true

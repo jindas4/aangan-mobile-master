@@ -1,0 +1,27 @@
+appId: in.aangan.app
+---
+- launchApp
+
+# Go to Profile tab (shows login prompt for guests)
+- tapOn: "Profile"
+- assertVisible: "Welcome to Aangan"
+- tapOn: "Log in"
+
+# Login modal opens
+- assertVisible: "Log in or sign up"
+- assertVisible: "Welcome back"
+- assertVisible: "Real homes, real hosts"
+
+# Verify form fields present
+- assertVisible: "you@example.com"
+- assertVisible: "Password"
+- assertVisible: "Log in"
+- assertVisible: "Create an account"
+- assertVisible: "Forgot password?"
+
+# Social buttons present
+- assertVisible: "Continue with Google"
+- assertVisible: "Continue with Facebook"
+
+# Verify OR divider
+- assertVisible: "OR"

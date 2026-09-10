@@ -1,0 +1,6 @@
+appId: in.aangan.app
+---
+- launchApp
+- assertVisible: "Where to?"
+- assertVisible: "CURATED STAYS"
+- assertVisible: "Real homes, real hosts, all over India"

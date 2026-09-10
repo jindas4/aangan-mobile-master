@@ -1,0 +1,82 @@
+name: Release to Stores
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform to release"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - ios
+          - android
+      skip_build:
+        description: "Skip build and submit latest existing build"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: Build (${{ matrix.platform }})
+    if: ${{ !inputs.skip_build }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ${{ inputs.platform == 'all' && fromJSON('["ios","android"]') || fromJSON(format('["{0}"]', inputs.platform)) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Build for production
+        run: eas build --profile production --platform ${{ matrix.platform }} --non-interactive
+
+  submit-ios:
+    name: Submit to App Store
+    if: ${{ always() && (inputs.platform == 'all' || inputs.platform == 'ios') && (needs.build.result == 'success' || inputs.skip_build) }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Submit to App Store Connect
+        run: eas submit --platform ios --latest --non-interactive
+
+  submit-android:
+    name: Submit to Google Play
+    if: ${{ always() && (inputs.platform == 'all' || inputs.platform == 'android') && (needs.build.result == 'success' || inputs.skip_build) }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Submit to Google Play
+        run: eas submit --platform android --latest --non-interactive

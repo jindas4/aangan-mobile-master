@@ -1,0 +1,32 @@
+appId: in.aangan.app
+tags:
+  - smoke
+  - explore
+---
+# Verify the Explore tab loads with listings
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+- assertVisible:
+    id: "search-bar"
+
+# Tap on a listing card
+- tapOn:
+    id: "listing-card"
+    index: 0
+
+# Wait for detail page to load
+- waitForAnimationToEnd
+
+# Scroll down to reveal the Reserve section
+- scroll
+- scroll
+- scroll
+
+# Verify listing detail screen loaded
+- assertVisible:
+    id: "reserve-title"
+
+# Go back
+- pressKey: back
