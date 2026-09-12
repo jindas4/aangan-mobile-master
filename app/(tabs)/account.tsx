@@ -226,6 +226,11 @@ export default function AccountScreen() {
         {/* Support */}
         <Text style={styles.sectionLabel}>SUPPORT</Text>
         <MenuItem
+          icon="information-circle-outline"
+          label="About Aangan"
+          onPress={() => router.push("/about")}
+        />
+        <MenuItem
           icon="help-circle-outline"
           label="Help centre"
           onPress={() => Linking.openURL("mailto:support@aangan.in")}
