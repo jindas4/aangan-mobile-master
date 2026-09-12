@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { Image } from "expo-image";
+import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -148,7 +149,7 @@ export default function HostDashboardScreen() {
               >
                 <View style={styles.listingIcon}>
                   {l.images?.[0]?.url && l.images[0].url.startsWith("http") ? (
-                    <Image source={{ uri: imageUrl(l.images[0].url) }} style={styles.listingThumb} contentFit="cover" transition={200} />
+                    <RemoteImage url={l.images[0].url} size="thumb" style={styles.listingThumb} contentFit="cover" transition={200} />
                   ) : (
                     <Ionicons name="home" size={20} color={Colors.aanganDeep} />
                   )}

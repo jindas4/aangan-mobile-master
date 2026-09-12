@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
+import { RemoteImage } from "@/components/RemoteImage";
 import { useRouter } from "expo-router";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -142,8 +143,9 @@ function BookingCard({
       onPress={() => router.push(`/listing/${booking.listing_id}`)}
     >
       {booking.listing_image && (
-        <Image
-          source={{ uri: imageUrl(booking.listing_image) }}
+        <RemoteImage
+          url={booking.listing_image}
+          size="thumb"
           style={styles.bookingImage}
           contentFit="cover"
         />

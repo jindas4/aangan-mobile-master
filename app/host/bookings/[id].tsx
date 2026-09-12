@@ -9,6 +9,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { Image } from "expo-image";
+import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -157,8 +158,9 @@ export default function HostBookingDetailScreen() {
         <View style={styles.card}>
           <View style={styles.listingRow}>
             {booking.listing_image ? (
-              <Image
-                source={{ uri: imageUrl(booking.listing_image) }}
+              <RemoteImage
+                url={booking.listing_image}
+                size="thumb"
                 style={styles.listingThumb}
                 contentFit="cover"
                 transition={200}

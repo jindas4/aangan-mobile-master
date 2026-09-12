@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { Image } from "expo-image";
+import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -213,8 +214,9 @@ export default function ManageListingScreen() {
               keyExtractor={(_, i) => String(i)}
               renderItem={({ item, index: i }) => (
                 <TouchableOpacity activeOpacity={0.9} onPress={() => { setImgIndex(i); setViewerOpen(true); }}>
-                  <Image
-                    source={{ uri: imageUrl(item.url) }}
+                  <RemoteImage
+                    url={item.url}
+                    size="large"
                     style={styles.carouselImage}
                     contentFit="cover"
                     transition={200}

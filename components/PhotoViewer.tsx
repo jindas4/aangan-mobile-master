@@ -13,6 +13,7 @@ import {
   PanResponder,
 } from "react-native";
 import { Image } from "expo-image";
+import { RemoteImage } from "@/components/RemoteImage";
 import { Ionicons } from "@expo/vector-icons";
 import { imageUrl } from "@/lib/format";
 import { ListingImage } from "@/lib/api";
@@ -97,8 +98,9 @@ export function PhotoViewer({ images, visible, initialIndex, onClose, onIndexCha
             keyExtractor={(_, i) => String(i)}
             renderItem={({ item }) => (
               <View style={styles.slide}>
-                <Image
-                  source={{ uri: imageUrl(item.url) }}
+                <RemoteImage
+                  url={item.url}
+                  size="large"
                   style={styles.image}
                   contentFit="contain"
                   transition={200}

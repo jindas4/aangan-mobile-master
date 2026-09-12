@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ListingCard as LC } from "@/lib/api";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { inr, imageUrl } from "@/lib/format";
+import { RemoteImage } from "@/components/RemoteImage";
 import { useWishlist } from "@/lib/auth";
 
 const CARD_WIDTH = (Dimensions.get("window").width - 48) / 2;
@@ -34,8 +34,9 @@ export function ListingCardItem({ listing, wide }: Props) {
       {/* Photo with overlays */}
       <View style={[styles.imageWrap, { width: w, height: w * 0.67 }]}>
         {imgSrc ? (
-          <Image
-            source={{ uri: imgSrc }}
+          <RemoteImage
+            url={img!.url}
+            size="medium"
             style={styles.image}
             contentFit="cover"
             transition={200}
