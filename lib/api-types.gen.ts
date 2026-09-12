@@ -1885,6 +1885,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/referrals/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply Code */
+        post: operations["apply_code_api_referrals_apply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/referrals/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Referrals */
+        get: operations["my_referrals_api_referrals_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/reports": {
         parameters: {
             query?: never;
@@ -2122,6 +2156,11 @@ export interface components {
             /** Suggested Price Inr */
             suggested_price_inr: number;
         };
+        /** ApplyIn */
+        ApplyIn: {
+            /** Code */
+            code: string;
+        };
         /** AvailabilityCheck */
         AvailabilityCheck: {
             /**
@@ -2256,6 +2295,11 @@ export interface components {
              */
             created_at: string;
             /**
+             * Credits Inr
+             * @default 0
+             */
+            credits_inr: number;
+            /**
              * End Date
              * Format: date
              */
@@ -2303,6 +2347,11 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /**
+             * Credits Inr
+             * @default 0
+             */
+            credits_inr: number;
             /**
              * End Date
              * Format: date
@@ -3469,6 +3518,49 @@ export interface components {
              * @default true
              */
             veg_kitchen: boolean;
+        };
+        /** ReferralEventOut */
+        ReferralEventOut: {
+            /** Amount Inr */
+            amount_inr: number;
+            /** Created At */
+            created_at?: unknown;
+            /** Id */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Note */
+            note?: string | null;
+            /** Status */
+            status: string;
+        };
+        /** ReferralMeOut */
+        ReferralMeOut: {
+            /** Balance Inr */
+            balance_inr: number;
+            /** Code */
+            code: string;
+            /** History */
+            history: components["schemas"]["ReferralEventOut"][];
+            /**
+             * Min Booking Inr
+             * @default 2000
+             */
+            min_booking_inr: number;
+            /** Pending Inr */
+            pending_inr: number;
+            /**
+             * Referee Bonus Inr
+             * @default 200
+             */
+            referee_bonus_inr: number;
+            /**
+             * Referrer Reward Inr
+             * @default 300
+             */
+            referrer_reward_inr: number;
+            /** Share Url */
+            share_url: string;
         };
         /** RefundQuoteResponse */
         RefundQuoteResponse: {
@@ -7695,6 +7787,72 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    apply_code_api_referrals_apply_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralMeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_referrals_api_referrals_me_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReferralMeOut"];
+                };
             };
             /** @description Validation Error */
             422: {

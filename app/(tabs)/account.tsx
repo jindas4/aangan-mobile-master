@@ -18,6 +18,7 @@ import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { api, WEB_BASE, UserOut, VerificationStatus } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/Button";
+import { ReferralCard } from "@/components/ReferralCard";
 
 export default function AccountScreen() {
   const router = useRouter();
@@ -143,6 +144,9 @@ export default function AccountScreen() {
 
         {/* Verification status */}
         <VerificationBanner user={user} isHost={!!user.is_host} />
+
+        {/* Invite & earn */}
+        <ReferralCard />
 
         {/* Badges */}
         {badges.length > 0 && (

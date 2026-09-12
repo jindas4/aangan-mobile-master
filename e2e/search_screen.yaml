@@ -1,6 +1,0 @@
-appId: in.aangan.app
----
-- launchApp
-
-# Tap the search bar on home screen
-- tapOn: "Where to?"

@@ -256,6 +256,19 @@
         "title": "AiPriceEstimateResponse",
         "type": "object"
       },
+      "ApplyIn": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "ApplyIn",
+        "type": "object"
+      },
       "AvailabilityCheck": {
         "properties": {
           "end_date": {
@@ -553,6 +566,11 @@
             "title": "Created At",
             "type": "string"
           },
+          "credits_inr": {
+            "default": 0,
+            "title": "Credits Inr",
+            "type": "integer"
+          },
           "end_date": {
             "format": "date",
             "title": "End Date",
@@ -659,6 +677,11 @@
             "format": "date-time",
             "title": "Created At",
             "type": "string"
+          },
+          "credits_inr": {
+            "default": 0,
+            "title": "Credits Inr",
+            "type": "integer"
           },
           "end_date": {
             "format": "date",
@@ -3236,6 +3259,99 @@
           }
         },
         "title": "PropertyCaptureUpdate",
+        "type": "object"
+      },
+      "ReferralEventOut": {
+        "properties": {
+          "amount_inr": {
+            "title": "Amount Inr",
+            "type": "integer"
+          },
+          "created_at": {
+            "title": "Created At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "amount_inr"
+        ],
+        "title": "ReferralEventOut",
+        "type": "object"
+      },
+      "ReferralMeOut": {
+        "properties": {
+          "balance_inr": {
+            "title": "Balance Inr",
+            "type": "integer"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/ReferralEventOut"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "min_booking_inr": {
+            "default": 2000,
+            "title": "Min Booking Inr",
+            "type": "integer"
+          },
+          "pending_inr": {
+            "title": "Pending Inr",
+            "type": "integer"
+          },
+          "referee_bonus_inr": {
+            "default": 200,
+            "title": "Referee Bonus Inr",
+            "type": "integer"
+          },
+          "referrer_reward_inr": {
+            "default": 300,
+            "title": "Referrer Reward Inr",
+            "type": "integer"
+          },
+          "share_url": {
+            "title": "Share Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "share_url",
+          "balance_inr",
+          "pending_inr",
+          "history"
+        ],
+        "title": "ReferralMeOut",
         "type": "object"
       },
       "RefundQuoteResponse": {
@@ -10974,6 +11090,114 @@
         "summary": "Unregister Push Token",
         "tags": [
           "push"
+        ]
+      }
+    },
+    "/api/referrals/apply": {
+      "post": {
+        "operationId": "apply_code_api_referrals_apply_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralMeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Apply Code",
+        "tags": [
+          "referrals"
+        ]
+      }
+    },
+    "/api/referrals/me": {
+      "get": {
+        "operationId": "my_referrals_api_referrals_me_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralMeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Referrals",
+        "tags": [
+          "referrals"
         ]
       }
     },

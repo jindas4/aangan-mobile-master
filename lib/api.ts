@@ -262,6 +262,8 @@ export interface BookingOut {
   service_inr: number;
   tax_inr: number;
   total_inr: number;
+  /** Referral credits applied — the guest pays total_inr - credits_inr. */
+  credits_inr?: number;
   status: "pending" | "confirmed" | "cancelled" | "completed" | "refunded";
   payment_id?: string | null;
   created_at: string;
@@ -314,6 +316,26 @@ export interface PaymentConfirmResponse {
   booking_status: string;
   payment_id: string;
   booking_id: string;
+}
+
+// ── Referral program ───────────────────────────────────────────
+export interface ReferralEventOut {
+  id: string;
+  kind: string;
+  status: string;
+  amount_inr: number;
+  note?: string | null;
+  created_at?: string | null;
+}
+export interface ReferralMe {
+  code: string;
+  share_url: string;
+  balance_inr: number;
+  pending_inr: number;
+  referee_bonus_inr: number;
+  referrer_reward_inr: number;
+  min_booking_inr: number;
+  history: ReferralEventOut[];
 }
 
 export interface RefundQuoteResponse {
