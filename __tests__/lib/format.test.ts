@@ -1,4 +1,4 @@
-import { inr, shortDate, fullDate, timeAgo, imageUrl } from "../../lib/format";
+import { inr, shortDate, fullDate, timeAgo, imageUrl, imageVariantUrl } from "../../lib/format";
 
 describe("inr", () => {
   it("formats round numbers with Indian grouping", () => {
@@ -69,5 +69,28 @@ describe("imageUrl", () => {
     const result = imageUrl("/uploads/photo.jpg");
     expect(result).toContain("https://");
     expect(result).toContain("/uploads/photo.jpg");
+  });
+});
+
+describe("imageVariantUrl", () => {
+  const original = "https://cdn.example.com/images/usr_abc123/xYz9.jpg";
+
+  it("derives the sized WebP variant for standard upload keys", () => {
+    expect(imageVariantUrl(original, "thumb"))
+      .toBe("https://cdn.example.com/images/usr_abc123/thumb/xYz9.webp");
+    expect(imageVariantUrl(original, "large"))
+      .toBe("https://cdn.example.com/images/usr_abc123/large/xYz9.webp");
+  });
+
+  it("passes through URLs that don't match the upload key convention", () => {
+    expect(imageVariantUrl("https://elsewhere.com/photo.jpg", "thumb"))
+      .toBe("https://elsewhere.com/photo.jpg");
+    // Extra path segments = not an original key (could already be a variant).
+    expect(imageVariantUrl("https://cdn.example.com/images/usr_a/thumb/x.webp", "large"))
+      .toBe("https://cdn.example.com/images/usr_a/thumb/x.webp");
+  });
+
+  it("handles empty input", () => {
+    expect(imageVariantUrl("", "medium")).toBe("");
   });
 });
