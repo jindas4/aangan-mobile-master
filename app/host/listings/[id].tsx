@@ -41,6 +41,7 @@ export default function ManageListingScreen() {
   // Editable fields
   const [editTitle, setEditTitle] = useState("");
   const [editPrice, setEditPrice] = useState("");
+  const [editCleaning, setEditCleaning] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editGuests, setEditGuests] = useState("");
   const [editBedrooms, setEditBedrooms] = useState("");
@@ -60,6 +61,7 @@ export default function ManageListingScreen() {
     if (l) {
       setEditTitle(l.title);
       setEditPrice(String(l.price_inr));
+      setEditCleaning(String(l.cleaning_fee_inr ?? 0));
       setEditDescription(l.description || "");
       setEditGuests(String(l.guests));
       setEditBedrooms(String(l.bedrooms));
@@ -111,6 +113,7 @@ export default function ManageListingScreen() {
         body: {
           title: editTitle.trim(),
           price_inr: parseInt(editPrice) || listing.price_inr,
+          cleaning_fee_inr: editCleaning === "" ? listing.cleaning_fee_inr : Math.max(parseInt(editCleaning) || 0, 0),
           description: editDescription.trim(),
           guests: parseInt(editGuests) || listing.guests,
           bedrooms: parseInt(editBedrooms) || listing.bedrooms,
@@ -302,6 +305,7 @@ export default function ManageListingScreen() {
               <Text style={styles.sectionTitle}>Edit listing</Text>
               <EditField label="Title" value={editTitle} onChangeText={setEditTitle} />
               <EditField label="Price per night (₹)" value={editPrice} onChangeText={setEditPrice} keyboardType="number-pad" />
+              <EditField label="Cleaning fee (₹/stay — goes to you)" value={editCleaning} onChangeText={setEditCleaning} keyboardType="number-pad" />
               <View style={styles.editRow}>
                 <EditField label="Guests" value={editGuests} onChangeText={setEditGuests} keyboardType="number-pad" style={{ flex: 1 }} />
                 <EditField label="Bedrooms" value={editBedrooms} onChangeText={setEditBedrooms} keyboardType="number-pad" style={{ flex: 1 }} />

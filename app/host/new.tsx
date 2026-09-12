@@ -42,6 +42,7 @@ export default function NewListingScreen() {
   const [scene, setScene] = useState<Scene>("mountain");
   const [type, setType] = useState("Apartment");
   const [price, setPrice] = useState("");
+  const [cleaning, setCleaning] = useState("800");
   const [guests, setGuests] = useState("2");
   const [bedrooms, setBedrooms] = useState("1");
   const [baths, setBaths] = useState("1");
@@ -67,6 +68,7 @@ export default function NewListingScreen() {
           scene,
           type,
           price_inr: parseInt(price),
+          cleaning_fee_inr: Math.max(parseInt(cleaning) || 0, 0),
           guests: parseInt(guests) || 2,
           bedrooms: parseInt(bedrooms) || 1,
           baths: parseInt(baths) || 1,
@@ -159,6 +161,9 @@ export default function NewListingScreen() {
 
           <Field label="Price per night (₹)">
             <TextInput value={price} onChangeText={setPrice} keyboardType="number-pad" placeholder="3500" placeholderTextColor={Colors.charcoal3} style={styles.input} />
+          </Field>
+          <Field label="Cleaning fee (₹/stay — goes to you, 0 for none)">
+            <TextInput value={cleaning} onChangeText={setCleaning} keyboardType="number-pad" placeholder="800" placeholderTextColor={Colors.charcoal3} style={styles.input} />
           </Field>
 
           <View style={styles.row}>
