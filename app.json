@@ -32,7 +32,6 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Aangan needs camera access to take photos of your property.",
         "NSPhotoLibraryUsageDescription": "Aangan needs photo library access to upload property images.",
-        "NSLocationWhenInUseUsageDescription": "Aangan uses your location to show nearby stays.",
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationQueriesSchemes": ["whatsapp"]
       },
@@ -59,12 +58,6 @@
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePhotosorVideos",
             "NSPrivacyCollectedDataTypeLinked": true,
-            "NSPrivacyCollectedDataTypeTracking": false,
-            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
-          },
-          {
-            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePreciseLocation",
-            "NSPrivacyCollectedDataTypeLinked": false,
             "NSPrivacyCollectedDataTypeTracking": false,
             "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
           },
@@ -116,8 +109,7 @@
       ],
       "permissions": [
         "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "ACCESS_FINE_LOCATION"
+        "READ_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -127,7 +119,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store",
+      ["expo-secure-store", { "faceIDPermission": false }],
+      ["expo-image-picker", { "microphonePermission": false }],
       "expo-asset",
       "expo-apple-authentication",
       [
