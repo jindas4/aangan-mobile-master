@@ -61,15 +61,33 @@
             "title": "Reason",
             "type": "string"
           },
+          "refund_inr": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refund Inr"
+          },
           "refund_pct": {
-            "maximum": 100.0,
-            "minimum": 0.0,
-            "title": "Refund Pct",
-            "type": "integer"
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refund Pct"
           }
         },
         "required": [
-          "refund_pct",
           "reason"
         ],
         "title": "AdminRefundRequest",
@@ -491,6 +509,42 @@
           "blocked_ids"
         ],
         "title": "BlockList",
+        "type": "object"
+      },
+      "Body_import_captures_admin_api_admin_captures_import_post": {
+        "properties": {
+          "agent_phone": {
+            "title": "Agent Phone",
+            "type": "string"
+          },
+          "csv_file": {
+            "format": "binary",
+            "title": "Csv File",
+            "type": "string"
+          },
+          "dry_run": {
+            "default": false,
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "photos": {
+            "anyOf": [
+              {
+                "format": "binary",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photos"
+          }
+        },
+        "required": [
+          "csv_file",
+          "agent_phone"
+        ],
+        "title": "Body_import_captures_admin_api_admin_captures_import_post",
         "type": "object"
       },
       "Body_upload_image_api_uploads_image_post": {
@@ -1335,6 +1389,60 @@
         "title": "DeletionStatus",
         "type": "object"
       },
+      "DisputeUpdate": {
+        "properties": {
+          "dispute_status": {
+            "pattern": "^(none|open|won|lost)$",
+            "title": "Dispute Status",
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 500,
+            "minLength": 4,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dispute_status",
+          "note"
+        ],
+        "title": "DisputeUpdate",
+        "type": "object"
+      },
+      "EmailAddRequest": {
+        "properties": {
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "EmailAddRequest",
+        "type": "object"
+      },
+      "EmailAddVerify": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "code"
+        ],
+        "title": "EmailAddVerify",
+        "type": "object"
+      },
       "EmailOtpRequest": {
         "properties": {
           "email": {
@@ -1366,33 +1474,6 @@
           "code"
         ],
         "title": "EmailOtpVerify",
-        "type": "object"
-      },
-      "EmailRequest": {
-        "properties": {
-          "email": {
-            "format": "email",
-            "title": "Email",
-            "type": "string"
-          }
-        },
-        "required": [
-          "email"
-        ],
-        "title": "EmailRequest",
-        "type": "object"
-      },
-      "EmailVerify": {
-        "properties": {
-          "token": {
-            "title": "Token",
-            "type": "string"
-          }
-        },
-        "required": [
-          "token"
-        ],
-        "title": "EmailVerify",
         "type": "object"
       },
       "FlagSet": {
@@ -1512,6 +1593,21 @@
           "id"
         ],
         "title": "HostMini",
+        "type": "object"
+      },
+      "KycDecision": {
+        "properties": {
+          "reason": {
+            "maxLength": 500,
+            "minLength": 4,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "KycDecision",
         "type": "object"
       },
       "ListingCardOut": {
@@ -2306,6 +2402,21 @@
           "token"
         ],
         "title": "MobileTokenLogin",
+        "type": "object"
+      },
+      "NotifyRequest": {
+        "properties": {
+          "message": {
+            "maxLength": 500,
+            "minLength": 4,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "NotifyRequest",
         "type": "object"
       },
       "OtherPartyMini": {
@@ -3387,6 +3498,40 @@
         "title": "RefundQuoteResponse",
         "type": "object"
       },
+      "RegisterPending": {
+        "properties": {
+          "dev_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dev Code"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "verification_required": {
+            "default": true,
+            "title": "Verification Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "RegisterPending",
+        "type": "object"
+      },
       "RegisterToken": {
         "properties": {
           "platform": {
@@ -3406,6 +3551,25 @@
           "platform"
         ],
         "title": "RegisterToken",
+        "type": "object"
+      },
+      "RegisterVerify": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "code"
+        ],
+        "title": "RegisterVerify",
         "type": "object"
       },
       "ReportCreate": {
@@ -3650,6 +3814,44 @@
           "body"
         ],
         "title": "TicketCreate",
+        "type": "object"
+      },
+      "TicketOpen": {
+        "properties": {
+          "body": {
+            "maxLength": 4000,
+            "minLength": 10,
+            "title": "Body",
+            "type": "string"
+          },
+          "category": {
+            "default": "general",
+            "title": "Category",
+            "type": "string"
+          },
+          "related_booking_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Related Booking Id"
+          },
+          "subject": {
+            "maxLength": 200,
+            "minLength": 4,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "body"
+        ],
+        "title": "TicketOpen",
         "type": "object"
       },
       "TicketPatch": {
@@ -4282,6 +4484,16 @@
           },
           {
             "in": "query",
+            "name": "disputes",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Disputes",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
             "name": "limit",
             "required": false,
             "schema": {
@@ -4467,6 +4679,73 @@
         ]
       }
     },
+    "/api/admin/bookings/{booking_id}/dispute": {
+      "post": {
+        "description": "Chargeback / dispute lifecycle on a booking: none \u2192 open \u2192 won|lost.\nSupport agents can open one (they take the issuer's call); the money\nconsequence of a LOST dispute is the full-admin refund override above.\nOpening a dispute also holds any not-yet-paid payout for the booking \u2014\nmoney must not go out to the host mid-dispute.",
+        "operationId": "set_dispute_api_admin_bookings__booking_id__dispute_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisputeUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Dispute",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/bookings/{booking_id}/refund": {
       "post": {
         "description": "Admin-triggered refund \u2014 overrides the cancellation policy. Used when\nthe host is at fault / safety incident / dispute outcome.",
@@ -4634,6 +4913,63 @@
         ]
       }
     },
+    "/api/admin/captures/import": {
+      "post": {
+        "operationId": "import_captures_admin_api_admin_captures_import_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_captures_admin_api_admin_captures_import_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Captures Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/cms/banners": {
       "get": {
         "operationId": "list_banners_api_admin_cms_banners_get",
@@ -4782,6 +5118,71 @@
           }
         },
         "summary": "Delete Banner",
+        "tags": [
+          "admin"
+        ]
+      },
+      "put": {
+        "description": "Update / publish-toggle \u2014 banners are created as drafts, so without\nthis there was no way to take one live (or edit a typo) from the UI.",
+        "operationId": "update_banner_api_admin_cms_banners__bid__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bid",
+            "required": true,
+            "schema": {
+              "title": "Bid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BannerWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Banner",
         "tags": [
           "admin"
         ]
@@ -5052,6 +5453,170 @@
         ]
       }
     },
+    "/api/admin/export/bookings.csv": {
+      "get": {
+        "description": "Finance export \u2014 one row per booking with payment + refund amounts.\nDate range filters on created_at; omit both for everything.",
+        "operationId": "export_bookings_csv_api_admin_export_bookings_csv_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Bookings Csv",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/export/payouts.csv": {
+      "get": {
+        "description": "Finance export \u2014 one row per payout with gross/TDS/net, rail reference\nfor bank reconciliation, and FY for 26Q TDS filing.",
+        "operationId": "export_payouts_csv_api_admin_export_payouts_csv_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Payouts Csv",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/flags": {
       "get": {
         "operationId": "list_flags_api_admin_flags_get",
@@ -5209,6 +5774,224 @@
           }
         },
         "summary": "Set Flag",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/kyc": {
+      "get": {
+        "description": "Hosts by KYC state (default: pending \u2014 the actionable queue), with the\nmoney impact (payouts held for KYC) so ops can prioritise.",
+        "operationId": "kyc_queue_api_admin_kyc_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "pending",
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Kyc Queue",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/kyc/{user_id}/approve": {
+      "post": {
+        "operationId": "kyc_approve_api_admin_kyc__user_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KycDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Kyc Approve",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/kyc/{user_id}/reject": {
+      "post": {
+        "operationId": "kyc_reject_api_admin_kyc__user_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KycDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Kyc Reject",
         "tags": [
           "admin"
         ]
@@ -5381,6 +6164,22 @@
         "parameters": [
           {
             "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
             "name": "pstatus",
             "required": false,
             "schema": {
@@ -5454,6 +6253,54 @@
           }
         },
         "summary": "List Payouts Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/payouts/summary": {
+      "get": {
+        "description": "Reconciliation view \u2014 how much money sits in each payout state, plus\nTDS deducted per financial year (what the CA needs for quarterly 26Q).",
+        "operationId": "payout_summary_api_admin_payouts_summary_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Payout Summary",
         "tags": [
           "admin"
         ]
@@ -6218,6 +7065,73 @@
         ]
       }
     },
+    "/api/admin/users/{user_id}/notify": {
+      "post": {
+        "description": "Direct WhatsApp/SMS to a user \u2014 'your payout is released', 'your KYC\nwas rejected because\u2026'. Available to support agents too (this IS customer\ncare), audited with the full message so there's a record of what was said.\nBest-effort delivery: WhatsApp if possible, SMS fallback (services/\nnotifications.notify_user).",
+        "operationId": "notify_user_admin_api_admin_users__user_id__notify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Notify User Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/users/{user_id}/role": {
       "put": {
         "description": "Grants admin access with the given role, or changes an existing\nadmin's role (e.g. promote a support agent to full, or demote a full\nadmin down to support). Minting privileged accounts is itself a\nfull-admin-only action \u2014 support agents can't create more support\nagents or escalate themselves.",
@@ -6282,6 +7196,124 @@
         "summary": "Set Admin Role",
         "tags": [
           "admin"
+        ]
+      }
+    },
+    "/api/auth/email/add/request": {
+      "post": {
+        "operationId": "email_add_request_api_auth_email_add_request_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailAddRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpRequestResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Email Add Request",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/email/add/verify": {
+      "post": {
+        "operationId": "email_add_verify_api_auth_email_add_verify_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailAddVerify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Email Add Verify",
+        "tags": [
+          "auth"
         ]
       }
     },
@@ -6362,103 +7394,6 @@
           }
         },
         "summary": "Email Otp Verify",
-        "tags": [
-          "auth"
-        ]
-      }
-    },
-    "/api/auth/email/request": {
-      "post": {
-        "description": "Issue a verification token. Production: send via SES; dev: returns token.",
-        "operationId": "email_request_api_auth_email_request_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmailRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Email Request",
-        "tags": [
-          "auth"
-        ]
-      }
-    },
-    "/api/auth/email/verify": {
-      "post": {
-        "operationId": "email_verify_api_auth_email_verify_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EmailVerify"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Email Verify",
         "tags": [
           "auth"
         ]
@@ -6834,7 +7769,7 @@
     },
     "/api/auth/password/register": {
       "post": {
-        "description": "Reject on ANY existing email \u2014 verified or not, OTP/OAuth/password \u2014\nrather than silently attaching a password to it. This endpoint proves\nnothing about inbox ownership at submit time, so allowing it to \"claim\"\na passwordless account would let anyone who merely knows a victim's\nemail address add themselves a working credential on that account.",
+        "description": "Creates the account and emails a code, but issues no session: the\naccount only becomes usable through /password/register/verify.\n\nRejects any existing email \u2014 verified or not, OTP/OAuth/password \u2014\nrather than attaching a password to it, since nothing here proves inbox\nownership. The one exception is another unconfirmed sign-up: it never\nworked, so a fresh sign-up replaces it (otherwise anyone could squat an\naddress by registering it first).",
         "operationId": "password_register_api_auth_password_register_post",
         "requestBody": {
           "content": {
@@ -6848,6 +7783,47 @@
         },
         "responses": {
           "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterPending"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Password Register",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/password/register/verify": {
+      "post": {
+        "operationId": "password_register_verify_api_auth_password_register_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterVerify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
             "content": {
               "application/json": {
                 "schema": {
@@ -6868,7 +7844,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Password Register",
+        "summary": "Password Register Verify",
         "tags": [
           "auth"
         ]
@@ -11316,6 +12292,230 @@
         "summary": "Write Review",
         "tags": [
           "reviews"
+        ]
+      }
+    },
+    "/api/support/tickets": {
+      "get": {
+        "operationId": "my_tickets_api_support_tickets_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Tickets",
+        "tags": [
+          "support"
+        ]
+      },
+      "post": {
+        "operationId": "open_ticket_api_support_tickets_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketOpen"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open Ticket",
+        "tags": [
+          "support"
+        ]
+      }
+    },
+    "/api/support/tickets/{tid}": {
+      "get": {
+        "operationId": "my_ticket_api_support_tickets__tid__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tid",
+            "required": true,
+            "schema": {
+              "title": "Tid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Ticket",
+        "tags": [
+          "support"
+        ]
+      }
+    },
+    "/api/support/tickets/{tid}/reply": {
+      "post": {
+        "operationId": "reply_ticket_api_support_tickets__tid__reply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tid",
+            "required": true,
+            "schema": {
+              "title": "Tid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketReply"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reply Ticket",
+        "tags": [
+          "support"
         ]
       }
     },

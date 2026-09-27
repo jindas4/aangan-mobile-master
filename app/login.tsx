@@ -17,7 +17,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as Facebook from "expo-auth-session/providers/facebook";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Colors, Radius } from "@/constants/Colors";
-import { WEB_BASE } from "@/lib/api";
+import { WEB_BASE, ApiError } from "@/lib/api";
 import { useAuth, useWishlist } from "@/lib/auth";
 import { Button } from "@/components/Button";
 import { signInWithGoogle, isGoogleSignInConfigured, GoogleSignInCancelledError } from "@/lib/googleAuth";
@@ -27,7 +27,7 @@ import Svg, { Path } from "react-native-svg";
 WebBrowser.maybeCompleteAuthSession();
 
 type Mode = "login" | "register";
-type Flow = "form" | "resetRequest" | "resetCode";
+type Flow = "form" | "resetRequest" | "resetCode" | "verifyEmail";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -56,7 +56,8 @@ function FacebookIcon() {
 export default function LoginScreen() {
   const router = useRouter();
   const {
-    socialLogin, loginWithPassword, registerWithPassword, requestPasswordReset, confirmPasswordReset,
+    socialLogin, loginWithPassword, registerWithPassword, verifySignup, requestEmailOtp,
+    requestPasswordReset, confirmPasswordReset,
   } = useAuth();
   const { hydrate: refreshWish } = useWishlist();
   const [mode, setMode] = useState<Mode>("login");
@@ -70,6 +71,8 @@ export default function LoginScreen() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
+  const [signupCode, setSignupCode] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
 
   const [, , facebookPrompt] = Facebook.useAuthRequest({
@@ -142,18 +145,66 @@ export default function LoginScreen() {
     password.length >= 8 &&
     (mode === "login" || (firstName.trim().length > 0 && agreed));
 
+  const startVerify = (dev: string | null) => {
+    setFlow("verifyEmail");
+    setSignupCode("");
+    setDevCode(dev);
+    setNotice(null);
+    setErr(null);
+  };
+
   const submit = async () => {
     if (!canSubmit) return;
     setBusy(true);
     setErr(null);
     try {
       const normEmail = email.trim().toLowerCase();
-      if (mode === "login") await loginWithPassword(normEmail, password);
-      else await registerWithPassword(firstName.trim(), lastName.trim(), normEmail, password);
+      if (mode === "login") {
+        await loginWithPassword(normEmail, password);
+      } else {
+        const pending = await registerWithPassword(firstName.trim(), lastName.trim(), normEmail, password);
+        if (pending) return startVerify(pending.devCode);
+      }
       await refreshWish();
       router.back();
     } catch (e: any) {
+      const detail = e instanceof ApiError ? e.body?.detail : null;
+      if (e instanceof ApiError && e.status === 403 && detail?.reason === "email_unverified") {
+        startVerify(detail.dev_code ?? null);
+        if (detail.code_sent === false) setNotice(detail.message);
+        return;
+      }
       setErr(e.message || "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirmSignup = async () => {
+    if (signupCode.length < 4) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      await verifySignup(email.trim().toLowerCase(), signupCode);
+      await refreshWish();
+      router.back();
+    } catch (e: any) {
+      setErr(e.message || "Could not confirm your email");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resendSignupCode = async () => {
+    setBusy(true);
+    setErr(null);
+    setNotice(null);
+    try {
+      const dev = await requestEmailOtp(email.trim().toLowerCase());
+      if (dev) setDevCode(dev);
+      setNotice("We've sent a new code.");
+    } catch (e: any) {
+      setErr(e.message || "Could not send a new code");
     } finally {
       setBusy(false);
     }
@@ -216,10 +267,11 @@ export default function LoginScreen() {
           <Text style={styles.kicker}>
             {flow === "form" ? "WELCOME" : flow === "resetRequest" ? "RESET PASSWORD" : "ONE MORE STEP"}
           </Text>
-          <Text style={styles.title} testID="login-title" accessibilityLabel={flow === "form" ? (mode === "login" ? "Welcome back" : "Create your account") : "Reset password"}>
+          <Text style={styles.title} testID="login-title" accessibilityLabel={flow === "form" ? (mode === "login" ? "Welcome back" : "Create your account") : flow === "verifyEmail" ? "Check your email" : "Reset password"}>
             {flow === "form"
               ? mode === "login" ? "Welcome back" : "Create your account"
               : flow === "resetRequest" ? "Forgot your password?"
+              : flow === "verifyEmail" ? "Check your email"
               : "Enter your reset code"}
           </Text>
           <Text style={styles.subtitle}>
@@ -227,8 +279,55 @@ export default function LoginScreen() {
               ? "Real homes, real hosts — all over India."
               : flow === "resetRequest"
                 ? "We'll email you a code to reset it."
-                : `We've sent a code to ${email.trim().toLowerCase()}.`}
+                : flow === "verifyEmail"
+                  ? `We sent a 6-digit code to ${email.trim().toLowerCase()}. Enter it to confirm your email.`
+                  : `We've sent a code to ${email.trim().toLowerCase()}.`}
           </Text>
+
+          {flow === "verifyEmail" && (
+            <>
+              <TextInput
+                value={signupCode}
+                onChangeText={(t) => setSignupCode(t.replace(/\D/g, "").slice(0, 6))}
+                onSubmitEditing={confirmSignup}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                autoComplete="one-time-code"
+                placeholder="6-digit code"
+                placeholderTextColor={Colors.charcoal3}
+                autoFocus
+                testID="signup-code-input"
+                accessibilityLabel="6-digit code"
+                style={[styles.input, { textAlign: "center", letterSpacing: 4 }]}
+              />
+              {devCode && (
+                <Text style={styles.devCode}>
+                  Dev mode — your code: <Text style={{ fontWeight: "800" }}>{devCode}</Text>
+                </Text>
+              )}
+              {notice && <Text style={styles.devCode}>{notice}</Text>}
+              {err && <Text style={styles.error}>{err}</Text>}
+              <Button
+                title={busy ? "Confirming…" : "Confirm email"}
+                onPress={confirmSignup}
+                disabled={signupCode.length < 4 || busy}
+                loading={busy}
+                full
+                size="lg"
+                style={{ marginTop: 20 }}
+              />
+              <View style={styles.pwLinksRow}>
+                <TouchableOpacity onPress={resendSignupCode} disabled={busy}>
+                  <Text style={styles.editText}>Resend code</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => { setFlow("form"); setMode("login"); setErr(null); setNotice(null); setDevCode(null); }}
+                >
+                  <Text style={styles.editText}>Back to log in</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
 
           {flow === "form" && (
             <>

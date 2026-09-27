@@ -10,7 +10,9 @@ interface AuthState {
   verifyOtp: (phone: string, code: string) => Promise<UserOut>;
   requestEmailOtp: (email: string) => Promise<string | undefined>;
   verifyEmailOtp: (email: string, code: string) => Promise<UserOut>;
-  registerWithPassword: (firstName: string, lastName: string, email: string, password: string) => Promise<UserOut>;
+  /** Returns the dev-mode code when the email still needs confirming, or null when already signed in. */
+  registerWithPassword: (firstName: string, lastName: string, email: string, password: string) => Promise<{ devCode: string | null } | null>;
+  verifySignup: (email: string, code: string) => Promise<UserOut>;
   loginWithPassword: (email: string, password: string) => Promise<UserOut>;
   requestPasswordReset: (email: string) => Promise<string | undefined>;
   confirmPasswordReset: (email: string, code: string, newPassword: string) => Promise<void>;
@@ -73,9 +75,22 @@ export const useAuth = create<AuthState>((set) => ({
     return res.user;
   },
   async registerWithPassword(firstName, lastName, email, password) {
-    const res = await api<{ token: string; user: UserOut }>("/api/auth/password/register", {
+    const res = await api<{ token?: string; user?: UserOut; dev_code?: string | null }>(
+      "/api/auth/password/register",
+      { method: "POST", body: { first_name: firstName, last_name: lastName || null, email, password } },
+    );
+    if (res.token && res.user) {   // backends from before email verification sign you in straight away
+      await setToken(res.token);
+      set({ user: res.user });
+      registerPushToken().catch(() => {});
+      return null;
+    }
+    return { devCode: res.dev_code ?? null };
+  },
+  async verifySignup(email, code) {
+    const res = await api<{ token: string; user: UserOut }>("/api/auth/password/register/verify", {
       method: "POST",
-      body: { first_name: firstName, last_name: lastName || null, email, password },
+      body: { email, code },
     });
     await setToken(res.token);
     set({ user: res.user });

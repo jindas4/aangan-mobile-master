@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
-import { api, VerificationStatus } from "@/lib/api";
+import { api, UserOut, VerificationStatus } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/Button";
 
@@ -186,24 +186,34 @@ function PhoneStepForm({ onDone }: { onDone: () => void }) {
   );
 }
 
+// Attaches the email to the signed-in account. Deliberately not the email-OTP
+// *login* endpoints: those would swap the session to whichever account owns
+// the address. An address owned by another account is refused (409).
 function EmailStepForm({ onDone }: { onDone: () => void }) {
-  const { requestEmailOtp, verifyEmailOtp, user } = useAuth();
+  const { user } = useAuth();
   const [stage, setStage] = useState<"identifier" | "code">("identifier");
   const [email, setEmail] = useState(user?.email || "");
   const [code, setCode] = useState("");
   const [devCode, setDevCode] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const normEmail = email.trim().toLowerCase();
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normEmail);
 
   const send = async () => {
     if (!validEmail) return;
     setBusy(true);
     setErr(null);
+    setNotice(null);
     try {
-      const dev = await requestEmailOtp(email.trim().toLowerCase());
-      if (dev) setDevCode(dev);
+      const res = await api<{ ok: boolean; dev_code?: string | null }>("/api/auth/email/add/request", {
+        method: "POST",
+        body: { email: normEmail },
+      });
+      setDevCode(res.dev_code || null);
+      if (stage === "code") setNotice("We sent a new code.");
       setStage("code");
     } catch (e: any) {
       setErr(e.message || "Could not send code");
@@ -216,8 +226,13 @@ function EmailStepForm({ onDone }: { onDone: () => void }) {
     if (code.length < 4) return;
     setBusy(true);
     setErr(null);
+    setNotice(null);
     try {
-      await verifyEmailOtp(email.trim().toLowerCase(), code);
+      const me = await api<UserOut>("/api/auth/email/add/verify", {
+        method: "POST",
+        body: { email: normEmail, code },
+      });
+      useAuth.setState({ user: me });
       onDone();
     } catch (e: any) {
       setErr(e.message || "Invalid code");
@@ -243,18 +258,34 @@ function EmailStepForm({ onDone }: { onDone: () => void }) {
     </View>
   ) : (
     <View>
+      <Text style={styles.sentTo}>
+        We sent a 6-digit code to <Text style={{ fontWeight: "800" }}>{normEmail}</Text>
+      </Text>
       <TextInput
         value={code}
         onChangeText={(t) => setCode(t.replace(/\D/g, "").slice(0, 6))}
+        onSubmitEditing={verify}
         keyboardType="number-pad"
-        placeholder="Enter code"
+        placeholder="6-digit code"
         placeholderTextColor={Colors.charcoal3}
         textContentType="oneTimeCode"
-        style={styles.formInput}
+        autoComplete="one-time-code"
+        accessibilityLabel="6-digit code"
+        autoFocus
+        style={[styles.formInput, { textAlign: "center", letterSpacing: 4 }]}
       />
       {devCode && <Text style={styles.devCode}>Dev code: {devCode}</Text>}
+      {notice && <Text style={styles.devCode}>{notice}</Text>}
       {err && <Text style={styles.formError}>{err}</Text>}
-      <Button title={busy ? "Verifying…" : "Verify"} onPress={verify} disabled={code.length < 4 || busy} loading={busy} full style={{ marginTop: 12 }} />
+      <Button title={busy ? "Confirming…" : "Confirm email"} onPress={verify} disabled={code.length < 4 || busy} loading={busy} full style={{ marginTop: 12 }} />
+      <View style={styles.linksRow}>
+        <TouchableOpacity onPress={send} disabled={busy}>
+          <Text style={styles.linkText}>Resend code</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => { setStage("identifier"); setCode(""); setErr(null); setNotice(null); }}>
+          <Text style={styles.linkText}>Change email</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -548,6 +579,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.charcoal3,
     marginTop: 8,
+  },
+  sentTo: {
+    fontSize: 12.5,
+    color: Colors.charcoal2,
+    marginBottom: 10,
+  },
+  linksRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 12,
+  },
+  linkText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: Colors.charcoal2,
+    textDecorationLine: "underline",
   },
   payoutTabs: {
     flexDirection: "row",

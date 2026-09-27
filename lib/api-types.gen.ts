@@ -83,6 +83,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/bookings/{booking_id}/dispute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Dispute
+         * @description Chargeback / dispute lifecycle on a booking: none → open → won|lost.
+         *     Support agents can open one (they take the issuer's call); the money
+         *     consequence of a LOST dispute is the full-admin refund override above.
+         *     Opening a dispute also holds any not-yet-paid payout for the booking —
+         *     money must not go out to the host mid-dispute.
+         */
+        post: operations["set_dispute_api_admin_bookings__booking_id__dispute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/bookings/{booking_id}/refund": {
         parameters: {
             query?: never;
@@ -121,6 +145,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/captures/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import Captures Admin */
+        post: operations["import_captures_admin_api_admin_captures_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/cms/banners": {
         parameters: {
             query?: never;
@@ -147,7 +188,12 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
+        /**
+         * Update Banner
+         * @description Update / publish-toggle — banners are created as drafts, so without
+         *     this there was no way to take one live (or edit a typo) from the UI.
+         */
+        put: operations["update_banner_api_admin_cms_banners__bid__put"];
         post?: never;
         /** Delete Banner */
         delete: operations["delete_banner_api_admin_cms_banners__bid__delete"];
@@ -212,6 +258,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/export/bookings.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Bookings Csv
+         * @description Finance export — one row per booking with payment + refund amounts.
+         *     Date range filters on created_at; omit both for everything.
+         */
+        get: operations["export_bookings_csv_api_admin_export_bookings_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/export/payouts.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Payouts Csv
+         * @description Finance export — one row per payout with gross/TDS/net, rail reference
+         *     for bank reconciliation, and FY for 26Q TDS filing.
+         */
+        get: operations["export_payouts_csv_api_admin_export_payouts_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/flags": {
         parameters: {
             query?: never;
@@ -242,6 +330,61 @@ export interface paths {
         post?: never;
         /** Delete Flag */
         delete: operations["delete_flag_api_admin_flags__key__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/kyc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Kyc Queue
+         * @description Hosts by KYC state (default: pending — the actionable queue), with the
+         *     money impact (payouts held for KYC) so ops can prioritise.
+         */
+        get: operations["kyc_queue_api_admin_kyc_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/kyc/{user_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Kyc Approve */
+        post: operations["kyc_approve_api_admin_kyc__user_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/kyc/{user_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Kyc Reject */
+        post: operations["kyc_reject_api_admin_kyc__user_id__reject_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -290,6 +433,27 @@ export interface paths {
         };
         /** List Payouts Admin */
         get: operations["list_payouts_admin_api_admin_payouts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/payouts/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Payout Summary
+         * @description Reconciliation view — how much money sits in each payout state, plus
+         *     TDS deducted per financial year (what the CA needs for quarterly 26Q).
+         */
+        get: operations["payout_summary_api_admin_payouts_summary_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -458,6 +622,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{user_id}/notify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Notify User Admin
+         * @description Direct WhatsApp/SMS to a user — 'your payout is released', 'your KYC
+         *     was rejected because…'. Available to support agents too (this IS customer
+         *     care), audited with the full message so there's a record of what was said.
+         *     Best-effort delivery: WhatsApp if possible, SMS fallback (services/
+         *     notifications.notify_user).
+         */
+        post: operations["notify_user_admin_api_admin_users__user_id__notify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/users/{user_id}/role": {
         parameters: {
             query?: never;
@@ -476,6 +664,40 @@ export interface paths {
          */
         put: operations["set_admin_role_api_admin_users__user_id__role_put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/email/add/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Email Add Request */
+        post: operations["email_add_request_api_auth_email_add_request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/email/add/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Email Add Verify */
+        post: operations["email_add_verify_api_auth_email_add_verify_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -510,43 +732,6 @@ export interface paths {
         put?: never;
         /** Email Otp Verify */
         post: operations["email_otp_verify_api_auth_email_otp_verify_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/auth/email/request": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Email Request
-         * @description Issue a verification token. Production: send via SES; dev: returns token.
-         */
-        post: operations["email_request_api_auth_email_request_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/auth/email/verify": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Email Verify */
-        post: operations["email_verify_api_auth_email_verify_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -696,13 +881,33 @@ export interface paths {
         put?: never;
         /**
          * Password Register
-         * @description Reject on ANY existing email — verified or not, OTP/OAuth/password —
-         *     rather than silently attaching a password to it. This endpoint proves
-         *     nothing about inbox ownership at submit time, so allowing it to "claim"
-         *     a passwordless account would let anyone who merely knows a victim's
-         *     email address add themselves a working credential on that account.
+         * @description Creates the account and emails a code, but issues no session: the
+         *     account only becomes usable through /password/register/verify.
+         *
+         *     Rejects any existing email — verified or not, OTP/OAuth/password —
+         *     rather than attaching a password to it, since nothing here proves inbox
+         *     ownership. The one exception is another unconfirmed sign-up: it never
+         *     worked, so a fresh sign-up replaces it (otherwise anyone could squat an
+         *     address by registering it first).
          */
         post: operations["password_register_api_auth_password_register_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/password/register/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Password Register Verify */
+        post: operations["password_register_verify_api_auth_password_register_verify_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1953,6 +2158,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/support/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Tickets */
+        get: operations["my_tickets_api_support_tickets_get"];
+        put?: never;
+        /** Open Ticket */
+        post: operations["open_ticket_api_support_tickets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/support/tickets/{tid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Ticket */
+        get: operations["my_ticket_api_support_tickets__tid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/support/tickets/{tid}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reply Ticket */
+        post: operations["reply_ticket_api_support_tickets__tid__reply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/uploads/image": {
         parameters: {
             query?: never;
@@ -2035,8 +2292,10 @@ export interface components {
         AdminRefundRequest: {
             /** Reason */
             reason: string;
+            /** Refund Inr */
+            refund_inr?: number | null;
             /** Refund Pct */
-            refund_pct: number;
+            refund_pct?: number | null;
         };
         /** AdminRoleSet */
         AdminRoleSet: {
@@ -2252,6 +2511,23 @@ export interface components {
         BlockList: {
             /** Blocked Ids */
             blocked_ids: string[];
+        };
+        /** Body_import_captures_admin_api_admin_captures_import_post */
+        Body_import_captures_admin_api_admin_captures_import_post: {
+            /** Agent Phone */
+            agent_phone: string;
+            /**
+             * Csv File
+             * Format: binary
+             */
+            csv_file: string;
+            /**
+             * Dry Run
+             * @default false
+             */
+            dry_run: boolean;
+            /** Photos */
+            photos?: string | null;
         };
         /** Body_upload_image_api_uploads_image_post */
         Body_upload_image_api_uploads_image_post: {
@@ -2621,6 +2897,31 @@ export interface components {
             /** Requested At */
             requested_at?: string | null;
         };
+        /** DisputeUpdate */
+        DisputeUpdate: {
+            /** Dispute Status */
+            dispute_status: string;
+            /** Note */
+            note: string;
+        };
+        /** EmailAddRequest */
+        EmailAddRequest: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
+        /** EmailAddVerify */
+        EmailAddVerify: {
+            /** Code */
+            code: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
         /** EmailOtpRequest */
         EmailOtpRequest: {
             /**
@@ -2638,19 +2939,6 @@ export interface components {
              * Format: email
              */
             email: string;
-        };
-        /** EmailRequest */
-        EmailRequest: {
-            /**
-             * Email
-             * Format: email
-             */
-            email: string;
-        };
-        /** EmailVerify */
-        EmailVerify: {
-            /** Token */
-            token: string;
         };
         /** FlagSet */
         FlagSet: {
@@ -2693,6 +2981,11 @@ export interface components {
              * @default false
              */
             superhost: boolean;
+        };
+        /** KycDecision */
+        KycDecision: {
+            /** Reason */
+            reason: string;
         };
         /** ListingCardOut */
         ListingCardOut: {
@@ -3032,6 +3325,11 @@ export interface components {
             provider: string;
             /** Token */
             token: string;
+        };
+        /** NotifyRequest */
+        NotifyRequest: {
+            /** Message */
+            message: string;
         };
         /**
          * OtherPartyMini
@@ -3575,12 +3873,39 @@ export interface components {
             /** Total Inr */
             total_inr: number;
         };
+        /** RegisterPending */
+        RegisterPending: {
+            /** Dev Code */
+            dev_code?: string | null;
+            /** Email */
+            email: string;
+            /**
+             * Ok
+             * @default true
+             */
+            ok: boolean;
+            /**
+             * Verification Required
+             * @default true
+             */
+            verification_required: boolean;
+        };
         /** RegisterToken */
         RegisterToken: {
             /** Platform */
             platform: string;
             /** Token */
             token: string;
+        };
+        /** RegisterVerify */
+        RegisterVerify: {
+            /** Code */
+            code: string;
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
         };
         /** ReportCreate */
         ReportCreate: {
@@ -3668,6 +3993,20 @@ export interface components {
             category: string;
             /** Opener Id */
             opener_id?: string | null;
+            /** Subject */
+            subject: string;
+        };
+        /** TicketOpen */
+        TicketOpen: {
+            /** Body */
+            body: string;
+            /**
+             * Category
+             * @default general
+             */
+            category: string;
+            /** Related Booking Id */
+            related_booking_id?: string | null;
             /** Subject */
             subject: string;
         };
@@ -3883,6 +4222,7 @@ export interface operations {
             query?: {
                 q?: string | null;
                 bstatus?: string | null;
+                disputes?: boolean;
                 limit?: number;
                 offset?: number;
             };
@@ -3984,6 +4324,43 @@ export interface operations {
             };
         };
     };
+    set_dispute_api_admin_bookings__booking_id__dispute_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DisputeUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     admin_refund_api_admin_bookings__booking_id__refund_post: {
         parameters: {
             query?: never;
@@ -4057,6 +4434,41 @@ export interface operations {
             };
         };
     };
+    import_captures_admin_api_admin_captures_import_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_captures_admin_api_admin_captures_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_banners_api_admin_cms_banners_get: {
         parameters: {
             query?: never;
@@ -4105,6 +4517,43 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_banner_api_admin_cms_banners__bid__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                bid: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BannerWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4319,6 +4768,74 @@ export interface operations {
             };
         };
     };
+    export_bookings_csv_api_admin_export_bookings_csv_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_payouts_csv_api_admin_export_payouts_csv_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_flags_api_admin_flags_get: {
         parameters: {
             query?: never;
@@ -4418,6 +4935,115 @@ export interface operations {
             };
         };
     };
+    kyc_queue_api_admin_kyc_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    kyc_approve_api_admin_kyc__user_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KycDecision"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    kyc_reject_api_admin_kyc__user_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KycDecision"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_listings_admin_api_admin_listings_get: {
         parameters: {
             query?: {
@@ -4494,10 +5120,42 @@ export interface operations {
     list_payouts_admin_api_admin_payouts_get: {
         parameters: {
             query?: {
+                q?: string | null;
                 pstatus?: string | null;
                 limit?: number;
                 offset?: number;
             };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    payout_summary_api_admin_payouts_summary_get: {
+        parameters: {
+            query?: never;
             header?: {
                 authorization?: string | null;
             };
@@ -4943,6 +5601,43 @@ export interface operations {
             };
         };
     };
+    notify_user_admin_api_admin_users__user_id__notify_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NotifyRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     set_admin_role_api_admin_users__user_id__role_put: {
         parameters: {
             query?: never;
@@ -4967,6 +5662,76 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    email_add_request_api_auth_email_add_request_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailAddRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OtpRequestResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    email_add_verify_api_auth_email_add_verify_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailAddVerify"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
                 };
             };
             /** @description Validation Error */
@@ -5033,74 +5798,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TokenResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    email_request_api_auth_email_request_post: {
-        parameters: {
-            query?: never;
-            header?: {
-                authorization?: string | null;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EmailRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    email_verify_api_auth_email_verify_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EmailVerify"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -5389,6 +6086,39 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegisterPending"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    password_register_verify_api_auth_password_register_verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterVerify"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7922,6 +8652,142 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_tickets_api_support_tickets_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    open_ticket_api_support_tickets_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TicketOpen"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_ticket_api_support_tickets__tid__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                tid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reply_ticket_api_support_tickets__tid__reply_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                tid: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TicketReply"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
