@@ -8,7 +8,7 @@ import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { WEB_BASE } from "@/lib/api";
 
 const SUPPORT_EMAIL = "support@aangan.net.in";
-const COMPANY = "Aangan India Private Limited";
+const COMPANY = "Meera Stay India Private Limited";
 
 export default function AboutScreen() {
   const version = Application.nativeApplicationVersion ?? "1.0.0";
