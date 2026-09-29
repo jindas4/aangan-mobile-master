@@ -78,7 +78,7 @@ export default function HostDashboardScreen() {
           <Text style={styles.pitchKicker}>FOR HOMEOWNERS</Text>
           <Text style={styles.pitchTitle}>A booking website for your home. In 5 minutes.</Text>
           <Text style={styles.pitchSub}>
-            Every home on Aangan gets a shareable page at aanganstay.com/p/your-home.{"\n"}
+            Every home on Aangan Stay gets a shareable page at aanganstay.com/p/your-home.{"\n"}
             Post it on WhatsApp, Instagram, anywhere.{"\n"}
             0% commission — forever.
           </Text>
@@ -216,7 +216,7 @@ function Header({ onBack }: { onBack: () => void }) {
       <TouchableOpacity onPress={onBack} style={styles.backBtn} hitSlop={8}>
         <Ionicons name="chevron-back" size={22} color={Colors.charcoal} />
       </TouchableOpacity>
-      <Text style={styles.headerTitle} testID="host-header" accessibilityLabel="Aangan for Hosts">Aangan for Hosts</Text>
+      <Text style={styles.headerTitle} testID="host-header" accessibilityLabel="Aangan Stay for Hosts">Aangan Stay for Hosts</Text>
       <View style={{ width: 40 }} />
     </View>
   );

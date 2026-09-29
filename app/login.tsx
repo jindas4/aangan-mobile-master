@@ -400,7 +400,7 @@ export default function LoginScreen() {
                     >
                       Privacy Policy
                     </Text>
-                    , and to Aangan's zero-tolerance policy for objectionable content and abusive
+                    , and to Aangan Stay's zero-tolerance policy for objectionable content and abusive
                     behaviour.
                   </Text>
                 </TouchableOpacity>

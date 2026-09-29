@@ -66,7 +66,7 @@ export function CheckoutSheet({ bookingId, totalInr, onClose, onPaid }: Props) {
           RazorpayCheckout = require("react-native-razorpay").default;
         } catch {
           throw new Error(
-            "Payments need the full Aangan app build. Please update the app and try again.",
+            "Payments need the full Aangan Stay app build. Please update the app and try again.",
           );
         }
         let rzp: { razorpay_payment_id: string; razorpay_signature: string };
@@ -76,7 +76,7 @@ export function CheckoutSheet({ bookingId, totalInr, onClose, onPaid }: Props) {
             order_id: init.razorpay_order_id,
             amount: init.amount_inr * 100, // paise
             currency: "INR",
-            name: "Aangan",
+            name: "Aangan Stay",
             description: `Booking ${bookingId}`,
             prefill: {
               contact: user?.phone ?? undefined,

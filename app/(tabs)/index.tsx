@@ -169,7 +169,7 @@ export default function HomeScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.hostTitle}>Got a spare room with a view?</Text>
             <Text style={styles.hostSub}>
-              List it on Aangan — zero commission, forever.
+              List it on Aangan Stay — zero commission, forever.
             </Text>
           </View>
           <View style={styles.hostArrow}>

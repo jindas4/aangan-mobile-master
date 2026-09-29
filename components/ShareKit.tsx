@@ -33,7 +33,7 @@ export function ShareKit({ slug, title, city }: Props) {
   };
 
   const shareWhatsApp = async () => {
-    const text = `Check out ${title} in ${city} — book directly on Aangan:\n${url}`;
+    const text = `Check out ${title} in ${city} — book directly on Aangan Stay:\n${url}`;
     const waUrl = `whatsapp://send?text=${encodeURIComponent(text)}`;
     const canOpen = await Linking.canOpenURL(waUrl);
     if (canOpen) {
@@ -46,7 +46,7 @@ export function ShareKit({ slug, title, city }: Props) {
   const shareGeneric = async () => {
     try {
       await Share.share({
-        message: `Check out ${title} in ${city} — book directly on Aangan: ${url}`,
+        message: `Check out ${title} in ${city} — book directly on Aangan Stay: ${url}`,
         url,
       });
     } catch {}
@@ -139,7 +139,7 @@ function QRModal({
   const shareQr = async () => {
     try {
       await Share.share({
-        message: `Scan to book ${title} on Aangan: ${url}`,
+        message: `Scan to book ${title} on Aangan Stay: ${url}`,
         url,
       });
     } catch {}

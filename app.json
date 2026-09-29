@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Aangan",
+    "name": "Aangan Stay",
     "slug": "aangan",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -32,8 +32,8 @@
         "webcredentials:aangan.net.in"
       ],
       "infoPlist": {
-        "NSCameraUsageDescription": "Aangan needs camera access to take photos of your property.",
-        "NSPhotoLibraryUsageDescription": "Aangan needs photo library access to upload property images.",
+        "NSCameraUsageDescription": "Aangan Stay needs camera access to take photos of your property.",
+        "NSPhotoLibraryUsageDescription": "Aangan Stay needs photo library access to upload property images.",
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationQueriesSchemes": ["whatsapp"]
       },

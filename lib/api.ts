@@ -101,7 +101,7 @@ export async function api<T = any>(path: string, init: ReqInit = {}): Promise<T>
       throw new ApiError(
         timedOut
           ? "Request timed out. Check your connection and try again."
-          : "Couldn't reach Aangan. Check your connection and try again.",
+          : "Couldn't reach Aangan Stay. Check your connection and try again.",
         0,
       );
     }
@@ -144,7 +144,7 @@ export async function uploadFile<T = any>(path: string, uri: string, filename: s
     throw new ApiError(
       e?.name === "AbortError"
         ? "Upload timed out. Check your connection and try again."
-        : "Couldn't reach Aangan. Check your connection and try again.",
+        : "Couldn't reach Aangan Stay. Check your connection and try again.",
       0,
     );
   }

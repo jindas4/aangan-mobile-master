@@ -42,9 +42,9 @@ export default function AccountScreen() {
           <Text
             style={styles.loginTitle}
             testID="welcome-title"
-            accessibilityLabel="Welcome to Aangan"
+            accessibilityLabel="Welcome to Aangan Stay"
           >
-            Welcome to Aangan
+            Welcome to Aangan Stay
           </Text>
           <Text style={styles.loginSub}>
             Log in to manage your trips, message hosts, and list your home.
@@ -227,7 +227,7 @@ export default function AccountScreen() {
         <Text style={styles.sectionLabel}>SUPPORT</Text>
         <MenuItem
           icon="information-circle-outline"
-          label="About Aangan"
+          label="About Aangan Stay"
           onPress={() => router.push("/about")}
         />
         <MenuItem
@@ -263,7 +263,7 @@ export default function AccountScreen() {
           <Text style={styles.deleteText}>Delete account</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>Aangan v1.0.0</Text>
+        <Text style={styles.version}>Aangan Stay v1.0.0</Text>
         <View style={{ height: tabBarHeight + 32 }} />
       </ScrollView>
     </SafeAreaView>

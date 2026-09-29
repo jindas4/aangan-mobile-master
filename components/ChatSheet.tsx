@@ -48,7 +48,7 @@ function ChatModal({ onClose }: { onClose: () => void }) {
       id: 0,
       role: "assistant",
       content:
-        "Hi! I'm the Aangan assistant. Ask me about stays, bookings, or anything about Aangan.",
+        "Hi! I'm the Aangan Stay assistant. Ask me about stays, bookings, or anything about Aangan Stay.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -185,7 +185,7 @@ function ChatModal({ onClose }: { onClose: () => void }) {
             <Ionicons name="sparkles" size={16} color="#fff" />
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Aangan Assistant</Text>
+            <Text style={styles.headerTitle}>Aangan Stay Assistant</Text>
             <Text style={styles.headerSub}>Ask me anything</Text>
           </View>
           <TouchableOpacity onPress={onClose} hitSlop={12} style={styles.closeBtn}>

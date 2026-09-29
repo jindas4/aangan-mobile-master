@@ -23,23 +23,23 @@ export default function AboutScreen() {
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>A</Text>
           </View>
-          <Text style={styles.appName}>Aangan</Text>
+          <Text style={styles.appName}>Aangan Stay</Text>
           <Text style={styles.tagline}>Real homes, real hosts, all over India</Text>
           <Text style={styles.version}>Version {version} ({build})</Text>
         </View>
 
         {/* About blurb */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>About Aangan</Text>
+          <Text style={styles.cardTitle}>About Aangan Stay</Text>
           <Text style={styles.body}>
-            Aangan connects travellers with verified homestay hosts across India.
+            Aangan Stay connects travellers with verified homestay hosts across India.
             Every price is all-inclusive in rupees — no hidden fees, no surprises.
             Hosts are government-ID verified, and payments happen securely via UPI
             and cards through Razorpay.
           </Text>
           <Text style={[styles.body, { marginTop: 12 }]}>
             Whether it's a Himalayan cabin, a Goan villa, or a heritage haveli —
-            Aangan helps you find a home away from home.
+            Aangan Stay helps you find a home away from home.
           </Text>
         </View>
 

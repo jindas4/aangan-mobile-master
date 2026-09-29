@@ -83,7 +83,7 @@ export default function ListingDetailScreen() {
     if (!listing) return;
     try {
       await Share.share({
-        message: `Check out ${listing.title} on Aangan!\n${WEB_BASE}/listing/${listing.id}`,
+        message: `Check out ${listing.title} on Aangan Stay!\n${WEB_BASE}/listing/${listing.id}`,
       });
     } catch {}
   };

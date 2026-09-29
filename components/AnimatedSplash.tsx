@@ -131,7 +131,7 @@ export function AnimatedSplash({ onFinish }: Props) {
           },
         ]}
       >
-        Aangan
+        Aangan Stay
       </Animated.Text>
 
       {/* Tagline */}

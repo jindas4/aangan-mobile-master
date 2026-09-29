@@ -32,7 +32,7 @@ export function ReferralCard() {
   if (!data) return null;
 
   const shareText =
-    `I use Aangan for real homestays across India — verified hosts, UPI, ` +
+    `I use Aangan Stay for real homestays across India — verified hosts, UPI, ` +
     `all-inclusive ₹ pricing. Use my code ${data.code} for ₹${data.referee_bonus_inr} ` +
     `off your first stay: ${data.share_url}`;
 
