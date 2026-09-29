@@ -7,7 +7,7 @@ import * as Application from "expo-application";
 import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { WEB_BASE } from "@/lib/api";
 
-const SUPPORT_EMAIL = "support@aangan.in";
+const SUPPORT_EMAIL = "support@aangan.net.in";
 const COMPANY = "Aangan India Private Limited";
 
 export default function AboutScreen() {
@@ -78,7 +78,7 @@ export default function AboutScreen() {
           />
           <LinkRow
             icon="globe-outline"
-            label="aangan.net.in"
+            label="aanganstay.com"
             onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}`)}
           />
         </View>

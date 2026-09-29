@@ -3,11 +3,9 @@ import * as SecureStore from "expo-secure-store";
 export const API_BASE =
   process.env.EXPO_PUBLIC_API_URL ||
   "https://backend-service-production-2df4.up.railway.app";
-// Overridable per-build via EXPO_PUBLIC_WEB_URL (see eas.json). Fallback is the
-// current Railway domain; switch the env to https://aangan.net.in once its DNS
-// resolves — no code change needed.
+// Overridable per-build via EXPO_PUBLIC_WEB_URL (see eas.json).
 export const WEB_BASE =
-  process.env.EXPO_PUBLIC_WEB_URL || "https://frontend-production-7d9b.up.railway.app";
+  process.env.EXPO_PUBLIC_WEB_URL || "https://aanganstay.com";
 const TOKEN_KEY = "hm_token";
 
 export function getToken(): string | null {

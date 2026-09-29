@@ -26,6 +26,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "in.aangan.app",
       "associatedDomains": [
+        "applinks:aanganstay.com",
+        "webcredentials:aanganstay.com",
         "applinks:aangan.net.in",
         "webcredentials:aangan.net.in"
       ],
@@ -99,6 +101,10 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
+            { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/listing" },
+            { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/p" },
+            { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/messages" },
+            { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/trips" },
             { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/listing" },
             { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/p" },
             { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/messages" },

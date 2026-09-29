@@ -78,12 +78,12 @@ export default function HostDashboardScreen() {
           <Text style={styles.pitchKicker}>FOR HOMEOWNERS</Text>
           <Text style={styles.pitchTitle}>A booking website for your home. In 5 minutes.</Text>
           <Text style={styles.pitchSub}>
-            Every home on Aangan gets a shareable page at aangan.in/p/your-home.{"\n"}
+            Every home on Aangan gets a shareable page at aanganstay.com/p/your-home.{"\n"}
             Post it on WhatsApp, Instagram, anywhere.{"\n"}
             0% commission — forever.
           </Text>
           <View style={styles.pitchFeatures}>
-            <FeatureItem icon="link-outline" title="Your own URL" sub="aangan.in/p/your-home" />
+            <FeatureItem icon="link-outline" title="Your own URL" sub="aanganstay.com/p/your-home" />
             <FeatureItem icon="cash-outline" title="0% commission" sub="UPI, ₹, in your bank" />
             <FeatureItem icon="calendar-outline" title="Calendar + bookings" sub="Manage availability" />
           </View>

@@ -24,7 +24,7 @@ order. The mobile app calls endpoints and web pages that must already be live.
 | Apple Team ID | `LRYVMJZY77` |
 | EAS project id | `e607db25-0749-4e2c-b974-a29326e5d8c8` |
 | Backend (prod) | `https://backend-service-production-2df4.up.railway.app` |
-| Frontend (prod) | `https://frontend-production-7d9b.up.railway.app` → `https://aangan.net.in` |
+| Frontend (prod) | `https://frontend-production-7d9b.up.railway.app` → `https://aanganstay.com` (old `aangan.net.in` redirects) |
 | Privacy Policy URL | `<frontend>/legal/privacy` |
 | Support URL | `<frontend>/support` |
 | Review demo login | `review@aangan.in` (password printed by the seed script) |
@@ -45,8 +45,8 @@ Full metadata checklist: the App Store Connect checklist artifact from the build
       it unset (the button auto-hides when unset).
 - [ ] **Google Play** service account JSON saved to
       `stayindia/... /google-service-account.json` (only needed for Android submit).
-- [ ] **Custom domain** `aangan.net.in` DNS pointed at Railway (in progress).
-- [ ] **Mailboxes** `support@aangan.in` and `safety@aangan.in` actually receive mail
+- [x] **Custom domain** `aanganstay.com` DNS pointed at Railway (`aangan.net.in` redirects to it).
+- [ ] **Mailboxes** `support@`, `privacy@`, `dpo@` and `safety@aangan.net.in` actually receive mail
       (referenced by the Support page).
 - [ ] **GitHub secret** `EXPO_TOKEN` set (for the CI workflows).
 
@@ -59,7 +59,7 @@ Full metadata checklist: the App Store Connect checklist artifact from the build
    | Var | Purpose |
    | --- | --- |
    | `APPLE_BUNDLE_IDS` | `in.aangan.app` — **required** for Sign in with Apple |
-   | `CORS_ORIGINS` | include the frontend origin(s), incl. `https://aangan.net.in` |
+   | `CORS_ORIGINS` | include the frontend origin(s), incl. `https://aanganstay.com` |
    | `RESEND_API_KEY`, `RESEND_FROM` | transactional email (verification / OTP) |
    | `MSG91_AUTH_KEY`, `MSG91_TEMPLATE_ID` | SMS OTP (DLT-approved template) |
    | `OTP_DEV_MODE` | `false` in production |
@@ -111,8 +111,8 @@ Full metadata checklist: the App Store Connect checklist artifact from the build
    done
    ```
 
-4. When `aangan.net.in` DNS resolves, flip `EXPO_PUBLIC_WEB_URL` in `eas.json`
-   (§4) to `https://aangan.net.in` and use its URLs for the store metadata.
+4. `EXPO_PUBLIC_WEB_URL` in `eas.json` (§4) is `https://aanganstay.com`; use its URLs
+   for the store metadata (privacy policy, support, marketing).
 
 ---
 
@@ -123,7 +123,7 @@ Full metadata checklist: the App Store Connect checklist artifact from the build
 | Var | Value |
 | --- | --- |
 | `EXPO_PUBLIC_API_URL` | backend prod URL |
-| `EXPO_PUBLIC_WEB_URL` | frontend prod URL (→ `aangan.net.in` when DNS is live) |
+| `EXPO_PUBLIC_WEB_URL` | `https://aanganstay.com` |
 | `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` / `_IOS_` / `_ANDROID_` | set ✅ |
 | `EXPO_PUBLIC_SENTRY_DSN` | mobile project DSN from Sentry (blank = disabled) |
 

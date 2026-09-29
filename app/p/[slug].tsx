@@ -1,4 +1,4 @@
-// Universal-link target for microsite URLs (https://aangan.net.in/p/<slug>).
+// Universal-link target for microsite URLs (https://aanganstay.com/p/<slug>).
 // The app's canonical screen is /listing/[id], so resolve slug → id and
 // replace. Falls back to the Explore tab if the slug is gone.
 import { useEffect } from "react";

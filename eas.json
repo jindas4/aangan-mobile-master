@@ -12,7 +12,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://backend-service-production-2df4.up.railway.app",
-        "EXPO_PUBLIC_WEB_URL": "https://aangan.net.in",
+        "EXPO_PUBLIC_WEB_URL": "https://aanganstay.com",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "417909183220-ghq1hml43c1pahmt2gjd6pulguo30he9.apps.googleusercontent.com",
         "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "417909183220-ok3a21qr22063kgh783tbrn1vo6n2h9k.apps.googleusercontent.com",
@@ -30,7 +30,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://backend-service-production-2df4.up.railway.app",
-        "EXPO_PUBLIC_WEB_URL": "https://aangan.net.in",
+        "EXPO_PUBLIC_WEB_URL": "https://aanganstay.com",
         "EXPO_PUBLIC_SENTRY_DSN": "https://disabled@o0.ingest.sentry.io/0",
         "EXPO_PUBLIC_SENTRY_ENVIRONMENT": "preview",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
@@ -50,7 +50,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://backend-service-production-2df4.up.railway.app",
-        "EXPO_PUBLIC_WEB_URL": "https://aangan.net.in",
+        "EXPO_PUBLIC_WEB_URL": "https://aanganstay.com",
         "EXPO_PUBLIC_SENTRY_DSN": "https://disabled@o0.ingest.sentry.io/0",
         "EXPO_PUBLIC_SENTRY_ENVIRONMENT": "production",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",

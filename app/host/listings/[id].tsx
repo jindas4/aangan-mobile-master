@@ -292,7 +292,7 @@ export default function ManageListingScreen() {
           {/* URL card */}
           <View style={styles.urlCard}>
             <Text style={styles.urlLabel}>YOUR PAGE</Text>
-            <Text style={styles.urlText}>aangan.in/p/{listing.slug}</Text>
+            <Text style={styles.urlText}>{WEB_BASE.replace(/^https?:\/\//, "")}/p/{listing.slug}</Text>
             <TouchableOpacity style={styles.shareBtn} onPress={onShare}>
               <Ionicons name="share-social-outline" size={16} color={Colors.paper} />
               <Text style={styles.shareBtnText}>Share</Text>

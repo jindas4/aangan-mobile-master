@@ -233,7 +233,7 @@ export default function AccountScreen() {
         <MenuItem
           icon="help-circle-outline"
           label="Help centre"
-          onPress={() => Linking.openURL("mailto:support@aangan.in")}
+          onPress={() => Linking.openURL("mailto:support@aangan.net.in")}
         />
         <MenuItem
           icon="document-text-outline"
