@@ -93,6 +93,7 @@ export function VerifyWizard() {
               {step.key === "phone" && <PhoneStepForm onDone={handleStepDone} />}
               {step.key === "email" && <EmailStepForm onDone={handleStepDone} />}
               {step.key === "aadhaar" && <AadhaarStepForm onDone={handleStepDone} />}
+              {step.key === "pan" && <PanStepForm onDone={handleStepDone} />}
               {step.key === "payout" && <PayoutStepForm onDone={handleStepDone} />}
             </View>
           )}
@@ -405,6 +406,7 @@ function PanStepForm({ onDone }: { onDone: () => void }) {
         placeholderTextColor={Colors.charcoal3}
         style={[styles.formInput, { marginTop: 10 }]}
       />
+      <Text style={[styles.stepHint, { marginTop: 8 }]}>Enter your name exactly as it's printed on your PAN card.</Text>
       {err && <Text style={styles.formError}>{err}</Text>}
       <Button title={busy ? "Verifying…" : "Verify PAN"} onPress={submit} disabled={!validPan || !name.trim() || busy} loading={busy} full style={{ marginTop: 12 }} />
     </View>

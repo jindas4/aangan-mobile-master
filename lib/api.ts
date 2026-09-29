@@ -385,7 +385,7 @@ export interface Message {
 }
 
 export interface VerificationStep {
-  key: "phone" | "email" | "aadhaar" | "payout";
+  key: "phone" | "email" | "aadhaar" | "pan" | "payout";
   label: string;
   done: boolean;
   required: boolean;
