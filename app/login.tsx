@@ -14,7 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
-import * as Facebook from "expo-auth-session/providers/facebook";
+// Facebook login is disabled until a Facebook app is set up.
+// import * as Facebook from "expo-auth-session/providers/facebook";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Colors, Radius } from "@/constants/Colors";
 import { WEB_BASE, ApiError } from "@/lib/api";
@@ -31,7 +32,7 @@ type Flow = "form" | "resetRequest" | "resetCode" | "verifyEmail";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const FACEBOOK_CLIENT_ID = process.env.EXPO_PUBLIC_FACEBOOK_CLIENT_ID || "";
+// const FACEBOOK_CLIENT_ID = process.env.EXPO_PUBLIC_FACEBOOK_CLIENT_ID || "";
 
 function GoogleIcon() {
   return (
@@ -44,14 +45,14 @@ function GoogleIcon() {
   );
 }
 
-function FacebookIcon() {
-  return (
-    <Svg width={18} height={18} viewBox="0 0 24 24">
-      <Path fill="#1877F2" d="M24 12a12 12 0 1 0-13.875 11.854V15.469H7.078V12h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.312 0 2.686.234 2.686.234v2.953h-1.514c-1.49 0-1.955.926-1.955 1.875V12h3.328l-.532 3.469h-2.796v8.385A12.003 12.003 0 0 0 24 12Z" />
-      <Path fill="#FFFFFF" d="m16.671 15.469.532-3.469h-3.328V9.75c0-.949.465-1.875 1.955-1.875h1.514V4.922s-1.374-.234-2.686-.234c-2.741 0-4.533 1.661-4.533 4.668V12H7.078v3.469h3.047v8.385a12.117 12.117 0 0 0 3.75 0v-8.385h2.796Z" />
-    </Svg>
-  );
-}
+// function FacebookIcon() {
+//   return (
+//     <Svg width={18} height={18} viewBox="0 0 24 24">
+//       <Path fill="#1877F2" d="M24 12a12 12 0 1 0-13.875 11.854V15.469H7.078V12h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.312 0 2.686.234 2.686.234v2.953h-1.514c-1.49 0-1.955.926-1.955 1.875V12h3.328l-.532 3.469h-2.796v8.385A12.003 12.003 0 0 0 24 12Z" />
+//       <Path fill="#FFFFFF" d="m16.671 15.469.532-3.469h-3.328V9.75c0-.949.465-1.875 1.955-1.875h1.514V4.922s-1.374-.234-2.686-.234c-2.741 0-4.533 1.661-4.533 4.668V12H7.078v3.469h3.047v8.385a12.117 12.117 0 0 0 3.75 0v-8.385h2.796Z" />
+//     </Svg>
+//   );
+// }
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -75,9 +76,9 @@ export default function LoginScreen() {
   const [notice, setNotice] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
 
-  const [, , facebookPrompt] = Facebook.useAuthRequest({
-    clientId: FACEBOOK_CLIENT_ID,
-  });
+//   const [, , facebookPrompt] = Facebook.useAuthRequest({
+//     clientId: FACEBOOK_CLIENT_ID,
+//   });
 
   const handleGoogleLogin = async () => {
     if (!isGoogleSignInConfigured) {
@@ -117,27 +118,27 @@ export default function LoginScreen() {
     }
   };
 
-  const handleFacebookLogin = async () => {
-    if (!FACEBOOK_CLIENT_ID) {
-      Alert.alert("Not configured", "Facebook login is not yet configured.");
-      return;
-    }
-    setBusy(true);
-    setErr(null);
-    try {
-      const result = await facebookPrompt();
-      if (result?.type === "success") {
-        const accessToken = result.params.access_token;
-        await socialLogin("facebook", accessToken);
-        await refreshWish();
-        router.back();
-      }
-    } catch (e: any) {
-      setErr(e.message || "Facebook login failed");
-    } finally {
-      setBusy(false);
-    }
-  };
+//   const handleFacebookLogin = async () => {
+//     if (!FACEBOOK_CLIENT_ID) {
+//       Alert.alert("Not configured", "Facebook login is not yet configured.");
+//       return;
+//     }
+//     setBusy(true);
+//     setErr(null);
+//     try {
+//       const result = await facebookPrompt();
+//       if (result?.type === "success") {
+//         const accessToken = result.params.access_token;
+//         await socialLogin("facebook", accessToken);
+//         await refreshWish();
+//         router.back();
+//       }
+//     } catch (e: any) {
+//       setErr(e.message || "Facebook login failed");
+//     } finally {
+//       setBusy(false);
+//     }
+//   };
 
   const validEmail = EMAIL_RE.test(email.trim());
   const canSubmit =
@@ -456,7 +457,7 @@ export default function LoginScreen() {
                 <Text style={styles.socialBtnText}>Continue with Google</Text>
               </TouchableOpacity>
 
-              {/* Facebook only shown when configured — a dead button fails App Review (2.1). */}
+              {/* Facebook login is disabled until a Facebook app is set up.
               {!!FACEBOOK_CLIENT_ID && (
                 <TouchableOpacity
                   style={styles.socialBtn}
@@ -468,6 +469,7 @@ export default function LoginScreen() {
                   <Text style={styles.socialBtnText}>Continue with Facebook</Text>
                 </TouchableOpacity>
               )}
+              */}
             </>
           )}
 
