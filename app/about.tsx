@@ -9,6 +9,8 @@ import { WEB_BASE } from "@/lib/api";
 
 const SUPPORT_EMAIL = "support@aangan.net.in";
 const COMPANY = "Meera Stay India Private Limited";
+const COMPANY_CIN = "U55101HR2026PTC151172";
+const COMPANY_OFFICE = "223/8 Krishna Colony, Bhiwani, Haryana 127021";
 
 export default function AboutScreen() {
   const version = Application.nativeApplicationVersion ?? "1.0.0";
@@ -85,6 +87,8 @@ export default function AboutScreen() {
 
         {/* Footer */}
         <Text style={styles.copyright}>{"©"} 2026 {COMPANY}</Text>
+        <Text style={styles.copyright}>CIN {COMPANY_CIN}</Text>
+        <Text style={styles.copyright}>{COMPANY_OFFICE}</Text>
         <Text style={styles.motto}>अपना आँगन, सारे जहाँ में</Text>
         <View style={{ height: 40 }} />
       </ScrollView>
