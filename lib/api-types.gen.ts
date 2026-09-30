@@ -738,6 +738,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/email/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Email Verify
+         * @description Verify an email with a code WITHOUT signing anyone in.
+         *
+         *     Backs the one-click link in sign-up emails: the web /verify-email page
+         *     calls this, so the click can happen on any device — no session is issued,
+         *     the user returns to the app and logs in normally. The code alone proves
+         *     inbox ownership, same trust as /password/register/verify.
+         */
+        post: operations["email_verify_api_auth_email_verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/host/enable": {
         parameters: {
             query?: never;
@@ -3875,10 +3900,17 @@ export interface components {
         };
         /** RegisterPending */
         RegisterPending: {
+            /**
+             * Code Sent
+             * @default true
+             */
+            code_sent: boolean;
             /** Dev Code */
             dev_code?: string | null;
             /** Email */
             email: string;
+            /** Message */
+            message?: string | null;
             /**
              * Ok
              * @default true
@@ -5798,6 +5830,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TokenResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    email_verify_api_auth_email_verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailOtpVerify"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

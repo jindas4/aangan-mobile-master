@@ -9,6 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Modal,
+  Animated,
+  PanResponder,
+  useWindowDimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,20 +24,80 @@ interface Message {
   content: string;
 }
 
+const FAB_SIZE = 52;
+const FAB_MARGIN = 16;
+
 export function ChatFab() {
   const [open, setOpen] = useState(false);
   const insets = useSafeAreaInsets();
+  const { width: winW, height: winH } = useWindowDimensions();
+
+  // Draggable FAB (QA: it overlapped booking totals). Anchored bottom-right;
+  // pan offsets are relative to that anchor, clamped to the screen and
+  // snapped to the nearest horizontal edge on release.
+  const pan = useRef(new Animated.ValueXY()).current;
+  const posRef = useRef({ x: 0, y: 0 });         // committed offset
+  const draggingRef = useRef(false);
+  const boundsRef = useRef({ winW, winH, top: insets.top, bottom: insets.bottom });
+  boundsRef.current = { winW, winH, top: insets.top, bottom: insets.bottom };
+
+  const responder = useRef(
+    PanResponder.create({
+      // Let plain taps through to TouchableOpacity; take over once it moves.
+      onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 6 || Math.abs(g.dy) > 6,
+      onPanResponderGrant: () => {
+        draggingRef.current = true;
+      },
+      onPanResponderMove: (_e, g) => {
+        pan.setValue({ x: posRef.current.x + g.dx, y: posRef.current.y + g.dy });
+      },
+      onPanResponderRelease: (_e, g) => {
+        const { winW, winH, top, bottom } = boundsRef.current;
+        const baseRight = FAB_MARGIN;                 // anchor: right/bottom in styles
+        const baseBottom = 90 + bottom;
+        // raw offset from anchor (negative x = moved left)
+        let x = posRef.current.x + g.dx;
+        let y = posRef.current.y + g.dy;
+        // clamp inside screen
+        const minX = -(winW - FAB_SIZE - baseRight - FAB_MARGIN); // left edge
+        const maxY = baseBottom - bottom - FAB_MARGIN;            // down to bottom margin
+        const minY = -(winH - FAB_SIZE - baseBottom - top - FAB_MARGIN); // up to top margin
+        x = Math.min(0, Math.max(minX, x));
+        y = Math.min(maxY, Math.max(minY, y));
+        // snap to nearest horizontal edge
+        x = x < minX / 2 ? minX : 0;
+        posRef.current = { x, y };
+        // JS driver: PanResponder writes this value with setValue, which is
+        // incompatible with moving the node to the native driver.
+        Animated.spring(pan, { toValue: { x, y }, useNativeDriver: false, friction: 7 }).start();
+        // Delay so the tap handler sees the drag flag before it resets.
+        setTimeout(() => { draggingRef.current = false; }, 50);
+      },
+      onPanResponderTerminate: () => {
+        Animated.spring(pan, { toValue: posRef.current, useNativeDriver: false, friction: 7 }).start();
+        setTimeout(() => { draggingRef.current = false; }, 50);
+      },
+    }),
+  ).current;
 
   return (
     <>
-      <TouchableOpacity
-        style={[styles.fab, { bottom: 90 + insets.bottom }]}
-        onPress={() => setOpen(true)}
-        activeOpacity={0.85}
-        accessibilityLabel="Open chat"
+      <Animated.View
+        style={[
+          styles.fabWrap,
+          { bottom: 90 + insets.bottom, transform: pan.getTranslateTransform() },
+        ]}
+        {...responder.panHandlers}
       >
-        <Ionicons name="sparkles" size={22} color="#fff" />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => { if (!draggingRef.current) setOpen(true); }}
+          activeOpacity={0.85}
+          accessibilityLabel="Open chat"
+        >
+          <Ionicons name="sparkles" size={22} color="#fff" />
+        </TouchableOpacity>
+      </Animated.View>
 
       {open && <ChatModal onClose={() => setOpen(false)} />}
     </>
@@ -231,12 +294,15 @@ function ChatModal({ onClose }: { onClose: () => void }) {
 }
 
 const styles = StyleSheet.create({
-  fab: {
+  fabWrap: {
     position: "absolute",
-    right: 16,
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    right: FAB_MARGIN,
+    zIndex: 100,
+  },
+  fab: {
+    width: FAB_SIZE,
+    height: FAB_SIZE,
+    borderRadius: FAB_SIZE / 2,
     backgroundColor: Colors.charcoal,
     alignItems: "center",
     justifyContent: "center",
@@ -245,7 +311,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 8,
-    zIndex: 100,
   },
   modal: {
     flex: 1,

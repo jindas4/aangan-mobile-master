@@ -10,8 +10,8 @@ interface AuthState {
   verifyOtp: (phone: string, code: string) => Promise<UserOut>;
   requestEmailOtp: (email: string) => Promise<string | undefined>;
   verifyEmailOtp: (email: string, code: string) => Promise<UserOut>;
-  /** Returns the dev-mode code when the email still needs confirming, or null when already signed in. */
-  registerWithPassword: (firstName: string, lastName: string, email: string, password: string) => Promise<{ devCode: string | null } | null>;
+  /** Returns verify-screen info when the email still needs confirming, or null when already signed in. */
+  registerWithPassword: (firstName: string, lastName: string, email: string, password: string) => Promise<{ devCode: string | null; codeSent: boolean; message: string | null } | null>;
   verifySignup: (email: string, code: string) => Promise<UserOut>;
   loginWithPassword: (email: string, password: string) => Promise<UserOut>;
   requestPasswordReset: (email: string) => Promise<string | undefined>;
@@ -75,7 +75,7 @@ export const useAuth = create<AuthState>((set) => ({
     return res.user;
   },
   async registerWithPassword(firstName, lastName, email, password) {
-    const res = await api<{ token?: string; user?: UserOut; dev_code?: string | null }>(
+    const res = await api<{ token?: string; user?: UserOut; dev_code?: string | null; code_sent?: boolean; message?: string | null }>(
       "/api/auth/password/register",
       { method: "POST", body: { first_name: firstName, last_name: lastName || null, email, password } },
     );
@@ -85,7 +85,7 @@ export const useAuth = create<AuthState>((set) => ({
       registerPushToken().catch(() => {});
       return null;
     }
-    return { devCode: res.dev_code ?? null };
+    return { devCode: res.dev_code ?? null, codeSent: res.code_sent !== false, message: res.message ?? null };
   },
   async verifySignup(email, code) {
     const res = await api<{ token: string; user: UserOut }>("/api/auth/password/register/verify", {

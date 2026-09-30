@@ -239,14 +239,18 @@ export default function AccountScreen() {
           icon="document-text-outline"
           label="Terms of service"
           onPress={() =>
-            WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/terms`)
+            WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/terms`, {
+              presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+            })
           }
         />
         <MenuItem
           icon="shield-outline"
           label="Privacy policy"
           onPress={() =>
-            WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/privacy`)
+            WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/privacy`, {
+              presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+            })
           }
         />
 

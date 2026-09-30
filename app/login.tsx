@@ -69,6 +69,8 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
@@ -164,7 +166,13 @@ export default function LoginScreen() {
         await loginWithPassword(normEmail, password);
       } else {
         const pending = await registerWithPassword(firstName.trim(), lastName.trim(), normEmail, password);
-        if (pending) return startVerify(pending.devCode);
+        if (pending) {
+          startVerify(pending.devCode);
+          // Account created but the code couldn't be sent — still land on the
+          // verify screen (it has "Resend code") instead of a dead-end error.
+          if (!pending.codeSent && pending.message) setNotice(pending.message);
+          return;
+        }
       }
       await refreshWish();
       router.back();
@@ -227,7 +235,7 @@ export default function LoginScreen() {
   };
 
   const confirmReset = async () => {
-    if (resetCode.length < 4 || newPassword.length < 8) return;
+    if (resetCode.length < 4 || newPassword.length < 8 || newPassword !== confirmPassword) return;
     setBusy(true);
     setErr(null);
     try {
@@ -237,6 +245,7 @@ export default function LoginScreen() {
       setPassword("");
       setResetCode("");
       setNewPassword("");
+      setConfirmPassword("");
       setDevCode(null);
     } catch (e: any) {
       setErr(e.message || "Could not reset password");
@@ -281,7 +290,7 @@ export default function LoginScreen() {
               : flow === "resetRequest"
                 ? "We'll email you a code to reset it."
                 : flow === "verifyEmail"
-                  ? `We sent a 6-digit code to ${email.trim().toLowerCase()}. Enter it to confirm your email.`
+                  ? `We sent a 6-digit code to ${email.trim().toLowerCase()}. Enter it here — or tap the verify link in the email.`
                   : `We've sent a code to ${email.trim().toLowerCase()}.`}
           </Text>
 
@@ -364,15 +373,25 @@ export default function LoginScreen() {
                 accessibilityLabel="Email"
                 style={[styles.input, styles.emailInput, validEmail && styles.inputValid]}
               />
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
-                placeholder="Password"
-                placeholderTextColor={Colors.charcoal3}
-                style={[styles.input, { marginTop: 10 }]}
-              />
+              <View style={styles.pwRow}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPw}
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  placeholder="Password"
+                  placeholderTextColor={Colors.charcoal3}
+                  style={[styles.input, styles.pwInput]}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPw((v) => !v)}
+                  style={styles.pwEye}
+                  hitSlop={8}
+                  accessibilityLabel={showPw ? "Hide password" : "Show password"}
+                >
+                  <Ionicons name={showPw ? "eye-off-outline" : "eye-outline"} size={20} color={Colors.charcoal3} />
+                </TouchableOpacity>
+              </View>
 
               {mode === "register" && (
                 <TouchableOpacity
@@ -518,20 +537,42 @@ export default function LoginScreen() {
                   Dev mode — your code: <Text style={{ fontWeight: "800" }}>{devCode}</Text>
                 </Text>
               )}
+              <View style={styles.pwRow}>
+                <TextInput
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  secureTextEntry={!showPw}
+                  autoComplete="new-password"
+                  placeholder="New password"
+                  placeholderTextColor={Colors.charcoal3}
+                  style={[styles.input, styles.pwInput]}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPw((v) => !v)}
+                  style={styles.pwEye}
+                  hitSlop={8}
+                  accessibilityLabel={showPw ? "Hide password" : "Show password"}
+                >
+                  <Ionicons name={showPw ? "eye-off-outline" : "eye-outline"} size={20} color={Colors.charcoal3} />
+                </TouchableOpacity>
+              </View>
               <TextInput
-                value={newPassword}
-                onChangeText={setNewPassword}
-                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!showPw}
                 autoComplete="new-password"
-                placeholder="New password"
+                placeholder="Confirm new password"
                 placeholderTextColor={Colors.charcoal3}
-                style={[styles.input, { marginTop: 10 }]}
+                style={[styles.input, { marginTop: 10 }, confirmPassword.length >= 8 && confirmPassword === newPassword && styles.inputValid]}
               />
+              {confirmPassword.length > 0 && newPassword !== confirmPassword && (
+                <Text style={styles.error}>Passwords don't match</Text>
+              )}
               {err && <Text style={styles.error}>{err}</Text>}
               <Button
                 title={busy ? "Resetting…" : "Reset password"}
                 onPress={confirmReset}
-                disabled={resetCode.length < 4 || newPassword.length < 8 || busy}
+                disabled={resetCode.length < 4 || newPassword.length < 8 || newPassword !== confirmPassword || busy}
                 loading={busy}
                 full
                 size="lg"
@@ -623,6 +664,20 @@ const styles = StyleSheet.create({
   },
   inputValid: {
     borderColor: Colors.terra,
+  },
+  pwRow: {
+    marginTop: 10,
+    position: "relative",
+  },
+  pwInput: {
+    paddingRight: 48,
+  },
+  pwEye: {
+    position: "absolute",
+    right: 14,
+    top: 0,
+    height: 52,
+    justifyContent: "center",
   },
   error: {
     fontSize: 13,

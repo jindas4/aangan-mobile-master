@@ -40,6 +40,7 @@ export default function ListingDetailScreen() {
 
   const [listing, setListing] = useState<ListingFull | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [loading, setLoading] = useState(true);
   const [imgIndex, setImgIndex] = useState(0);
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -380,42 +381,58 @@ export default function ListingDetailScreen() {
             </View>
           )}
 
-          {/* Reviews */}
-          {reviews.length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                Reviews ({reviews.length})
+          {/* Reviews — section always renders so guests can SEE where reviews
+              live even before the first one exists (QA: "no way to see
+              reviews" on unreviewed properties). */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {reviews.length > 0 ? `Reviews (${reviews.length})` : "Reviews"}
+            </Text>
+            {reviews.length === 0 && (
+              <Text style={styles.reviewEmpty}>
+                No reviews yet — guests can review after a completed stay.
               </Text>
-              {reviews.slice(0, 5).map((r) => (
-                <View key={r.id} style={styles.reviewCard}>
-                  <View style={styles.reviewHeader}>
-                    <Text style={styles.reviewAuthor}>{r.author_name || "Guest"}</Text>
-                    <View style={styles.reviewStars}>
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Ionicons
-                          key={i}
-                          name={i < r.rating ? "star" : "star-outline"}
-                          size={12}
-                          color={Colors.gold}
-                        />
-                      ))}
-                    </View>
+            )}
+            {(showAllReviews ? reviews : reviews.slice(0, 5)).map((r) => (
+              <View key={r.id} style={styles.reviewCard}>
+                <View style={styles.reviewHeader}>
+                  <Text style={styles.reviewAuthor}>{r.author_name || "Guest"}</Text>
+                  <View style={styles.reviewStars}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Ionicons
+                        key={i}
+                        name={i < r.rating ? "star" : "star-outline"}
+                        size={12}
+                        color={Colors.gold}
+                      />
+                    ))}
                   </View>
-                  <Text style={styles.reviewBody}>{r.body}</Text>
-                  {user && (
-                    <TouchableOpacity
-                      onPress={() =>
-                        setReport({ type: "review", id: String(r.id), title: "Report review" })
-                      }
-                      hitSlop={6}
-                    >
-                      <Text style={styles.reportLink}>Report</Text>
-                    </TouchableOpacity>
-                  )}
                 </View>
-              ))}
-            </View>
-          )}
+                <Text style={styles.reviewBody}>{r.body}</Text>
+                {user && (
+                  <TouchableOpacity
+                    onPress={() =>
+                      setReport({ type: "review", id: String(r.id), title: "Report review" })
+                    }
+                    hitSlop={6}
+                  >
+                    <Text style={styles.reportLink}>Report</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+            {reviews.length > 5 && (
+              <TouchableOpacity
+                onPress={() => setShowAllReviews((v) => !v)}
+                style={styles.showAllReviewsBtn}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.showAllReviewsText}>
+                  {showAllReviews ? "Show fewer reviews" : `Show all ${reviews.length} reviews`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
 
           {/* Report listing — UGC safety (App Store Guideline 1.2) */}
           <TouchableOpacity
@@ -850,6 +867,24 @@ const styles = StyleSheet.create({
     color: Colors.charcoal3,
     marginTop: 8,
     textDecorationLine: "underline",
+  },
+  reviewEmpty: {
+    fontSize: 13,
+    color: Colors.charcoal3,
+    lineHeight: 20,
+  },
+  showAllReviewsBtn: {
+    alignSelf: "flex-start",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: Radius.md,
+    borderWidth: 1.5,
+    borderColor: Colors.charcoal,
+  },
+  showAllReviewsText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: Colors.charcoal,
   },
   reportListingRow: {
     flexDirection: "row",

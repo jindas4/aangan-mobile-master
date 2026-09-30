@@ -12,6 +12,13 @@ const COMPANY = "Meera Stay India Private Limited";
 const COMPANY_CIN = "U55101HR2026PTC151172";
 const COMPANY_OFFICE = "223/8 Krishna Colony, Bhiwani, Haryana 127021";
 
+// In-app browser sheet (SFSafariViewController page-sheet / Chrome Custom Tab)
+// — the user never leaves the app for legal pages.
+const openWeb = (url: string) =>
+  WebBrowser.openBrowserAsync(url, {
+    presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+  });
+
 export default function AboutScreen() {
   const version = Application.nativeApplicationVersion ?? "1.0.0";
   const build = Application.nativeBuildVersion ?? "1";
@@ -51,22 +58,22 @@ export default function AboutScreen() {
           <LinkRow
             icon="document-text-outline"
             label="Terms of Service"
-            onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/terms`)}
+            onPress={() => openWeb(`${WEB_BASE}/legal/terms`)}
           />
           <LinkRow
             icon="shield-outline"
             label="Privacy Policy"
-            onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/privacy`)}
+            onPress={() => openWeb(`${WEB_BASE}/legal/privacy`)}
           />
           <LinkRow
             icon="close-circle-outline"
             label="Cancellation Policy"
-            onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/cancellation`)}
+            onPress={() => openWeb(`${WEB_BASE}/legal/cancellation`)}
           />
           <LinkRow
             icon="cash-outline"
             label="Refund Policy"
-            onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/refunds`)}
+            onPress={() => openWeb(`${WEB_BASE}/legal/refunds`)}
           />
         </View>
 
@@ -77,11 +84,6 @@ export default function AboutScreen() {
             icon="mail-outline"
             label={SUPPORT_EMAIL}
             onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}`)}
-          />
-          <LinkRow
-            icon="globe-outline"
-            label="aanganstay.com"
-            onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}`)}
           />
         </View>
 

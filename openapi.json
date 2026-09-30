@@ -3500,6 +3500,11 @@
       },
       "RegisterPending": {
         "properties": {
+          "code_sent": {
+            "default": true,
+            "title": "Code Sent",
+            "type": "boolean"
+          },
           "dev_code": {
             "anyOf": [
               {
@@ -3514,6 +3519,17 @@
           "email": {
             "title": "Email",
             "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
           },
           "ok": {
             "default": true,
@@ -7394,6 +7410,46 @@
           }
         },
         "summary": "Email Otp Verify",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/email/verify": {
+      "post": {
+        "description": "Verify an email with a code WITHOUT signing anyone in.\n\nBacks the one-click link in sign-up emails: the web /verify-email page\ncalls this, so the click can happen on any device \u2014 no session is issued,\nthe user returns to the app and logs in normally. The code alone proves\ninbox ownership, same trust as /password/register/verify.",
+        "operationId": "email_verify_api_auth_email_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailOtpVerify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Email Verify",
         "tags": [
           "auth"
         ]
