@@ -7,7 +7,7 @@ import * as Application from "expo-application";
 import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { WEB_BASE } from "@/lib/api";
 
-const SUPPORT_EMAIL = "support@aangan.net.in";
+const SUPPORT_EMAIL = "support@aanganstay.com";
 const COMPANY = "Meera Stay India Private Limited";
 const COMPANY_CIN = "U55101HR2026PTC151172";
 const COMPANY_OFFICE = "223/8 Krishna Colony, Bhiwani, Haryana 127021";

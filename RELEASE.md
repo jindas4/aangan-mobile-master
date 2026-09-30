@@ -27,7 +27,7 @@ order. The mobile app calls endpoints and web pages that must already be live.
 | Frontend (prod) | `https://frontend-production-7d9b.up.railway.app` → `https://aanganstay.com` (old `aangan.net.in` redirects) |
 | Privacy Policy URL | `<frontend>/legal/privacy` |
 | Support URL | `<frontend>/support` |
-| Review demo login | `review@aangan.in` (password printed by the seed script) |
+| Review demo login | `review@aanganstay.com` (password printed by the seed script) |
 
 Full metadata checklist: the App Store Connect checklist artifact from the build session.
 
@@ -46,7 +46,7 @@ Full metadata checklist: the App Store Connect checklist artifact from the build
 - [ ] **Google Play** service account JSON saved to
       `stayindia/... /google-service-account.json` (only needed for Android submit).
 - [x] **Custom domain** `aanganstay.com` DNS pointed at Railway (`aangan.net.in` redirects to it).
-- [ ] **Mailboxes** `support@`, `privacy@`, `dpo@` and `safety@aangan.net.in` actually receive mail
+- [ ] **Mailboxes** `support@`, `privacy@`, `dpo@` and `safety@aanganstay.com` exist in Zoho Mail and receive mail
       (referenced by the Support page).
 - [ ] **GitHub secret** `EXPO_TOKEN` set (for the CI workflows).
 
@@ -87,7 +87,7 @@ Full metadata checklist: the App Store Connect checklist artifact from the build
 
    ```bash
    python -m app.seed          # listings/hosts, if not already present
-   python -m app.seed_demo     # review@aangan.in + confirmed booking + thread
+   python -m app.seed_demo     # review@aanganstay.com + confirmed booking + thread
    ```
 
    Copy the printed **email + password** into App Store Connect → App Review Info.
@@ -181,7 +181,7 @@ Work through the checklist artifact. The fields that block submission:
 - [ ] Age rating questionnaire (flag User-Generated Content = Yes)
 - [ ] iPhone 6.9" screenshots
 - [ ] Description + keywords (drafts in the checklist)
-- [ ] App Review Information: **demo login** (`review@aangan.in` + password),
+- [ ] App Review Information: **demo login** (`review@aanganstay.com` + password),
       reviewer notes (moderation, physical-services payments, sign-in methods)
 - [ ] Build attached + export compliance
 - [ ] **Submit for Review**
