@@ -424,6 +424,50 @@ export interface paths {
         patch: operations["moderate_listing_api_admin_listings__listing_id__patch"];
         trace?: never;
     };
+    "/api/admin/otp-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Otp Status
+         * @description Support diagnostic for the most common call there is. Shows whether
+         *     codes were issued, attempted, consumed, locked or cooling down — NEVER the
+         *     code itself (only hashes are stored anyway).
+         */
+        get: operations["otp_status_api_admin_otp_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Payments Admin
+         * @description Payment lookup by Razorpay payment/order id, internal payment id or
+         *     booking id — the first thing support needs when a guest reads out the id
+         *     from their bank statement/UPI app.
+         */
+        get: operations["list_payments_admin_api_admin_payments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/payouts": {
         parameters: {
             query?: never;
@@ -511,6 +555,84 @@ export interface paths {
         put?: never;
         /** Release Payout Admin */
         post: operations["release_payout_admin_api_admin_payouts__payout_id__release_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Reports */
+        get: operations["list_reports_api_admin_reports_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/reports/{report_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Report
+         * @description Triage transition (open → reviewed/actioned/dismissed). Support agents
+         *     can triage — the actual remediation (hide review, unpublish listing,
+         *     suspend user) stays behind the existing full-admin endpoints.
+         */
+        patch: operations["patch_report_api_admin_reports__report_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/reviews/{review_id}/hide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Hide Review
+         * @description Remediation for an actioned review report: the review disappears from
+         *     the public endpoint and the listing's rating aggregates are recomputed
+         *     without it. Reversible via /unhide.
+         */
+        post: operations["hide_review_api_admin_reviews__review_id__hide_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/reviews/{review_id}/unhide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Unhide Review */
+        post: operations["unhide_review_api_admin_reviews__review_id__unhide_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -646,6 +768,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{user_id}/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** User Overview */
+        get: operations["user_overview_api_admin_users__user_id__overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/users/{user_id}/role": {
         parameters: {
             query?: never;
@@ -664,6 +803,45 @@ export interface paths {
          */
         put: operations["set_admin_role_api_admin_users__user_id__role_put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Webhooks Admin
+         * @description Webhook delivery ledger. A `failed` row = money may have moved without
+         *     the booking/payout state following — exactly the events behind an
+         *     'I paid but nothing happened' call.
+         */
+        get: operations["list_webhooks_admin_api_admin_webhooks_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/{event_pk}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Webhook Admin */
+        post: operations["retry_webhook_admin_api_admin_webhooks__event_pk__retry_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3966,6 +4144,13 @@ export interface components {
              */
             ok: boolean;
         };
+        /** ReportPatch */
+        ReportPatch: {
+            /** Note */
+            note?: string | null;
+            /** Status */
+            status: string;
+        };
         /** ReviewCreate */
         ReviewCreate: {
             /** Body */
@@ -3974,6 +4159,11 @@ export interface components {
             booking_id: string;
             /** Rating */
             rating: number;
+        };
+        /** ReviewHide */
+        ReviewHide: {
+            /** Reason */
+            reason: string;
         };
         /** ReviewOut */
         ReviewOut: {
@@ -5149,6 +5339,75 @@ export interface operations {
             };
         };
     };
+    otp_status_api_admin_otp_status_get: {
+        parameters: {
+            query: {
+                target: string;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_payments_admin_api_admin_payments_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                pstatus?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_payouts_admin_api_admin_payouts_get: {
         parameters: {
             query?: {
@@ -5294,6 +5553,148 @@ export interface operations {
             };
             path: {
                 payout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_reports_api_admin_reports_get: {
+        parameters: {
+            query?: {
+                rstatus?: string;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_report_api_admin_reports__report_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                report_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    hide_review_api_admin_reviews__review_id__hide_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                review_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewHide"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unhide_review_api_admin_reviews__review_id__unhide_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                review_id: number;
             };
             cookie?: never;
         };
@@ -5670,6 +6071,39 @@ export interface operations {
             };
         };
     };
+    user_overview_api_admin_users__user_id__overview_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     set_admin_role_api_admin_users__user_id__role_put: {
         parameters: {
             query?: never;
@@ -5686,6 +6120,75 @@ export interface operations {
                 "application/json": components["schemas"]["AdminRoleSet"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_webhooks_admin_api_admin_webhooks_get: {
+        parameters: {
+            query?: {
+                wstatus?: string;
+                q?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_webhook_admin_api_admin_webhooks__event_pk__retry_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                event_pk: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
