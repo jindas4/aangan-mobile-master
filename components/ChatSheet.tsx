@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { API_BASE, getToken } from "@/lib/api";
 
@@ -26,20 +27,48 @@ interface Message {
 
 const FAB_SIZE = 52;
 const FAB_MARGIN = 16;
+const FAB_POS_KEY = "chat_fab_pos";
 
 export function ChatFab() {
   const [open, setOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const { width: winW, height: winH } = useWindowDimensions();
 
-  // Draggable FAB (QA: it overlapped booking totals). Anchored bottom-right;
-  // pan offsets are relative to that anchor, clamped to the screen and
-  // snapped to the nearest horizontal edge on release.
+  // Draggable FAB (QA: it overlapped booking totals). Anchored bottom-right
+  // above the tab bar; pan offsets are relative to that anchor. It stays where
+  // it's dropped (clamped to the screen, never below the anchor so it can't
+  // cover the tab bar) and the spot is remembered, like the website.
   const pan = useRef(new Animated.ValueXY()).current;
   const posRef = useRef({ x: 0, y: 0 });         // committed offset
   const draggingRef = useRef(false);
   const boundsRef = useRef({ winW, winH, top: insets.top, bottom: insets.bottom });
   boundsRef.current = { winW, winH, top: insets.top, bottom: insets.bottom };
+
+  const clamp = (x: number, y: number) => {
+    const { winW, winH, top, bottom } = boundsRef.current;
+    const baseBottom = 90 + bottom;                                   // anchor: right/bottom in styles
+    const minX = -(winW - FAB_SIZE - FAB_MARGIN - FAB_MARGIN);        // left edge
+    const minY = -(winH - FAB_SIZE - baseBottom - top - FAB_MARGIN);  // up to top margin
+    return { x: Math.min(0, Math.max(minX, x)), y: Math.min(0, Math.max(minY, y)) };
+  };
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(SecureStore.getItem(FAB_POS_KEY) || "null");
+      if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+        posRef.current = clamp(saved.x, saved.y);
+        pan.setValue(posRef.current);
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep it on screen after rotation / window resize.
+  useEffect(() => {
+    posRef.current = clamp(posRef.current.x, posRef.current.y);
+    pan.setValue(posRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [winW, winH]);
 
   const responder = useRef(
     PanResponder.create({
@@ -49,32 +78,18 @@ export function ChatFab() {
         draggingRef.current = true;
       },
       onPanResponderMove: (_e, g) => {
-        pan.setValue({ x: posRef.current.x + g.dx, y: posRef.current.y + g.dy });
+        const p = clamp(posRef.current.x + g.dx, posRef.current.y + g.dy);
+        pan.setValue(p);
       },
       onPanResponderRelease: (_e, g) => {
-        const { winW, winH, top, bottom } = boundsRef.current;
-        const baseRight = FAB_MARGIN;                 // anchor: right/bottom in styles
-        const baseBottom = 90 + bottom;
-        // raw offset from anchor (negative x = moved left)
-        let x = posRef.current.x + g.dx;
-        let y = posRef.current.y + g.dy;
-        // clamp inside screen
-        const minX = -(winW - FAB_SIZE - baseRight - FAB_MARGIN); // left edge
-        const maxY = baseBottom - bottom - FAB_MARGIN;            // down to bottom margin
-        const minY = -(winH - FAB_SIZE - baseBottom - top - FAB_MARGIN); // up to top margin
-        x = Math.min(0, Math.max(minX, x));
-        y = Math.min(maxY, Math.max(minY, y));
-        // snap to nearest horizontal edge
-        x = x < minX / 2 ? minX : 0;
-        posRef.current = { x, y };
-        // JS driver: PanResponder writes this value with setValue, which is
-        // incompatible with moving the node to the native driver.
-        Animated.spring(pan, { toValue: { x, y }, useNativeDriver: false, friction: 7 }).start();
+        posRef.current = clamp(posRef.current.x + g.dx, posRef.current.y + g.dy);
+        pan.setValue(posRef.current);
+        SecureStore.setItemAsync(FAB_POS_KEY, JSON.stringify(posRef.current)).catch(() => {});
         // Delay so the tap handler sees the drag flag before it resets.
         setTimeout(() => { draggingRef.current = false; }, 50);
       },
       onPanResponderTerminate: () => {
-        Animated.spring(pan, { toValue: posRef.current, useNativeDriver: false, friction: 7 }).start();
+        pan.setValue(posRef.current);
         setTimeout(() => { draggingRef.current = false; }, 50);
       },
     }),
