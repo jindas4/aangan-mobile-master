@@ -871,6 +871,57 @@
         "title": "BulkRetryRequest",
         "type": "object"
       },
+      "BulkRetryResponse": {
+        "properties": {
+          "aborted": {
+            "default": false,
+            "title": "Aborted",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "failed_again": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Failed Again",
+            "type": "integer"
+          },
+          "not_attempted": {
+            "default": 0,
+            "description": "Selected rows blocked by configuration, including the aborting row; excludes rows beyond the 50-row batch.",
+            "minimum": 0.0,
+            "title": "Not Attempted",
+            "type": "integer"
+          },
+          "paid": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Paid",
+            "type": "integer"
+          },
+          "processing": {
+            "default": 0,
+            "description": "Submitted to the rail; settlement is still pending.",
+            "minimum": 0.0,
+            "title": "Processing",
+            "type": "integer"
+          },
+          "retried": {
+            "default": 0,
+            "description": "Attempts excluding configuration-blocked payouts.",
+            "minimum": 0.0,
+            "title": "Retried",
+            "type": "integer"
+          }
+        },
+        "title": "BulkRetryResponse",
+        "type": "object"
+      },
       "CalendarRange": {
         "description": "A half-open [start, end) date range that is NOT bookable.",
         "properties": {
@@ -6633,7 +6684,7 @@
     },
     "/api/admin/payouts/retry-failed": {
       "post": {
-        "description": "Re-disburse every failed payout (optionally only one failure reason).\nEach payout goes through the same disburse path as the single-row button;\none bad row doesn't stop the batch. Capped at 50 per call.",
+        "description": "Re-disburse up to 50 failed payouts (optionally only one failure reason).\nEach payout goes through the same disburse path as the single-row button;\none bad row doesn't stop the batch, but rail misconfiguration does.",
         "operationId": "retry_failed_payouts_api_admin_payouts_retry_failed_post",
         "parameters": [
           {
@@ -6667,7 +6718,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/BulkRetryResponse"
+                }
               }
             },
             "description": "Successful Response"
@@ -9254,6 +9307,25 @@
       "get": {
         "operationId": "host_bookings_api_bookings_host_get",
         "parameters": [
+          {
+            "in": "query",
+            "name": "listing_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 40,
+                  "minLength": 1,
+                  "pattern": "^\\S+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Listing Id"
+            }
+          },
           {
             "in": "header",
             "name": "authorization",

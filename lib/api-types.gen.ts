@@ -519,9 +519,9 @@ export interface paths {
         put?: never;
         /**
          * Retry Failed Payouts
-         * @description Re-disburse every failed payout (optionally only one failure reason).
+         * @description Re-disburse up to 50 failed payouts (optionally only one failure reason).
          *     Each payout goes through the same disburse path as the single-row button;
-         *     one bad row doesn't stop the batch. Capped at 50 per call.
+         *     one bad row doesn't stop the batch, but rail misconfiguration does.
          */
         post: operations["retry_failed_payouts_api_admin_payouts_retry_failed_post"];
         delete?: never;
@@ -2924,6 +2924,44 @@ export interface components {
         BulkRetryRequest: {
             /** Reason */
             reason?: string | null;
+        };
+        /** BulkRetryResponse */
+        BulkRetryResponse: {
+            /**
+             * Aborted
+             * @default false
+             */
+            aborted: boolean;
+            /** Errors */
+            errors?: string[];
+            /**
+             * Failed Again
+             * @default 0
+             */
+            failed_again: number;
+            /**
+             * Not Attempted
+             * @description Selected rows blocked by configuration, including the aborting row; excludes rows beyond the 50-row batch.
+             * @default 0
+             */
+            not_attempted: number;
+            /**
+             * Paid
+             * @default 0
+             */
+            paid: number;
+            /**
+             * Processing
+             * @description Submitted to the rail; settlement is still pending.
+             * @default 0
+             */
+            processing: number;
+            /**
+             * Retried
+             * @description Attempts excluding configuration-blocked payouts.
+             * @default 0
+             */
+            retried: number;
         };
         /**
          * CalendarRange
@@ -5554,7 +5592,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["BulkRetryResponse"];
                 };
             };
             /** @description Validation Error */
@@ -7096,7 +7134,9 @@ export interface operations {
     };
     host_bookings_api_bookings_host_get: {
         parameters: {
-            query?: never;
+            query?: {
+                listing_id?: string | null;
+            };
             header?: {
                 authorization?: string | null;
             };
