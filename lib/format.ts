@@ -2,13 +2,23 @@ export function inr(n: number | null | undefined): string {
   return "₹" + (n ?? 0).toLocaleString("en-IN");
 }
 
+/**
+ * Parse an API date. A plain calendar date ("2026-10-10") is read as that day
+ * in the device's time zone — `new Date("2026-10-10")` means UTC midnight,
+ * which is still the previous day anywhere west of UTC.
+ */
+export function parseDate(s: string): Date {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : new Date(s);
+}
+
 export function shortDate(iso: string): string {
-  const d = new Date(iso);
+  const d = parseDate(iso);
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
 export function fullDate(iso: string): string {
-  const d = new Date(iso);
+  const d = parseDate(iso);
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 

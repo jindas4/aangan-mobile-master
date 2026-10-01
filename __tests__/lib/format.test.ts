@@ -1,4 +1,4 @@
-import { inr, shortDate, fullDate, timeAgo, imageUrl, imageVariantUrl } from "../../lib/format";
+import { inr, shortDate, fullDate, timeAgo, imageUrl, imageVariantUrl, parseDate } from "../../lib/format";
 
 describe("inr", () => {
   it("formats round numbers with Indian grouping", () => {
@@ -92,5 +92,18 @@ describe("imageVariantUrl", () => {
 
   it("handles empty input", () => {
     expect(imageVariantUrl("", "medium")).toBe("");
+  });
+});
+
+describe("parseDate", () => {
+  // new Date("2026-10-10") is UTC midnight — the 9th anywhere west of UTC.
+  it("reads a plain date as that calendar day in the local time zone", () => {
+    const d = parseDate("2026-10-10");
+    expect([d.getFullYear(), d.getMonth(), d.getDate()]).toEqual([2026, 9, 10]);
+    expect(fullDate("2026-10-10")).toContain("10");
+  });
+
+  it("leaves full timestamps untouched", () => {
+    expect(parseDate("2026-09-30T18:30:00Z").toISOString()).toBe("2026-09-30T18:30:00.000Z");
   });
 });
