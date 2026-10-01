@@ -8037,6 +8037,10 @@ export interface operations {
                 solo_ok?: boolean | null;
                 superhost?: boolean | null;
                 sort?: string;
+                min_lat?: number | null;
+                max_lat?: number | null;
+                min_lng?: number | null;
+                max_lng?: number | null;
                 limit?: number;
                 offset?: number;
             };
