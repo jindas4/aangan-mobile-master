@@ -853,6 +853,24 @@
         "title": "BookingWithListing",
         "type": "object"
       },
+      "BulkRetryRequest": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "BulkRetryRequest",
+        "type": "object"
+      },
       "CalendarRange": {
         "description": "A half-open [start, end) date range that is NOT bookable.",
         "properties": {
@@ -3924,6 +3942,18 @@
             ],
             "title": "Assigned To"
           },
+          "priority": {
+            "anyOf": [
+              {
+                "pattern": "^(normal|high|urgent)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priority"
+          },
           "status": {
             "anyOf": [
               {
@@ -4547,6 +4577,40 @@
               "default": false,
               "title": "Disputes",
               "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "checkin_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Checkin From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "checkin_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Checkin To"
             }
           },
           {
@@ -5510,6 +5574,66 @@
         ]
       }
     },
+    "/api/admin/dashboard/trends": {
+      "get": {
+        "description": "Daily series for the dashboard sparklines: signups, bookings created,\nGMV and platform revenue (confirmed/completed only). Zero-filled so the\nclient can plot without gap handling. Buckets are UTC days \u2014 fine for a\ntrend line, not an accounting report.",
+        "operationId": "dashboard_trends_api_admin_dashboard_trends_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 90,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dashboard Trends",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/export/bookings.csv": {
       "get": {
         "description": "Finance export \u2014 one row per booking with payment + refund amounts.\nDate range filters on created_at; omit both for everything.",
@@ -6411,6 +6535,40 @@
           },
           {
             "in": "query",
+            "name": "due_from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Due From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "due_to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Due To"
+            }
+          },
+          {
+            "in": "query",
             "name": "limit",
             "required": false,
             "schema": {
@@ -6468,6 +6626,64 @@
           }
         },
         "summary": "List Payouts Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/payouts/retry-failed": {
+      "post": {
+        "description": "Re-disburse every failed payout (optionally only one failure reason).\nEach payout goes through the same disburse path as the single-row button;\none bad row doesn't stop the batch. Capped at 50 per call.",
+        "operationId": "retry_failed_payouts_api_admin_payouts_retry_failed_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkRetryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Failed Payouts",
         "tags": [
           "admin"
         ]
@@ -6987,6 +7203,69 @@
                 }
               ],
               "title": "Status Filter"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "priority",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Priority"
+            }
+          },
+          {
+            "in": "query",
+            "name": "overdue",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Overdue",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
             }
           },
           {

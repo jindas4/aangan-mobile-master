@@ -258,6 +258,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/dashboard/trends": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Dashboard Trends
+         * @description Daily series for the dashboard sparklines: signups, bookings created,
+         *     GMV and platform revenue (confirmed/completed only). Zero-filled so the
+         *     client can plot without gap handling. Buckets are UTC days — fine for a
+         *     trend line, not an accounting report.
+         */
+        get: operations["dashboard_trends_api_admin_dashboard_trends_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/export/bookings.csv": {
         parameters: {
             query?: never;
@@ -479,6 +502,28 @@ export interface paths {
         get: operations["list_payouts_admin_api_admin_payouts_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/payouts/retry-failed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retry Failed Payouts
+         * @description Re-disburse every failed payout (optionally only one failure reason).
+         *     Each payout goes through the same disburse path as the single-row button;
+         *     one bad row doesn't stop the batch. Capped at 50 per call.
+         */
+        post: operations["retry_failed_payouts_api_admin_payouts_retry_failed_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2875,6 +2920,11 @@ export interface components {
             /** Total Inr */
             total_inr: number;
         };
+        /** BulkRetryRequest */
+        BulkRetryRequest: {
+            /** Reason */
+            reason?: string | null;
+        };
         /**
          * CalendarRange
          * @description A half-open [start, end) date range that is NOT bookable.
@@ -4236,6 +4286,8 @@ export interface components {
         TicketPatch: {
             /** Assigned To */
             assigned_to?: string | null;
+            /** Priority */
+            priority?: string | null;
             /** Status */
             status?: string | null;
         };
@@ -4445,6 +4497,8 @@ export interface operations {
                 q?: string | null;
                 bstatus?: string | null;
                 disputes?: boolean;
+                checkin_from?: string | null;
+                checkin_to?: string | null;
                 limit?: number;
                 offset?: number;
             };
@@ -4990,6 +5044,39 @@ export interface operations {
             };
         };
     };
+    dashboard_trends_api_admin_dashboard_trends_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     export_bookings_csv_api_admin_export_bookings_csv_get: {
         parameters: {
             query?: {
@@ -5413,6 +5500,8 @@ export interface operations {
             query?: {
                 q?: string | null;
                 pstatus?: string | null;
+                due_from?: string | null;
+                due_to?: string | null;
                 limit?: number;
                 offset?: number;
             };
@@ -5423,6 +5512,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_failed_payouts_api_admin_payouts_retry_failed_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BulkRetryRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -5724,6 +5848,11 @@ export interface operations {
         parameters: {
             query?: {
                 status_filter?: string | null;
+                q?: string | null;
+                priority?: string | null;
+                overdue?: boolean;
+                limit?: number;
+                offset?: number;
             };
             header?: {
                 authorization?: string | null;
