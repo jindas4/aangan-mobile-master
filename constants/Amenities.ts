@@ -19,6 +19,7 @@ export const AMENITIES: { key: string; icon: string }[] = [
   { key: "Yoga deck", icon: "body-outline" },
   { key: "Laundry", icon: "shirt-outline" },
   { key: "Pet friendly", icon: "paw-outline" },
+  { key: "Power backup", icon: "flash-outline" },
   { key: "Heritage", icon: "business-outline" },
   { key: "Estate walks", icon: "walk-outline" },
 ];

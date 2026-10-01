@@ -15,6 +15,20 @@ import { api, ListingCard as LC, Scene } from "@/lib/api";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { ListingCardItem } from "@/components/ListingCard";
 import { EmptyState } from "@/components/EmptyState";
+import { DateRangeCalendar } from "@/components/DateRangeCalendar";
+import { GlassSheet } from "@/components/GlassSheet";
+import { shortDate } from "@/lib/format";
+
+const PAGE = 40;
+
+type Sort = "recommended" | "price_asc" | "price_desc" | "rating" | "newest";
+const SORTS: { label: string; value: Sort }[] = [
+  { label: "Recommended", value: "recommended" },
+  { label: "Price ↑", value: "price_asc" },
+  { label: "Price ↓", value: "price_desc" },
+  { label: "Top rated", value: "rating" },
+  { label: "Newest", value: "newest" },
+];
 
 const SCENES: { label: string; value: Scene }[] = [
   { label: "Mountains", value: "mountain" },
@@ -36,28 +50,65 @@ export default function SearchScreen() {
   const [guests, setGuests] = useState(1);
   const [instant, setInstant] = useState(false);
   const [veg, setVeg] = useState(false);
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [datesOpen, setDatesOpen] = useState(false);
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [sort, setSort] = useState<Sort>("recommended");
 
   const [results, setResults] = useState<LC[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mayHaveMore, setMayHaveMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const buildQuery = useCallback((offset: number) => {
+    const qs = new URLSearchParams();
+    if (where) qs.set("where", where);
+    if (scene) qs.set("scene", scene);
+    if (guests > 1) qs.set("guests", String(guests));
+    if (instant) qs.set("instant", "true");
+    if (veg) qs.set("veg", "true");
+    if (checkIn && checkOut) {
+      qs.set("start_date", checkIn);
+      qs.set("end_date", checkOut);
+    }
+    if (priceMin.trim()) qs.set("price_min", priceMin.trim());
+    if (priceMax.trim()) qs.set("price_max", priceMax.trim());
+    if (sort !== "recommended") qs.set("sort", sort);
+    qs.set("limit", String(PAGE));
+    if (offset > 0) qs.set("offset", String(offset));
+    return qs;
+  }, [where, scene, guests, instant, veg, checkIn, checkOut, priceMin, priceMax, sort]);
 
   const runSearch = useCallback(async () => {
     setLoading(true);
     try {
-      const qs = new URLSearchParams();
-      if (where) qs.set("where", where);
-      if (scene) qs.set("scene", scene);
-      if (guests > 1) qs.set("guests", String(guests));
-      if (instant) qs.set("instant", "true");
-      if (veg) qs.set("veg", "true");
-      qs.set("limit", "40");
-      const data = await api<LC[]>(`/api/listings?${qs.toString()}`);
+      const data = await api<LC[]>(`/api/listings?${buildQuery(0).toString()}`);
       setResults(data);
+      setMayHaveMore(data.length === PAGE);
     } catch {
       setResults([]);
+      setMayHaveMore(false);
     } finally {
       setLoading(false);
     }
-  }, [where, scene, guests, instant, veg]);
+  }, [buildQuery]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !mayHaveMore || !results) return;
+    setLoadingMore(true);
+    try {
+      const more = await api<LC[]>(`/api/listings?${buildQuery(results.length).toString()}`);
+      const seen = new Set(results.map((r) => r.id));
+      setResults([...results, ...more.filter((m) => !seen.has(m.id))]);
+      setMayHaveMore(more.length === PAGE);
+    } catch {
+      setMayHaveMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [buildQuery, loadingMore, mayHaveMore, results]);
 
   // Auto-run once on mount (covers arriving from the mood picker / map with
   // params already set), then only on explicit "Search" press after that.
@@ -129,6 +180,67 @@ export default function SearchScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* dates + price */}
+      <View style={styles.filterRow}>
+        <TouchableOpacity style={[styles.toggle, !!checkIn && styles.toggleDates]} onPress={() => setDatesOpen(true)}>
+          <Text style={styles.toggleLabel}>
+            {checkIn && checkOut ? `${shortDate(checkIn)} → ${shortDate(checkOut)}` : "📅 Add dates"}
+          </Text>
+        </TouchableOpacity>
+        {!!checkIn && (
+          <TouchableOpacity onPress={() => { setCheckIn(""); setCheckOut(""); }} hitSlop={8}>
+            <Ionicons name="close-circle" size={18} color={Colors.charcoal3} />
+          </TouchableOpacity>
+        )}
+        <TextInput
+          value={priceMin}
+          onChangeText={(t) => setPriceMin(t.replace(/\D/g, ""))}
+          keyboardType="number-pad"
+          placeholder="₹ min"
+          placeholderTextColor={Colors.charcoal3}
+          style={styles.priceInput}
+        />
+        <TextInput
+          value={priceMax}
+          onChangeText={(t) => setPriceMax(t.replace(/\D/g, ""))}
+          keyboardType="number-pad"
+          placeholder="₹ max"
+          placeholderTextColor={Colors.charcoal3}
+          style={styles.priceInput}
+        />
+      </View>
+
+      {/* sort */}
+      <View style={styles.filterRow}>
+        {SORTS.map((s) => {
+          const active = sort === s.value;
+          return (
+            <TouchableOpacity
+              key={s.value}
+              style={[styles.toggle, active && styles.sortActive]}
+              onPress={() => setSort(s.value)}
+            >
+              <Text style={[styles.toggleLabel, active && styles.toggleLabelActive]}>{s.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {datesOpen && (
+        <GlassSheet onClose={() => setDatesOpen(false)} title="Select dates">
+          <DateRangeCalendar
+            unavailable={[]}
+            minNights={1}
+            value={{ checkIn, checkOut }}
+            onChange={(v) => {
+              setCheckIn(v.checkIn);
+              setCheckOut(v.checkOut);
+              if (v.checkIn && v.checkOut) setDatesOpen(false);
+            }}
+          />
+        </GlassSheet>
+      )}
+
       <TouchableOpacity style={styles.searchAction} onPress={runSearch}>
         <Text style={styles.searchActionLabel}>Search</Text>
       </TouchableOpacity>
@@ -146,6 +258,9 @@ export default function SearchScreen() {
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => <ListingCardItem listing={item} />}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={{ marginVertical: 16 }} color={Colors.terra} /> : null}
         />
       )}
     </SafeAreaView>
@@ -224,6 +339,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.paper,
   },
   toggleActive: { backgroundColor: Colors.veg, borderColor: Colors.veg },
+  toggleDates: { borderColor: Colors.terra },
+  sortActive: { backgroundColor: Colors.charcoal, borderColor: Colors.charcoal },
+  priceInput: {
+    width: 84,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.edge,
+    backgroundColor: Colors.paper,
+    fontSize: 12.5,
+    fontWeight: "700",
+    color: Colors.charcoal,
+  },
   toggleLabel: { fontSize: 12.5, fontWeight: "700", color: Colors.charcoal },
   toggleLabelActive: { color: Colors.paper },
   searchAction: {

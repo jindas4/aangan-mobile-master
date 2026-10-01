@@ -8036,6 +8036,7 @@ export interface operations {
                 women_safe?: boolean | null;
                 solo_ok?: boolean | null;
                 superhost?: boolean | null;
+                sort?: string;
                 limit?: number;
                 offset?: number;
             };
