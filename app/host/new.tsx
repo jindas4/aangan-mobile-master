@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, Scene } from "@/lib/api";
+import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { Button } from "@/components/Button";
@@ -55,8 +56,13 @@ export default function NewListingScreen() {
   const stillUploading = photos.some((p) => p.uploading);
   const valid = title.trim() && city.trim() && price.trim() && description.trim() && uploadedImages.length > 0;
 
-  const handleCreate = async (published: boolean) => {
-    if (!valid || stillUploading || pending) return;
+  const saveDraftThenVerify = async () => {
+    const ok = await handleCreate(false, { quiet: true });
+    if (ok) router.replace("/host/verify");
+  };
+
+  const handleCreate = async (published: boolean, opts: { quiet?: boolean } = {}): Promise<boolean> => {
+    if (!valid || stillUploading || pending) return false;
     setPending(published ? "publish" : "draft");
     try {
       await api<{ id: string }>("/api/listings", {
@@ -78,6 +84,7 @@ export default function NewListingScreen() {
           published,
         },
       });
+      if (opts.quiet) return true;
       Alert.alert(
         published ? "Listing published!" : "Draft saved",
         published
@@ -85,8 +92,23 @@ export default function NewListingScreen() {
           : "Saved as a draft. Publish it any time from your dashboard.",
         [{ text: "View dashboard", onPress: () => router.replace("/host") }],
       );
+      return true;
     } catch (e: any) {
-      Alert.alert("Error", e.message || "Could not save listing.");
+      const missing = published ? verificationMissing(e) : null;
+      if (missing) {
+        // Not verified yet: keep their work as a private draft, then verify.
+        Alert.alert(
+          "Verify to publish",
+          `Before your listing can go live, ${describeMissing(missing)}. Save it as a draft now and publish it once you're verified.`,
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Save draft & verify", onPress: () => saveDraftThenVerify() },
+          ],
+        );
+      } else {
+        Alert.alert("Error", e.message || "Could not save listing.");
+      }
+      return false;
     } finally {
       setPending(null);
     }

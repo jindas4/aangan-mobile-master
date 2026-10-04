@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, ListingFull, BookingWithListing, WEB_BASE } from "@/lib/api";
+import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { inr, fullDate, imageUrl } from "@/lib/format";
@@ -97,8 +98,20 @@ export default function ManageListingScreen() {
         next ? "It's now live and visible in search."
              : "It's now a draft — hidden from guests until you publish again.");
     } catch (e: any) {
-      const msg = e?.body?.detail?.message || e?.message || "Could not update. Please try again.";
-      Alert.alert(next ? "Can't publish yet" : "Error", msg);
+      const missing = next ? verificationMissing(e) : null;
+      if (missing) {
+        Alert.alert(
+          "Verify to publish",
+          `Your draft is saved and private. Before it can go live, ${describeMissing(missing)}.`,
+          [
+            { text: "Not now", style: "cancel" },
+            { text: "Verify now", onPress: () => router.push("/host/verify") },
+          ],
+        );
+      } else {
+        const msg = e?.body?.detail?.message || e?.message || "Could not update. Please try again.";
+        Alert.alert(next ? "Can't publish yet" : "Error", msg);
+      }
     } finally {
       setToggling(false);
     }
@@ -194,9 +207,14 @@ export default function ManageListingScreen() {
           <Ionicons name="chevron-back" size={22} color={Colors.charcoal} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>{listing.title}</Text>
-        <TouchableOpacity onPress={onShare} style={styles.backBtn}>
-          <Ionicons name="share-outline" size={20} color={Colors.charcoal} />
-        </TouchableOpacity>
+        {/* Drafts have no public page yet — keep the header balanced without a share action. */}
+        {isDraft ? (
+          <View style={styles.backBtn} />
+        ) : (
+          <TouchableOpacity onPress={onShare} style={styles.backBtn}>
+            <Ionicons name="share-outline" size={20} color={Colors.charcoal} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <ScrollView
@@ -289,15 +307,17 @@ export default function ManageListingScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* URL card */}
-          <View style={styles.urlCard}>
-            <Text style={styles.urlLabel}>YOUR PAGE</Text>
-            <Text style={styles.urlText}>{WEB_BASE.replace(/^https?:\/\//, "")}/p/{listing.slug}</Text>
-            <TouchableOpacity style={styles.shareBtn} onPress={onShare}>
-              <Ionicons name="share-social-outline" size={16} color={Colors.paper} />
-              <Text style={styles.shareBtnText}>Share</Text>
-            </TouchableOpacity>
-          </View>
+          {/* URL card — only once the listing is live */}
+          {!isDraft && (
+            <View style={styles.urlCard}>
+              <Text style={styles.urlLabel}>YOUR PAGE</Text>
+              <Text style={styles.urlText}>{WEB_BASE.replace(/^https?:\/\//, "")}/p/{listing.slug}</Text>
+              <TouchableOpacity style={styles.shareBtn} onPress={onShare}>
+                <Ionicons name="share-social-outline" size={16} color={Colors.paper} />
+                <Text style={styles.shareBtnText}>Share</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Edit mode */}
           {editing ? (

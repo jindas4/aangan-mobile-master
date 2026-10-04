@@ -167,9 +167,12 @@ export default function HostDashboardScreen() {
                 </View>
                 <Ionicons name="chevron-forward" size={16} color={Colors.charcoal3} />
               </TouchableOpacity>
-              <View style={styles.shareRow}>
-                <ShareKit slug={l.slug} title={l.title} city={l.city} />
-              </View>
+              {/* Drafts have no public page yet, so nothing to share. */}
+              {l.published !== false && (
+                <View style={styles.shareRow}>
+                  <ShareKit slug={l.slug} title={l.title} city={l.city} />
+                </View>
+              )}
             </View>
           ))
         )}
