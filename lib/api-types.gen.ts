@@ -437,7 +437,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get Listing Admin
+         * @description Any listing, whatever its status — the public page 404s on drafts and
+         *     unpublished listings, so admins preview them here.
+         */
+        get: operations["get_listing_admin_api_admin_listings__listing_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5618,6 +5623,39 @@ export interface operations {
                 authorization?: string | null;
             };
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_listing_admin_api_admin_listings__listing_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

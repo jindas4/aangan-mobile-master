@@ -6504,6 +6504,61 @@
       }
     },
     "/api/admin/listings/{listing_id}": {
+      "get": {
+        "description": "Any listing, whatever its status \u2014 the public page 404s on drafts and\nunpublished listings, so admins preview them here.",
+        "operationId": "get_listing_admin_api_admin_listings__listing_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "listing_id",
+            "required": true,
+            "schema": {
+              "title": "Listing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Listing Admin",
+        "tags": [
+          "admin"
+        ]
+      },
       "patch": {
         "operationId": "moderate_listing_api_admin_listings__listing_id__patch",
         "parameters": [
