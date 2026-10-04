@@ -5610,6 +5610,7 @@ export interface operations {
             query?: {
                 q?: string | null;
                 filter?: string;
+                host_id?: string | null;
                 limit?: number;
                 offset?: number;
             };
