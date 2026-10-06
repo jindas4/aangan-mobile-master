@@ -8700,7 +8700,9 @@ export interface operations {
                 limit?: number;
                 offset?: number;
             };
-            header?: never;
+            header?: {
+                authorization?: string | null;
+            };
             path?: never;
             cookie?: never;
         };
@@ -8834,7 +8836,9 @@ export interface operations {
     get_listing_by_slug_api_listings_by_slug__slug__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                authorization?: string | null;
+            };
             path: {
                 slug: string;
             };
@@ -9044,7 +9048,9 @@ export interface operations {
     get_listing_api_listings__listing_id__get: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                authorization?: string | null;
+            };
             path: {
                 listing_id: string;
             };
