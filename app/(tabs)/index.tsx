@@ -34,7 +34,8 @@ export default function HomeScreen() {
 
   const fetchHome = useCallback(async () => {
     const [listingsRes, bannersRes, collectionsRes] = await Promise.all([
-      api<LC[]>("/api/listings?limit=12").catch(() => []),
+      // Newest first, matching the website: rating-first ordering hid new homes.
+      api<LC[]>("/api/listings?limit=12&sort=newest").catch(() => []),
       api<CmsBanner[]>("/api/cms/banners").catch(() => []),
       api<CmsCollection[]>("/api/cms/collections").catch(() => []),
     ]);
@@ -118,7 +119,7 @@ export default function HomeScreen() {
 
         {/* Hero — mirrors web's homepage headline */}
         <View style={styles.hero}>
-          <Text style={styles.heroKicker}>CURATED STAYS</Text>
+          <Text style={styles.heroKicker}>NEWEST STAYS</Text>
           <Text style={styles.heroTitle}>Real homes, real hosts, all over India</Text>
           <Text style={styles.heroSubtitle}>
             Phone-verified hosts, UPI payments, all-inclusive pricing in ₹ — no hidden fees, ever.
