@@ -122,7 +122,7 @@ export default function HomeScreen() {
           <Text style={styles.heroKicker}>NEWEST STAYS</Text>
           <Text style={styles.heroTitle}>Real homes, real hosts, all over India</Text>
           <Text style={styles.heroSubtitle}>
-            Phone-verified hosts, UPI payments, all-inclusive pricing in ₹ — no hidden fees, ever.
+            ID-verified hosts, UPI payments, all-inclusive pricing in ₹ — no hidden fees, ever.
           </Text>
         </View>
 

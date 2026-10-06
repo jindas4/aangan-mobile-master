@@ -145,6 +145,9 @@ export default function SearchScreen() {
         showsHorizontalScrollIndicator={false}
         data={SCENES}
         keyExtractor={(s) => s.value}
+        // A horizontal list in a column otherwise grows to fill the leftover
+        // height and stretches the chips (blank or giant capsules).
+        style={styles.chipList}
         contentContainerStyle={styles.chipRow}
         renderItem={({ item }) => {
           const active = scene === item.value;
@@ -290,7 +293,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.paper,
   },
   searchInput: { flex: 1, fontSize: 15, color: Colors.charcoal, fontFamily: Fonts.regular },
-  chipRow: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
+  chipList: { flexGrow: 0, flexShrink: 0 },
+  chipRow: { paddingHorizontal: 16, paddingVertical: 12, gap: 8, alignItems: "center" },
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 8,

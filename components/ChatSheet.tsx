@@ -18,6 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { API_BASE, getToken } from "@/lib/api";
+import { parseSse, replyFromEvents, type ChatEvent } from "@/lib/chatStream";
 
 interface Message {
   id: number;
@@ -172,52 +173,40 @@ function ChatModal({ onClose }: { onClose: () => void }) {
         return;
       }
 
+      const apply = (events: ChatEvent[]) => {
+        for (const e of events) {
+          if (e.type === "session" && typeof e.session_id === "string") setSessionId(e.session_id);
+        }
+        setMsgs((p) =>
+          p.map((m) => (m.id === assistantId ? { ...m, content: replyFromEvents(events, m.content) } : m))
+        );
+      };
+
+      // React Native's fetch can't stream, so there's usually no reader and
+      // the whole event stream arrives at once — parse it the same way.
       const reader = res.body?.getReader();
       if (!reader) {
-        const fallback = await res.text();
-        try {
-          const json = JSON.parse(fallback);
-          setMsgs((p) =>
-            p.map((m) => (m.id === assistantId ? { ...m, content: json.content || fallback } : m))
-          );
-        } catch {
-          setMsgs((p) => p.map((m) => (m.id === assistantId ? { ...m, content: fallback } : m)));
+        const body = await res.text();
+        const { events } = parseSse(body + "\n\n");
+        if (events.length) {
+          apply(events);
+        } else {
+          let content = "Something went wrong. Please try again.";
+          try { content = JSON.parse(body).content || content; } catch {}
+          setMsgs((p) => p.map((m) => (m.id === assistantId ? { ...m, content } : m)));
         }
-        setLoading(false);
         return;
       }
 
       const decoder = new TextDecoder();
       let buffer = "";
-
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
-
-        for (const line of lines) {
-          const raw = line.trim().replace(/^data:\s*/, "");
-          if (!raw) continue;
-          try {
-            const evt = JSON.parse(raw);
-            if (evt.type === "session" && evt.session_id) {
-              setSessionId(evt.session_id);
-            } else if (evt.type === "text") {
-              setMsgs((p) =>
-                p.map((m) => (m.id === assistantId ? { ...m, content: evt.content } : m))
-              );
-            } else if (evt.type === "delta") {
-              setMsgs((p) =>
-                p.map((m) =>
-                  m.id === assistantId ? { ...m, content: m.content + evt.content } : m
-                )
-              );
-            }
-          } catch {}
-        }
+        const { events, rest } = parseSse(buffer);
+        buffer = rest;
+        if (events.length) apply(events);
       }
     } catch {
       setMsgs((p) =>
