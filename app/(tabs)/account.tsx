@@ -285,7 +285,7 @@ function VerificationBanner({
   const [eligible, setEligible] = useState<boolean | null>(null);
 
   useEffect(() => {
-    api<VerificationStatus>("/api/account/verification")
+    api<VerificationStatus>("/api/me/account/verification")
       .then((s) => setEligible(s.eligible))
       .catch(() => {});
   }, [user]);

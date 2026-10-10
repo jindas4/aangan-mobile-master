@@ -1643,6 +1643,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/conversations/{conv_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Conversation
+         * @description One conversation, for the thread header (who you're talking to, which
+         *     stay) and its Report / Block menu. Participants only; a blocked thread is
+         *     gone, same as in the inbox list.
+         */
+        get: operations["get_conversation_api_conversations__conv_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/conversations/{conv_id}/messages": {
         parameters: {
             query?: never;
@@ -1884,6 +1906,72 @@ export interface paths {
         put?: never;
         /** Bank */
         post: operations["bank_api_kyc_bank_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/kyc/cashfree/webhook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cashfree Verification Webhook
+         * @description Cashfree Secure ID webhook (DigiLocker events). Add this URL under
+         *     Secure ID → Developers → Webhooks. The signature is checked on the raw
+         *     body; the event itself is only a nudge — we re-read the status from
+         *     Cashfree before recording anything, so repeats are harmless.
+         */
+        post: operations["cashfree_verification_webhook_api_kyc_cashfree_webhook_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/kyc/digilocker/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Digilocker Complete
+         * @description Checks the DigiLocker request with Cashfree and records the result.
+         *     Polled by the website/app while the user is in DigiLocker — safe to repeat.
+         */
+        post: operations["digilocker_complete_api_kyc_digilocker_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/kyc/digilocker/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Digilocker Start
+         * @description Returns a DigiLocker consent link (valid 10 minutes). The user signs in
+         *     to DigiLocker with their Aadhaar or mobile number and approves sharing;
+         *     then call /kyc/digilocker/complete.
+         */
+        post: operations["digilocker_start_api_kyc_digilocker_start_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2299,6 +2387,32 @@ export interface paths {
         get: operations["verification_api_me_account_verification_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments/cashfree/webhook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cashfree Webhook
+         * @description Cashfree webhook receiver (version 2025-01-01).
+         *
+         *     Configure in Cashfree Dashboard → Developers → Webhooks with the URL
+         *     `/api/payments/cashfree/webhook`, subscribed to payment success, payment
+         *     failed and refund status. The signature is HMAC-SHA256 over
+         *     `timestamp + raw body` with the secret key — verified on the raw bytes,
+         *     before any parsing. Deliveries are de-duplicated on `x-idempotency-key`.
+         */
+        post: operations["cashfree_webhook_api_payments_cashfree_webhook_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3350,6 +3464,14 @@ export interface components {
             /** Requested At */
             requested_at?: string | null;
         };
+        /** DigilockerStart */
+        DigilockerStart: {
+            /**
+             * Client
+             * @default web
+             */
+            client: string;
+        };
         /** DisputeUpdate */
         DisputeUpdate: {
             /** Dispute Status */
@@ -3909,8 +4031,19 @@ export interface components {
         PaymentInitResponse: {
             /** Amount Inr */
             amount_inr: number;
+            /** Cashfree Mode */
+            cashfree_mode?: string | null;
+            /** Cashfree Order Id */
+            cashfree_order_id?: string | null;
+            /** Cashfree Payment Session Id */
+            cashfree_payment_session_id?: string | null;
             /** Payment Id */
             payment_id: string;
+            /**
+             * Provider
+             * @default razorpay
+             */
+            provider: string;
             /** Razorpay Key */
             razorpay_key?: string | null;
             /** Razorpay Order Id */
@@ -7999,6 +8132,39 @@ export interface operations {
             };
         };
     };
+    get_conversation_api_conversations__conv_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                conv_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     messages_api_conversations__conv_id__messages_get: {
         parameters: {
             query?: never;
@@ -8576,6 +8742,92 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["BankSubmit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cashfree_verification_webhook_api_kyc_cashfree_webhook_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    digilocker_complete_api_kyc_digilocker_complete_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    digilocker_start_api_kyc_digilocker_start_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DigilockerStart"];
             };
         };
         responses: {
@@ -9507,6 +9759,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cashfree_webhook_api_payments_cashfree_webhook_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };

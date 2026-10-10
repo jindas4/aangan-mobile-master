@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { api, UserOut, VerificationStatus } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -67,9 +68,9 @@ export function VerifyWizard() {
               <Text style={styles.stepLabel}>{step.label}</Text>
               <Text style={styles.stepHint}>{step.done ? "Completed" : step.hint}</Text>
             </View>
-            {step.required && !step.done && (
+            {(step.required || step.key === "pan") && !step.done && (
               <View style={styles.requiredBadge}>
-                <Text style={styles.requiredText}>Required</Text>
+                <Text style={styles.requiredText}>{step.required ? "Required" : "For payouts"}</Text>
               </View>
             )}
             {!step.done && (
@@ -291,7 +292,90 @@ function EmailStepForm({ onDone }: { onDone: () => void }) {
   );
 }
 
+// The server says which method this deployment uses: DigiLocker (the host
+// approves sharing on DigiLocker's own page) or the older Aadhaar-number OTP.
 function AadhaarStepForm({ onDone }: { onDone: () => void }) {
+  const [method, setMethod] = useState<"digilocker" | "otp" | null>(null);
+  useEffect(() => {
+    api<{ aadhaar_method?: string }>("/api/kyc")
+      .then((k) => setMethod(k.aadhaar_method === "digilocker" ? "digilocker" : "otp"))
+      .catch(() => setMethod("otp"));
+  }, []);
+  if (!method) return <ActivityIndicator color={Colors.terra} />;
+  return method === "digilocker" ? <DigilockerStepForm onDone={onDone} /> : <AadhaarOtpStepForm onDone={onDone} />;
+}
+
+const DIGILOCKER_RETURN = "aangan://digilocker-done";
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function DigilockerStepForm({ onDone }: { onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [started, setStarted] = useState(false);
+
+  // Ask the server (which asks Cashfree) how it went. After consent the
+  // document can take a few seconds to arrive, so try a few times.
+  const check = async (attempts: number) => {
+    for (let i = 0; i < attempts; i++) {
+      const r = await api<{ digilocker_status: string; message: string }>("/api/kyc/digilocker/complete", {
+        method: "POST",
+      });
+      if (r.digilocker_status === "VERIFIED") return onDone();
+      if (r.digilocker_status !== "PENDING") {
+        setStarted(false);
+        return setErr(r.message);
+      }
+      if (i < attempts - 1) await wait(3000);
+    }
+    setErr("Not finished yet. Complete the steps in DigiLocker, then tap “I’ve finished”.");
+  };
+
+  const start = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      const r = await api<{ url: string }>("/api/kyc/digilocker/start", { method: "POST", body: { client: "app" } });
+      setStarted(true);
+      // Closes by itself when DigiLocker hands back to the app; the result
+      // comes from the server either way, never from the browser.
+      await WebBrowser.openAuthSessionAsync(r.url, DIGILOCKER_RETURN);
+      await check(5);
+    } catch (e: any) {
+      setErr(e.message || "Could not open DigiLocker. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const recheck = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      await check(1);
+    } catch (e: any) {
+      setErr(e.message || "Could not check. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <View>
+      <Text style={styles.stepHint}>
+        DigiLocker is the Government of India's document wallet. Sign in there with your Aadhaar or mobile number,
+        enter the OTP they send, and tap Allow. You never type your Aadhaar number into Aangan Stay, and we keep only
+        its last 4 digits. If the mobile number matches your account, your phone is verified too.
+      </Text>
+      {err && <Text style={styles.formError}>{err}</Text>}
+      <Button title={busy ? "Please wait…" : started ? "Open DigiLocker again" : "Verify with DigiLocker"} onPress={start} disabled={busy} loading={busy} full style={{ marginTop: 12 }} />
+      {started && !busy && (
+        <Button title="I’ve finished — check now" onPress={recheck} variant="ghost" full style={{ marginTop: 8 }} />
+      )}
+    </View>
+  );
+}
+
+function AadhaarOtpStepForm({ onDone }: { onDone: () => void }) {
   const [stage, setStage] = useState<"identifier" | "code">("identifier");
   const [aadhaar, setAadhaar] = useState("");
   const [txnId, setTxnId] = useState("");
@@ -406,7 +490,10 @@ function PanStepForm({ onDone }: { onDone: () => void }) {
         placeholderTextColor={Colors.charcoal3}
         style={[styles.formInput, { marginTop: 10 }]}
       />
-      <Text style={[styles.stepHint, { marginTop: 8 }]}>Enter your name exactly as it's printed on your PAN card.</Text>
+      <Text style={[styles.stepHint, { marginTop: 8 }]}>
+        Enter your name exactly as it's printed on your PAN card. We check it with the Income Tax Department's
+        records and keep only the last 4 characters. Payouts start once your PAN is verified.
+      </Text>
       {err && <Text style={styles.formError}>{err}</Text>}
       <Button title={busy ? "Verifying…" : "Verify PAN"} onPress={submit} disabled={!validPan || !name.trim() || busy} loading={busy} full style={{ marginTop: 12 }} />
     </View>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -37,6 +37,7 @@ export default function NewListingScreen() {
   const router = useRouter();
   const [pending, setPending] = useState<null | "publish" | "draft">(null);
 
+  const scrollRef = useRef<ScrollView>(null);
   const [title, setTitle] = useState("");
   const [city, setCity] = useState("");
   const [area, setArea] = useState("");
@@ -126,6 +127,7 @@ export default function NewListingScreen() {
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
         <ScrollView
+          ref={scrollRef}
           contentContainerStyle={styles.form}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -276,6 +278,9 @@ export default function NewListingScreen() {
               multiline
               numberOfLines={4}
               textAlignVertical="top"
+              // Last field on the form: bring it above the keyboard so hosts
+              // can see what they type.
+              onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300)}
               placeholder="Tell guests what makes your place special…"
               placeholderTextColor={Colors.charcoal3}
               style={[styles.input, { height: 100 }]}

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, ActivityIndicator } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Radius } from "@/constants/Colors";
 import { GlassHeader } from "@/components/GlassHeader";
@@ -23,6 +23,7 @@ export default function AccountDeleteScreen() {
   const [status, setStatus] = useState<DeletionStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirmText, setConfirmText] = useState("");
+  const scrollRef = useRef<ScrollView>(null);
   const [busy, setBusy] = useState<"req" | "cancel" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -79,7 +80,11 @@ export default function AccountDeleteScreen() {
       {loading ? (
         <ActivityIndicator style={{ marginTop: 40 }} color={Colors.terra} />
       ) : (
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        // The confirmation box sits at the bottom: keep it (and the button)
+        // above the keyboard so people can see what they type.
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <ScrollView ref={scrollRef} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
           <Text style={styles.title}>Delete account</Text>
           <Text style={styles.subtitle}>
             You have the right under the Digital Personal Data Protection Act, 2023 to withdraw consent and erase
@@ -147,6 +152,7 @@ export default function AccountDeleteScreen() {
                 onChangeText={setConfirmText}
                 editable={!hasBlockers}
                 autoCapitalize="characters"
+                onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 250)}
                 placeholder={CONFIRM_PHRASE}
                 placeholderTextColor={Colors.charcoal3}
                 style={styles.input}
@@ -165,6 +171,7 @@ export default function AccountDeleteScreen() {
 
           <View style={{ height: 32 }} />
         </ScrollView>
+        </KeyboardAvoidingView>
       )}
     </View>
   );

@@ -207,8 +207,10 @@ const styles = StyleSheet.create({
   weekRow: {
     flexDirection: "row",
   },
+  // Seven equal columns: fixed-width cells in a wrapping row only lined up
+  // when the sheet happened to be exactly 7 cells wide.
   weekLabel: {
-    width: CELL,
+    width: `${100 / 7}%`,
     textAlign: "center",
     fontSize: 11,
     fontWeight: "700",
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   cell: {
-    width: CELL,
+    width: `${100 / 7}%`,
     height: CELL,
     alignItems: "center",
     justifyContent: "center",

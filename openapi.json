@@ -1458,6 +1458,18 @@
         "title": "DeletionStatus",
         "type": "object"
       },
+      "DigilockerStart": {
+        "properties": {
+          "client": {
+            "default": "web",
+            "pattern": "^(web|app)$",
+            "title": "Client",
+            "type": "string"
+          }
+        },
+        "title": "DigilockerStart",
+        "type": "object"
+      },
       "DisputeUpdate": {
         "properties": {
           "dispute_status": {
@@ -2796,8 +2808,46 @@
             "title": "Amount Inr",
             "type": "integer"
           },
+          "cashfree_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cashfree Mode"
+          },
+          "cashfree_order_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cashfree Order Id"
+          },
+          "cashfree_payment_session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cashfree Payment Session Id"
+          },
           "payment_id": {
             "title": "Payment Id",
+            "type": "string"
+          },
+          "provider": {
+            "default": "razorpay",
+            "title": "Provider",
             "type": "string"
           },
           "razorpay_key": {
@@ -10621,6 +10671,65 @@
         ]
       }
     },
+    "/api/conversations/{conv_id}": {
+      "get": {
+        "description": "One conversation, for the thread header (who you're talking to, which\nstay) and its Report / Block menu. Participants only; a blocked thread is\ngone, same as in the inbox list.",
+        "operationId": "get_conversation_api_conversations__conv_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conv_id",
+            "required": true,
+            "schema": {
+              "title": "Conv Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Conversation",
+        "tags": [
+          "messages"
+        ]
+      }
+    },
     "/api/conversations/{conv_id}/messages": {
       "get": {
         "operationId": "messages_api_conversations__conv_id__messages_get",
@@ -11639,6 +11748,132 @@
           }
         },
         "summary": "Bank",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/api/kyc/cashfree/webhook": {
+      "post": {
+        "description": "Cashfree Secure ID webhook (DigiLocker events). Add this URL under\nSecure ID \u2192 Developers \u2192 Webhooks. The signature is checked on the raw\nbody; the event itself is only a nudge \u2014 we re-read the status from\nCashfree before recording anything, so repeats are harmless.",
+        "operationId": "cashfree_verification_webhook_api_kyc_cashfree_webhook_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Cashfree Verification Webhook",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/api/kyc/digilocker/complete": {
+      "post": {
+        "description": "Checks the DigiLocker request with Cashfree and records the result.\nPolled by the website/app while the user is in DigiLocker \u2014 safe to repeat.",
+        "operationId": "digilocker_complete_api_kyc_digilocker_complete_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Digilocker Complete",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/api/kyc/digilocker/start": {
+      "post": {
+        "description": "Returns a DigiLocker consent link (valid 10 minutes). The user signs in\nto DigiLocker with their Aadhaar or mobile number and approves sharing;\nthen call /kyc/digilocker/complete.",
+        "operationId": "digilocker_start_api_kyc_digilocker_start_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DigilockerStart"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Digilocker Start",
         "tags": [
           "kyc"
         ]
@@ -13543,6 +13778,26 @@
         "summary": "Verification",
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/api/payments/cashfree/webhook": {
+      "post": {
+        "description": "Cashfree webhook receiver (version 2025-01-01).\n\nConfigure in Cashfree Dashboard \u2192 Developers \u2192 Webhooks with the URL\n`/api/payments/cashfree/webhook`, subscribed to payment success, payment\nfailed and refund status. The signature is HMAC-SHA256 over\n`timestamp + raw body` with the secret key \u2014 verified on the raw bytes,\nbefore any parsing. Deliveries are de-duplicated on `x-idempotency-key`.",
+        "operationId": "cashfree_webhook_api_payments_cashfree_webhook_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Cashfree Webhook",
+        "tags": [
+          "payments"
         ]
       }
     },

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } fr
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, CancelResponse } from "@/lib/api";
@@ -47,6 +47,10 @@ export default function TripsScreen() {
     setLoading(true);
     fetchBookings().finally(() => setLoading(false));
   }, [fetchBookings]);
+
+  // Refresh when the tab comes back into view, so a booking made or cancelled
+  // elsewhere in the app shows up without a manual pull-to-refresh.
+  useFocusEffect(useCallback(() => { fetchBookings(); }, [fetchBookings]));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

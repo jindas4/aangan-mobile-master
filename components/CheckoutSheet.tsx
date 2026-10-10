@@ -9,6 +9,9 @@
 //     then POST /payments/confirm with the returned payment id + signature.
 //     The backend verifies the signature; the Razorpay webhook remains the
 //     source of truth and reconciles asynchronously.
+//   · Cashfree (`provider: "cashfree"`) → a payment session id comes back; we
+//     open Cashfree's checkout, then POST /payments/confirm, where the backend
+//     checks the order with Cashfree. Which gateway is used is a server setting.
 //
 // react-native-razorpay is a native module — required lazily so Expo Go
 // (where it isn't linked) still runs the dev-mode path.
@@ -18,6 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { api, PaymentInitResponse, PaymentConfirmResponse } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { openCashfreeCheckout } from "@/lib/cashfree";
 import { inr } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { GlassSheet } from "@/components/GlassSheet";
@@ -59,7 +63,14 @@ export function CheckoutSheet({ bookingId, totalInr, onClose, onPaid }: Props) {
         method_detail: method,
       };
 
-      if (init.razorpay_key && init.razorpay_order_id) {
+      let cashfreeOutcome: string | null = null;
+      if (init.provider === "cashfree" && init.cashfree_payment_session_id) {
+        cashfreeOutcome = await openCashfreeCheckout(
+          init.cashfree_payment_session_id,
+          init.cashfree_order_id ?? init.payment_id,
+          init.cashfree_mode,
+        );
+      } else if (init.razorpay_key && init.razorpay_order_id) {
         // Live mode — hand off to the native Razorpay checkout.
         let RazorpayCheckout: any;
         try {
@@ -108,6 +119,11 @@ export function CheckoutSheet({ bookingId, totalInr, onClose, onPaid }: Props) {
       });
       if (res.status === "failed") {
         throw new Error("Payment verification failed. If you were charged, it will be auto-refunded.");
+      }
+      if (res.status !== "captured") {
+        // Cashfree says the order is still unpaid. Closing the page is not an error.
+        if (cashfreeOutcome === "cancelled") return;
+        throw new Error("Payment was not completed. You have not been charged — please try again.");
       }
       onPaid(res.booking_status);
     } catch (e: any) {

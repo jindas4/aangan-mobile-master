@@ -35,7 +35,7 @@
         "NSCameraUsageDescription": "Aangan Stay needs camera access to take photos of your property.",
         "NSPhotoLibraryUsageDescription": "Aangan Stay needs photo library access to upload property images.",
         "ITSAppUsesNonExemptEncryption": false,
-        "LSApplicationQueriesSchemes": ["whatsapp"]
+        "LSApplicationQueriesSchemes": ["whatsapp", "upi", "phonepe", "tez", "paytmmp", "bhim", "amazonpay", "credpay", "navipay", "mobikwik", "myairtel", "popclubapp", "super", "kiwi", "simplypayupi"]
       },
       "privacyManifests": {
         "NSPrivacyCollectedDataTypes": [

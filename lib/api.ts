@@ -113,7 +113,10 @@ export async function api<T = any>(path: string, init: ReqInit = {}): Promise<T>
       const msg =
         (typeof detail === "string" ? detail : detail?.message) ||
         data?.message ||
-        `${res.status} ${res.statusText}`;
+        // Never show a bare status code ("500") to a person.
+        (res.status >= 500
+          ? "Something went wrong on our side. Please try again in a moment."
+          : `Request failed (${res.status}). Please try again.`);
       throw new ApiError(msg, res.status, data);
     }
     return data as T;
@@ -305,6 +308,12 @@ export interface PaymentInitResponse {
   /** null while the backend runs in PAYMENTS_DEV_MODE — no real gateway call. */
   razorpay_key: string | null;
   amount_inr: number;
+  /** Which gateway the server chose: "razorpay" | "cashfree" | "local". */
+  provider?: string;
+  cashfree_order_id?: string | null;
+  cashfree_payment_session_id?: string | null;
+  /** "sandbox" | "production" */
+  cashfree_mode?: string | null;
 }
 
 export interface PaymentConfirmResponse {

@@ -191,7 +191,8 @@ export default function HostBookingDetailScreen() {
         {/* Pricing */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Pricing</Text>
-          <PriceRow label={`${inr(booking.nights ? booking.nightly_inr / booking.nights : 0)} × ${booking.nights} nights`} value={inr(booking.nightly_inr)} />
+          {/* A booking's nightly_inr is the per-night rate (booking_svc sets it from the listing price). */}
+          <PriceRow label={`${inr(booking.nightly_inr)} × ${booking.nights} night${booking.nights === 1 ? "" : "s"}`} value={inr(booking.nightly_inr * booking.nights)} />
           <PriceRow label="Cleaning fee" value={inr(booking.cleaning_inr)} />
           <PriceRow label="Service fee" value={inr(booking.service_inr)} />
           <PriceRow label="Taxes" value={inr(booking.tax_inr)} />

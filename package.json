@@ -53,6 +53,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
+    "react-native-cashfree-pg-sdk": "^2.5.0",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-qrcode-svg": "^6.3.23",
     "react-native-razorpay": "^3.0.0",
