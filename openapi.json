@@ -7253,6 +7253,63 @@
         ]
       }
     },
+    "/api/admin/payouts/{payout_id}/sync": {
+      "post": {
+        "description": "Asks Cashfree for the current status of a payout and applies it \u2014 for a\npayout stuck in `processing` (e.g. a missed webhook or a timeout when it was sent).",
+        "operationId": "sync_payout_admin_api_admin_payouts__payout_id__sync_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sync Payout Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/reports": {
       "get": {
         "operationId": "list_reports_api_admin_reports_get",
@@ -14037,6 +14094,26 @@
           }
         },
         "summary": "Schedule",
+        "tags": [
+          "payouts"
+        ]
+      }
+    },
+    "/api/payouts/cashfree/webhook": {
+      "post": {
+        "description": "Cashfree Payouts webhook (V2). Add this URL under Payouts \u2192 Developers \u2192\nWebhooks. The signature is checked on the raw body. The event is only a\nnudge: the transfer's status is read back from Cashfree before a payout is\nmarked paid or failed, so repeats and forged-looking payloads change nothing.",
+        "operationId": "cashfree_payout_webhook_api_payouts_cashfree_webhook_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Cashfree Payout Webhook",
         "tags": [
           "payouts"
         ]

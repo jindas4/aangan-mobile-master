@@ -611,6 +611,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/payouts/{payout_id}/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sync Payout Admin
+         * @description Asks Cashfree for the current status of a payout and applies it — for a
+         *     payout stuck in `processing` (e.g. a missed webhook or a timeout when it was sent).
+         */
+        post: operations["sync_payout_admin_api_admin_payouts__payout_id__sync_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/reports": {
         parameters: {
             query?: never;
@@ -2523,6 +2544,29 @@ export interface paths {
          *     runs this for every eligible booking each day.
          */
         post: operations["schedule_api_payouts_booking__booking_id__schedule_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payouts/cashfree/webhook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cashfree Payout Webhook
+         * @description Cashfree Payouts webhook (V2). Add this URL under Payouts → Developers →
+         *     Webhooks. The signature is checked on the raw body. The event is only a
+         *     nudge: the transfer's status is read back from Cashfree before a payout is
+         *     marked paid or failed, so repeats and forged-looking payloads change nothing.
+         */
+        post: operations["cashfree_payout_webhook_api_payouts_cashfree_webhook_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6094,6 +6138,39 @@ export interface operations {
         };
     };
     release_payout_admin_api_admin_payouts__payout_id__release_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                payout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sync_payout_admin_api_admin_payouts__payout_id__sync_post: {
         parameters: {
             query?: never;
             header?: {
@@ -9933,6 +10010,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cashfree_payout_webhook_api_payouts_cashfree_webhook_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };
