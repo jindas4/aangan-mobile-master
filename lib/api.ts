@@ -220,6 +220,8 @@ export interface ListingCard {
   bedrooms: number;
   baths: number;
   instant_book: boolean;
+  /** What a guest gets back on cancelling: the standard tiers, or nothing. */
+  cancellation_policy?: "flexible" | "non_refundable";
   veg_kitchen: boolean;
   jain_friendly: boolean;
   min_nights?: number;
@@ -258,6 +260,8 @@ export interface BookingOut {
   end_date: string;
   nights: number;
   guests: number;
+  /** Fixed when the booking was made. */
+  cancellation_policy?: "flexible" | "non_refundable" | null;
   /** Per-night rate on a booking (the stay costs nightly_inr × nights). */
   nightly_inr: number;
   cleaning_inr: number;

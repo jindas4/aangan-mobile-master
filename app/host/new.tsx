@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { CancellationChoice, type CancellationPolicy } from "@/components/CancellationChoice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -45,6 +46,7 @@ export default function NewListingScreen() {
   const [type, setType] = useState("Apartment");
   const [price, setPrice] = useState("");
   const [cleaning, setCleaning] = useState("800");
+  const [policy, setPolicy] = useState<CancellationPolicy>("flexible");
   const [guests, setGuests] = useState("2");
   const [bedrooms, setBedrooms] = useState("1");
   const [baths, setBaths] = useState("1");
@@ -81,6 +83,7 @@ export default function NewListingScreen() {
           baths: parseInt(baths) || 1,
           description: description.trim(),
           amenities,
+          cancellation_policy: policy,
           images: uploadedImages,
           published,
         },
@@ -201,6 +204,9 @@ export default function NewListingScreen() {
               <TextInput value={baths} onChangeText={setBaths} keyboardType="number-pad" style={styles.input} />
             </Field>
           </View>
+
+          <Text style={[styles.sectionLabel, { marginTop: 24 }]}>IF A GUEST CANCELS</Text>
+          <CancellationChoice value={policy} onChange={setPolicy} />
 
           <Text style={[styles.sectionLabel, { marginTop: 24 }]} testID="amenities-section" accessibilityLabel="AMENITIES">AMENITIES</Text>
           <View style={styles.amenGrid}>

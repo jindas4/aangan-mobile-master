@@ -22,6 +22,7 @@ import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { api, PaymentInitResponse, PaymentConfirmResponse } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { openCashfreeCheckout } from "@/lib/cashfree";
+import { policyLine } from "@/components/CancellationChoice";
 import { inr } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { GlassSheet } from "@/components/GlassSheet";
@@ -38,12 +39,14 @@ const METHODS: { key: Method; label: string; sub: string; icon: keyof typeof Ion
 interface Props {
   bookingId: string;
   totalInr: number;
+  /** The listing's policy — shown once more before the guest pays. */
+  cancellationPolicy?: string | null;
   onClose: () => void;
   /** Called with the booking status the server reported after payment. */
   onPaid: (bookingStatus: string) => void;
 }
 
-export function CheckoutSheet({ bookingId, totalInr, onClose, onPaid }: Props) {
+export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose, onPaid }: Props) {
   const [method, setMethod] = useState<Method>("upi");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -174,6 +177,9 @@ export function CheckoutSheet({ bookingId, totalInr, onClose, onPaid }: Props) {
       <Text style={styles.helperText}>
         You won't be charged until the host confirms your stay.
       </Text>
+      <Text style={[styles.helperText, cancellationPolicy === "non_refundable" && styles.strictText]}>
+        {policyLine(cancellationPolicy)}
+      </Text>
     </GlassSheet>
   );
 }
@@ -207,6 +213,7 @@ const styles = StyleSheet.create({
   },
   radioOn: { borderColor: Colors.terra },
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.terra },
+  strictText: { color: Colors.error, fontWeight: "700", marginTop: 6 },
   errorText: { fontSize: 13, color: Colors.error, marginTop: 12, fontWeight: "600" },
   helperText: {
     fontSize: 11.5, color: Colors.charcoal3,

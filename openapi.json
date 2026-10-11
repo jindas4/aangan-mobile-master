@@ -621,6 +621,18 @@
       },
       "BookingOut": {
         "properties": {
+          "cancellation_policy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "flexible",
+            "title": "Cancellation Policy"
+          },
           "cleaning_inr": {
             "title": "Cleaning Inr",
             "type": "integer"
@@ -733,6 +745,18 @@
       },
       "BookingWithListing": {
         "properties": {
+          "cancellation_policy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "flexible",
+            "title": "Cancellation Policy"
+          },
           "cleaning_inr": {
             "title": "Cleaning Inr",
             "type": "integer"
@@ -1749,6 +1773,11 @@
             "title": "Bedrooms",
             "type": "integer"
           },
+          "cancellation_policy": {
+            "default": "flexible",
+            "title": "Cancellation Policy",
+            "type": "string"
+          },
           "city": {
             "title": "City",
             "type": "string"
@@ -1887,6 +1916,12 @@
             "default": 1,
             "title": "Bedrooms",
             "type": "integer"
+          },
+          "cancellation_policy": {
+            "default": "flexible",
+            "pattern": "^(flexible|non_refundable)$",
+            "title": "Cancellation Policy",
+            "type": "string"
           },
           "capture_code": {
             "anyOf": [
@@ -2118,6 +2153,11 @@
             "title": "Bedrooms",
             "type": "integer"
           },
+          "cancellation_policy": {
+            "default": "flexible",
+            "title": "Cancellation Policy",
+            "type": "string"
+          },
           "city": {
             "title": "City",
             "type": "string"
@@ -2284,6 +2324,18 @@
               }
             ],
             "title": "Bedrooms"
+          },
+          "cancellation_policy": {
+            "anyOf": [
+              {
+                "pattern": "^(flexible|non_refundable)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cancellation Policy"
           },
           "cleaning_fee_inr": {
             "anyOf": [

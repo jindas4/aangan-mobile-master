@@ -12,6 +12,7 @@ import {
   FlatList,
   RefreshControl,
 } from "react-native";
+import { CancellationChoice, type CancellationPolicy } from "@/components/CancellationChoice";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -43,6 +44,7 @@ export default function ManageListingScreen() {
   const [editTitle, setEditTitle] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editCleaning, setEditCleaning] = useState("");
+  const [editPolicy, setEditPolicy] = useState<CancellationPolicy>("flexible");
   const [editDescription, setEditDescription] = useState("");
   const [editGuests, setEditGuests] = useState("");
   const [editBedrooms, setEditBedrooms] = useState("");
@@ -63,6 +65,7 @@ export default function ManageListingScreen() {
       setEditTitle(l.title);
       setEditPrice(String(l.price_inr));
       setEditCleaning(String(l.cleaning_fee_inr ?? 0));
+      setEditPolicy(l.cancellation_policy === "non_refundable" ? "non_refundable" : "flexible");
       setEditDescription(l.description || "");
       setEditGuests(String(l.guests));
       setEditBedrooms(String(l.bedrooms));
@@ -132,6 +135,7 @@ export default function ManageListingScreen() {
           bedrooms: parseInt(editBedrooms) || listing.bedrooms,
           baths: parseInt(editBaths) || listing.baths,
           amenities: editAmenities,
+          cancellation_policy: editPolicy,
         },
       });
       setListing(updated);
@@ -326,6 +330,9 @@ export default function ManageListingScreen() {
               <EditField label="Title" value={editTitle} onChangeText={setEditTitle} />
               <EditField label="Price per night (₹)" value={editPrice} onChangeText={setEditPrice} keyboardType="number-pad" />
               <EditField label="Cleaning fee (₹/stay — goes to you)" value={editCleaning} onChangeText={setEditCleaning} keyboardType="number-pad" />
+              <Text style={styles.policyLabel}>If a guest cancels</Text>
+              <CancellationChoice value={editPolicy} onChange={setEditPolicy} />
+              <Text style={styles.policyNote}>Applies to new bookings. Bookings already made keep the policy they were booked under.</Text>
               <View style={styles.editRow}>
                 <EditField label="Guests" value={editGuests} onChangeText={setEditGuests} keyboardType="number-pad" style={{ flex: 1 }} />
                 <EditField label="Bedrooms" value={editBedrooms} onChangeText={setEditBedrooms} keyboardType="number-pad" style={{ flex: 1 }} />
@@ -412,6 +419,9 @@ export default function ManageListingScreen() {
             </View>
           ) : (
             <>
+              <Text style={styles.policyView}>
+                If a guest cancels: {listing.cancellation_policy === "non_refundable" ? "Non-refundable" : "Refundable (standard rules)"}
+              </Text>
               {/* Quick stats */}
               <View style={styles.statsRow}>
                 <View style={styles.stat}>
@@ -528,6 +538,9 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+  policyLabel: { fontSize: 12, fontWeight: "700", color: Colors.charcoal2, marginTop: 14, marginBottom: 8 },
+  policyNote: { fontSize: 11.5, color: Colors.charcoal3, marginBottom: 6 },
+  policyView: { fontSize: 13, color: Colors.charcoal2, marginTop: 12 },
   safe: { flex: 1, backgroundColor: Colors.cream },
   header: {
     flexDirection: "row", alignItems: "center",

@@ -10,6 +10,7 @@ import {
   Alert,
   FlatList,
 } from "react-native";
+import { policyLine } from "@/components/CancellationChoice";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -544,6 +545,10 @@ export default function ListingDetailScreen() {
               </View>
             )}
 
+            <Text style={[styles.cancelPolicy, listing.cancellation_policy === "non_refundable" && styles.cancelPolicyStrict]}>
+              {policyLine(listing.cancellation_policy)}
+            </Text>
+
             <Button
               title={
                 booking ? "Booking…" :
@@ -569,6 +574,7 @@ export default function ListingDetailScreen() {
         <CheckoutSheet
           bookingId={checkoutBookingId}
           totalInr={quote.total_inr}
+          cancellationPolicy={listing.cancellation_policy}
           onClose={() => setCheckoutBookingId(null)}
           onPaid={onPaid}
         />
@@ -602,6 +608,8 @@ function QuoteLine({ label, value, bold }: { label: string; value: string; bold?
 }
 
 const styles = StyleSheet.create({
+  cancelPolicy: { fontSize: 12.5, lineHeight: 18, color: Colors.charcoal2, marginTop: 12, textAlign: "center" },
+  cancelPolicyStrict: { color: Colors.error, fontWeight: "700" },
   safe: {
     flex: 1,
     backgroundColor: Colors.cream,

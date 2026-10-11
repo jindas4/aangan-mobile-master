@@ -3155,6 +3155,11 @@ export interface components {
         };
         /** BookingOut */
         BookingOut: {
+            /**
+             * Cancellation Policy
+             * @default flexible
+             */
+            cancellation_policy: string | null;
             /** Cleaning Inr */
             cleaning_inr: number;
             /**
@@ -3208,6 +3213,11 @@ export interface components {
         BookingStatus: "pending" | "confirmed" | "cancelled" | "completed" | "refunded";
         /** BookingWithListing */
         BookingWithListing: {
+            /**
+             * Cancellation Policy
+             * @default flexible
+             */
+            cancellation_policy: string | null;
             /** Cleaning Inr */
             cleaning_inr: number;
             /**
@@ -3649,6 +3659,11 @@ export interface components {
             baths: number;
             /** Bedrooms */
             bedrooms: number;
+            /**
+             * Cancellation Policy
+             * @default flexible
+             */
+            cancellation_policy: string;
             /** City */
             city: string;
             /** Distance Note */
@@ -3727,6 +3742,11 @@ export interface components {
              * @default 1
              */
             bedrooms: number;
+            /**
+             * Cancellation Policy
+             * @default flexible
+             */
+            cancellation_policy: string;
             /** Capture Code */
             capture_code?: string | null;
             /** City */
@@ -3845,6 +3865,11 @@ export interface components {
             baths: number;
             /** Bedrooms */
             bedrooms: number;
+            /**
+             * Cancellation Policy
+             * @default flexible
+             */
+            cancellation_policy: string;
             /** City */
             city: string;
             /** Cleaning Fee Inr */
@@ -3917,6 +3942,8 @@ export interface components {
             baths?: number | null;
             /** Bedrooms */
             bedrooms?: number | null;
+            /** Cancellation Policy */
+            cancellation_policy?: string | null;
             /** Cleaning Fee Inr */
             cleaning_fee_inr?: number | null;
             /** Description */
