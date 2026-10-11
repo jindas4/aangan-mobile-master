@@ -3260,6 +3260,8 @@ export interface components {
             guests: number;
             /** Host Id */
             host_id: string;
+            /** Host Name */
+            host_name?: string | null;
             /** Id */
             id: string;
             /** Listing Area */

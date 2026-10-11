@@ -799,6 +799,17 @@
             "title": "Host Id",
             "type": "string"
           },
+          "host_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Host Name"
+          },
           "id": {
             "title": "Id",
             "type": "string"

@@ -144,7 +144,8 @@ function BookingCard({
     <TouchableOpacity
       style={styles.bookingCard}
       activeOpacity={0.9}
-      onPress={() => router.push(`/listing/${booking.listing_id}`)}
+      onPress={() => router.push(`/trips/${booking.id}`)}
+      accessibilityLabel={`Booking details for ${booking.listing_title}`}
     >
       {booking.listing_image && (
         <RemoteImage

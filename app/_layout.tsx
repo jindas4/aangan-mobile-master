@@ -93,6 +93,7 @@ function RootLayout() {
         <Stack.Screen name="host/listings/[id]" />
         <Stack.Screen name="host/profile" />
         <Stack.Screen name="account/verify" />
+        <Stack.Screen name="trips/[id]" />
         <Stack.Screen name="account/edit" />
         <Stack.Screen name="account/delete" />
       </Stack>

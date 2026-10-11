@@ -285,6 +285,8 @@ export interface BookingWithListing extends BookingOut {
   listing_image?: string;
   /** Who booked — present only when the viewer is the host. */
   guest_name?: string | null;
+  /** Who is hosting — present only when the viewer is the guest, on a single booking. */
+  host_name?: string | null;
 }
 
 export interface AvailabilityResponse {
