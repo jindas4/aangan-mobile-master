@@ -38,19 +38,22 @@ export function imageUrl(url: string): string {
   return `https://backend-service-production-2df4.up.railway.app${url}`;
 }
 
-/** Derive a resized WebP variant URL from an original upload URL.
+// One of our uploads: …/images/<owner>/<id>.<ext>, with or without a signature after it.
+const UPLOAD_RE = /\/images\/(usr_[A-Za-z0-9_-]+)\/([A-Za-z0-9_-]+)\.[A-Za-z0-9]+(?:\?|$)/;
+const MEDIA_BASE = process.env.EXPO_PUBLIC_API_URL || "https://backend-service-production-2df4.up.railway.app";
+
+/**
+ * The address of a small copy of a listing photo — thumb (320 px), medium
+ * (800 px) or large (1600 px) — instead of the multi-MB original.
  *
- * The backend worker renders every upload into thumb(320)/medium(960)/
- * large(1920) WebP files at `images/<user>/<size>/<id>.webp` — a fraction of
- * the original's bytes, which matters a lot on 4G. Mirrors the web app's
- * lib/format.imageVariantUrl; URLs that don't match the convention pass
- * through unchanged. Use via <RemoteImage>, which falls back to the original
- * if a variant hasn't been rendered yet. */
+ * The copies live at a fixed address on our API, so the app caches them on
+ * the phone; the signed link for the original is different every time and is
+ * downloaded again on each visit. Anything that isn't one of our uploads
+ * passes through unchanged. Use via <RemoteImage>, which falls back to the
+ * original if a copy can't be loaded. Mirrors the web app's lib/format.
+ */
 export function imageVariantUrl(url: string, size: "thumb" | "medium" | "large"): string {
-  if (!url || !url.includes("/images/")) return url;
-  const [prefix, remaining] = url.split("/images/");
-  const parts = remaining.split("/");
-  if (parts.length !== 2) return url;
-  const fileId = parts[1].split(".")[0];
-  return `${prefix}/images/${parts[0]}/${size}/${fileId}.webp`;
+  if (!url) return url;
+  const m = UPLOAD_RE.exec(url);
+  return m ? `${MEDIA_BASE}/api/media/images/${m[1]}/${size}/${m[2]}.webp` : url;
 }

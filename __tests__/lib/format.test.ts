@@ -75,11 +75,18 @@ describe("imageUrl", () => {
 describe("imageVariantUrl", () => {
   const original = "https://cdn.example.com/images/usr_abc123/xYz9.jpg";
 
-  it("derives the sized WebP variant for standard upload keys", () => {
-    expect(imageVariantUrl(original, "thumb"))
-      .toBe("https://cdn.example.com/images/usr_abc123/thumb/xYz9.webp");
-    expect(imageVariantUrl(original, "large"))
-      .toBe("https://cdn.example.com/images/usr_abc123/large/xYz9.webp");
+  const API = "https://backend-service-production-2df4.up.railway.app";
+
+  it("points at the small copy on our API, at an address that never changes", () => {
+    expect(imageVariantUrl(original, "thumb")).toBe(`${API}/api/media/images/usr_abc123/thumb/xYz9.webp`);
+    expect(imageVariantUrl(original, "large")).toBe(`${API}/api/media/images/usr_abc123/large/xYz9.webp`);
+  });
+
+  it("ignores the signature on a signed link, so the result is the same on every load", () => {
+    const signed = "https://bucket.t3.storageapi.dev/bucket/images/usr_abc123/xYz9.jpg?X-Amz-Date=20261011T000000Z&X-Amz-Signature=abc";
+    const later = signed.replace("Signature=abc", "Signature=def").replace("T000000Z", "T060000Z");
+    expect(imageVariantUrl(signed, "medium")).toBe(`${API}/api/media/images/usr_abc123/medium/xYz9.webp`);
+    expect(imageVariantUrl(later, "medium")).toBe(imageVariantUrl(signed, "medium"));
   });
 
   it("passes through URLs that don't match the upload key convention", () => {

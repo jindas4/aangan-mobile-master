@@ -2434,6 +2434,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/media/images/{owner}/{size}/{filename}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Resized Image */
+        get: operations["resized_image_api_media_images__owner___size___filename__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/payments/cashfree/webhook": {
         parameters: {
             query?: never;
@@ -9902,6 +9919,39 @@ export interface operations {
                 authorization?: string | null;
             };
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resized_image_api_media_images__owner___size___filename__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                owner: string;
+                size: string;
+                filename: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

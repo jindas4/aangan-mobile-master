@@ -13968,6 +13968,64 @@
         ]
       }
     },
+    "/api/media/images/{owner}/{size}/{filename}": {
+      "get": {
+        "operationId": "resized_image_api_media_images__owner___size___filename__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "owner",
+            "required": true,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "size",
+            "required": true,
+            "schema": {
+              "title": "Size",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "title": "Filename",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resized Image",
+        "tags": [
+          "media"
+        ]
+      }
+    },
     "/api/payments/cashfree/webhook": {
       "post": {
         "description": "Cashfree webhook receiver (version 2025-01-01).\n\nConfigure in Cashfree Dashboard \u2192 Developers \u2192 Webhooks with the URL\n`/api/payments/cashfree/webhook`, subscribed to payment success, payment\nfailed and refund status. The signature is HMAC-SHA256 over\n`timestamp + raw body` with the secret key \u2014 verified on the raw bytes,\nbefore any parsing. Deliveries are de-duplicated on `x-idempotency-key`.",
