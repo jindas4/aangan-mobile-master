@@ -187,6 +187,9 @@ export default function HostDashboardScreen() {
               <TouchableOpacity key={b.id} style={styles.bookingRow} onPress={() => router.push(`/host/bookings/${b.id}`)}>
                 <View style={styles.bookingLeft}>
                   <Text style={styles.bookingGuest}>
+                    {b.guest_name || "Guest"}
+                  </Text>
+                  <Text style={styles.bookingDates} numberOfLines={1}>
                     {b.listing_title}
                   </Text>
                   <Text style={styles.bookingDates}>

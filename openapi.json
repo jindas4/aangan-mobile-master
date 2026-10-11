@@ -746,6 +746,17 @@
             "title": "Guest Id",
             "type": "string"
           },
+          "guest_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guest Name"
+          },
           "guests": {
             "title": "Guests",
             "type": "integer"

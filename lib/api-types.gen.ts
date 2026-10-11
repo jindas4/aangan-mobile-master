@@ -3203,6 +3203,8 @@ export interface components {
             end_date: string;
             /** Guest Id */
             guest_id: string;
+            /** Guest Name */
+            guest_name?: string | null;
             /** Guests */
             guests: number;
             /** Host Id */

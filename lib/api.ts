@@ -276,6 +276,8 @@ export interface BookingWithListing extends BookingOut {
   listing_area: string;
   listing_scene: Scene;
   listing_image?: string;
+  /** Who booked — present only when the viewer is the host. */
+  guest_name?: string | null;
 }
 
 export interface AvailabilityResponse {

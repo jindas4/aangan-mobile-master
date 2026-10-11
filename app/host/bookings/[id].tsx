@@ -185,6 +185,7 @@ export default function HostBookingDetailScreen() {
           <DetailRow icon="calendar-outline" label="Check-in" value={fullDate(booking.start_date)} />
           <DetailRow icon="calendar-outline" label="Check-out" value={fullDate(booking.end_date)} />
           <DetailRow icon="moon-outline" label="Nights" value={String(booking.nights)} />
+          <DetailRow icon="person-outline" label="Booked by" value={booking.guest_name || "Guest"} />
           <DetailRow icon="people-outline" label="Guests" value={String(booking.guests)} />
         </View>
 
