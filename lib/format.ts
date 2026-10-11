@@ -44,7 +44,7 @@ const MEDIA_BASE = process.env.EXPO_PUBLIC_API_URL || "https://backend-service-p
 
 /**
  * The address of a small copy of a listing photo — thumb (320 px), medium
- * (800 px) or large (1600 px) — instead of the multi-MB original.
+ * (1080 px) or large (1600 px) — instead of the multi-MB original.
  *
  * The copies live at a fixed address on our API, so the app caches them on
  * the phone; the signed link for the original is different every time and is
