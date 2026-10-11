@@ -330,6 +330,14 @@
             "title": "Nights",
             "type": "integer"
           },
+          "nights_total_inr": {
+            "title": "Nights Total Inr",
+            "type": "integer"
+          },
+          "price_per_night_inr": {
+            "title": "Price Per Night Inr",
+            "type": "integer"
+          },
           "service_inr": {
             "title": "Service Inr",
             "type": "integer"
@@ -346,6 +354,8 @@
         "required": [
           "available",
           "nights",
+          "price_per_night_inr",
+          "nights_total_inr",
           "nightly_inr",
           "cleaning_inr",
           "service_inr",

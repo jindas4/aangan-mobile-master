@@ -530,10 +530,11 @@ export default function ListingDetailScreen() {
 
             {quote && quote.available && (
               <View style={styles.quoteCard}>
-                {/* The availability quote's nightly_inr is the subtotal for all nights. */}
+                {/* Rate × nights = total for the nights. (quote.nightly_inr is the old
+                    name for that total — a fallback until every server has the new fields.) */}
                 <QuoteLine
-                  label={`${inr(listing.price_inr)} × ${quote.nights} night${quote.nights === 1 ? "" : "s"}`}
-                  value={inr(quote.nightly_inr)}
+                  label={`${inr(quote.price_per_night_inr ?? listing.price_inr)} × ${quote.nights} night${quote.nights === 1 ? "" : "s"}`}
+                  value={inr(quote.nights_total_inr ?? quote.nightly_inr)}
                 />
                 <QuoteLine label="Cleaning fee" value={inr(quote.cleaning_inr)} />
                 <QuoteLine label="Service fee" value={inr(quote.service_inr)} />

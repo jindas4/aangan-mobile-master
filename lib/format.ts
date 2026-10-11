@@ -1,5 +1,5 @@
 export function inr(n: number | null | undefined): string {
-  return "₹" + (n ?? 0).toLocaleString("en-IN");
+  return "₹" + (n ?? 0).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 }
 
 /**

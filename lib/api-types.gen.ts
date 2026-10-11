@@ -3016,6 +3016,10 @@ export interface components {
             nightly_inr: number;
             /** Nights */
             nights: number;
+            /** Nights Total Inr */
+            nights_total_inr: number;
+            /** Price Per Night Inr */
+            price_per_night_inr: number;
             /** Service Inr */
             service_inr: number;
             /** Tax Inr */

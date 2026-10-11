@@ -258,6 +258,7 @@ export interface BookingOut {
   end_date: string;
   nights: number;
   guests: number;
+  /** Per-night rate on a booking (the stay costs nightly_inr × nights). */
   nightly_inr: number;
   cleaning_inr: number;
   service_inr: number;
@@ -283,6 +284,10 @@ export interface BookingWithListing extends BookingOut {
 export interface AvailabilityResponse {
   available: boolean;
   nights: number;
+  /** Price line: price_per_night_inr × nights = nights_total_inr. */
+  price_per_night_inr?: number;
+  nights_total_inr?: number;
+  /** Deprecated — the total for all nights, not a per-night rate. */
   nightly_inr: number;
   cleaning_inr: number;
   service_inr: number;
