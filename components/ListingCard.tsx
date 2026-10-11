@@ -36,6 +36,7 @@ export function ListingCardItem({ listing, wide }: Props) {
         {imgSrc ? (
           <RemoteImage
             url={img!.url}
+            blur={img!.blur}
             size="medium"
             style={styles.image}
             contentFit="cover"

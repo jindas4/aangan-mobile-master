@@ -3849,6 +3849,8 @@ export interface components {
         };
         /** ListingImageOut */
         ListingImageOut: {
+            /** Blur */
+            blur?: string | null;
             /** Id */
             id: number;
             /** Label */

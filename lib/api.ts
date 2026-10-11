@@ -203,6 +203,8 @@ export interface ListingImage {
   url: string;
   position: number;
   label?: string;
+  /** Tiny data: URI preview to show while the photo loads. In lists only the cover has one. */
+  blur?: string | null;
 }
 
 export interface ListingCard {

@@ -2049,6 +2049,17 @@
       },
       "ListingImageOut": {
         "properties": {
+          "blur": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blur"
+          },
           "id": {
             "title": "Id",
             "type": "integer"

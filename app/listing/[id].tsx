@@ -216,6 +216,7 @@ export default function ListingDetailScreen() {
               <TouchableOpacity activeOpacity={0.9} onPress={() => { setImgIndex(i); setViewerOpen(true); }}>
                 <RemoteImage
                   url={item.url}
+                  blur={item.blur}
                   size="large"
                   style={styles.carouselImage}
                   contentFit="cover"
