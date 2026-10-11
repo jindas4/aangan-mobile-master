@@ -11505,6 +11505,63 @@
         ]
       }
     },
+    "/api/invoices/booking/{booking_id}/credit-notes": {
+      "get": {
+        "description": "Credit notes issued against this booking's invoice \u2014 one per refund.",
+        "operationId": "credit_notes_for_booking_api_invoices_booking__booking_id__credit_notes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Credit Notes For Booking",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
     "/api/invoices/booking/{booking_id}/issue": {
       "post": {
         "operationId": "issue_api_invoices_booking__booking_id__issue_post",
