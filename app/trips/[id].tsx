@@ -93,7 +93,7 @@ export default function TripDetailScreen() {
   const st = STATUS[b.status] ?? STATUS.pending;
   const credits = b.credits_inr ?? 0;
   const canCancel = b.status === "pending" || b.status === "confirmed";
-  const canReview = b.status === "confirmed" || b.status === "completed";
+  const canReview = !b.reviewed && (b.status === "confirmed" || b.status === "completed");
   const active = b.status !== "cancelled" && b.status !== "refunded";
 
   return (
@@ -167,6 +167,7 @@ export default function TripDetailScreen() {
         <View style={styles.actions}>
           {active && <Button title="Message host" onPress={messageHost} full />}
           {canReview && <Button title="Write a review" onPress={() => setReviewing(true)} variant="outline" full style={{ marginTop: 10 }} />}
+          {b.reviewed && <Text style={styles.reviewed}>You reviewed this stay ✓</Text>}
           {canCancel && (
             <TouchableOpacity style={styles.cancelBtn} onPress={() => setCancelling(true)}>
               <Text style={styles.cancelBtnText}>Cancel booking</Text>
@@ -190,7 +191,10 @@ export default function TripDetailScreen() {
           bookingId={b.id}
           listingTitle={b.listing_title}
           onClose={() => setReviewing(false)}
-          onPosted={() => setReviewing(false)}
+          onPosted={() => {
+            setReviewing(false);
+            load();
+          }}
         />
       )}
     </SafeAreaView>
@@ -254,6 +258,7 @@ const styles = StyleSheet.create({
   policyStrict: { color: Colors.error, fontWeight: "700" },
   policyNote: { fontSize: 12.5, color: Colors.charcoal3, marginTop: 8 },
   actions: { marginHorizontal: 16, marginTop: 4 },
+  reviewed: { textAlign: "center", fontSize: 13, fontWeight: "700", color: Colors.charcoal3, marginTop: 12 },
   cancelBtn: {
     marginTop: 10, minHeight: 46, borderRadius: Radius.md, borderWidth: 1.5, borderColor: Colors.error,
     alignItems: "center", justifyContent: "center",

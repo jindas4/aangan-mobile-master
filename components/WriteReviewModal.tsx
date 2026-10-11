@@ -33,6 +33,9 @@ export function WriteReviewModal({ bookingId, listingTitle, onClose, onPosted }:
       });
       onPosted();
     } catch (e: any) {
+      // Already reviewed (e.g. posted from the website): nothing more to do,
+      // so close as if it had just been posted.
+      if (e?.status === 409) { onPosted(); return; }
       setErr(e.message || "Couldn't post your review");
     } finally {
       setBusy(false);

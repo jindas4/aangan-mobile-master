@@ -864,6 +864,11 @@
             ],
             "title": "Payment Id"
           },
+          "reviewed": {
+            "default": false,
+            "title": "Reviewed",
+            "type": "boolean"
+          },
           "service_inr": {
             "title": "Service Inr",
             "type": "integer"

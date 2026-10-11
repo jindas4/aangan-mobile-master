@@ -287,6 +287,8 @@ export interface BookingWithListing extends BookingOut {
   guest_name?: string | null;
   /** Who is hosting — present only when the viewer is the guest, on a single booking. */
   host_name?: string | null;
+  /** The guest has already reviewed this stay (one review per booking). */
+  reviewed?: boolean;
 }
 
 export interface AvailabilityResponse {

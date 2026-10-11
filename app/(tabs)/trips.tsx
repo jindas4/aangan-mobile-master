@@ -179,7 +179,7 @@ function BookingCard({
 
         {(() => {
           const canCancel = booking.status === "pending" || booking.status === "confirmed";
-          const canReview = booking.status === "confirmed" || booking.status === "completed";
+          const canReview = !booking.reviewed && (booking.status === "confirmed" || booking.status === "completed");
           if (!canCancel && !canReview) return null;
           return (
             <View style={styles.actionRow}>

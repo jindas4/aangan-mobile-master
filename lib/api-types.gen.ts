@@ -3282,6 +3282,11 @@ export interface components {
             nights: number;
             /** Payment Id */
             payment_id?: string | null;
+            /**
+             * Reviewed
+             * @default false
+             */
+            reviewed: boolean;
             /** Service Inr */
             service_inr: number;
             /**
