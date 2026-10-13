@@ -22,7 +22,8 @@ import { api, ListingFull, BookingWithListing, WEB_BASE } from "@/lib/api";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
-import { inr, fullDate, imageUrl, hostTakeHome, HOST_FEE_PCT, HOST_FEE_DIRECT_PCT } from "@/lib/format";
+import { inr, fullDate, imageUrl } from "@/lib/format";
+import { PayoutPreview } from "@/components/PayoutPreview";
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
 
@@ -330,13 +331,8 @@ export default function ManageListingScreen() {
               <Text style={styles.sectionTitle}>Edit listing</Text>
               <EditField label="Title" value={editTitle} onChangeText={setEditTitle} />
               <EditField label="Price per night (₹)" value={editPrice} onChangeText={setEditPrice} keyboardType="number-pad" />
-              {parseInt(editPrice) > 0 ? (
-                <Text style={styles.policyNote}>
-                  You keep about {inr(hostTakeHome(parseInt(editPrice)))} a night after our {HOST_FEE_PCT}% fee + GST
-                  ({inr(hostTakeHome(parseInt(editPrice), HOST_FEE_DIRECT_PCT))} on your own link).
-                </Text>
-              ) : null}
               <EditField label="Cleaning fee (₹/stay)" value={editCleaning} onChangeText={setEditCleaning} keyboardType="number-pad" />
+              <PayoutPreview price={parseInt(editPrice) || 0} cleaning={parseInt(editCleaning) || 0} />
               <Text style={styles.policyLabel}>If a guest cancels</Text>
               <CancellationChoice value={editPolicy} onChange={setEditPolicy} />
               <Text style={styles.policyNote}>Applies to new bookings. Bookings already made keep the policy they were booked under.</Text>

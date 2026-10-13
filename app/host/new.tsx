@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, Scene } from "@/lib/api";
-import { inr, hostTakeHome, HOST_FEE_PCT, HOST_FEE_DIRECT_PCT } from "@/lib/format";
+import { PayoutPreview } from "@/components/PayoutPreview";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
@@ -189,16 +189,11 @@ export default function NewListingScreen() {
 
           <Field label="Price per night (₹)">
             <TextInput value={price} onChangeText={setPrice} keyboardType="number-pad" placeholder="3500" placeholderTextColor={Colors.charcoal3} style={styles.input} />
-            {parseInt(price) > 0 ? (
-              <Text style={{ fontSize: 12, color: Colors.charcoal3, marginTop: 6 }}>
-                You keep about {inr(hostTakeHome(parseInt(price)))} a night after our {HOST_FEE_PCT}% fee + GST
-                ({inr(hostTakeHome(parseInt(price), HOST_FEE_DIRECT_PCT))} on your own link).
-              </Text>
-            ) : null}
           </Field>
           <Field label="Cleaning fee (₹/stay, 0 for none)">
             <TextInput value={cleaning} onChangeText={setCleaning} keyboardType="number-pad" placeholder="800" placeholderTextColor={Colors.charcoal3} style={styles.input} />
           </Field>
+          <PayoutPreview price={parseInt(price) || 0} cleaning={parseInt(cleaning) || 0} />
 
           <View style={styles.row}>
             <Field label="Guests" style={{ flex: 1 }}>

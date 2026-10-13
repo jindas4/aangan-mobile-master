@@ -66,3 +66,22 @@ export const HOST_FEE_DIRECT_PCT = 5;
 export function hostTakeHome(amount: number, feePct: number = HOST_FEE_PCT): number {
   return Math.round((amount || 0) * (1 - (feePct / 100) * 1.18));
 }
+
+export interface HostPayoutEstimate {
+  guestPays: number; earnings: number; feePct: number; fee: number; feeGst: number; tds: number; payout: number;
+}
+/** What a host is paid for one booking, worked out the way the server does it
+ *  (backend pricing.py + payouts.py): fee on room + cleaning, 18% GST on the
+ *  fee, 0.1% TDS on room + cleaning. Amounts in rupees. */
+export function hostPayoutEstimate(pricePerNight: number, cleaning: number, nights: number,
+                                   feePct: number = HOST_FEE_PCT): HostPayoutEstimate {
+  const rupees = Math.max(pricePerNight || 0, 0) * Math.max(nights, 1) + Math.max(cleaning || 0, 0);
+  const feePaise = Math.floor((rupees * Math.round(feePct * 100) + 50) / 100);
+  const gstPaise = Math.floor((feePaise * 18 + 50) / 100);
+  const tdsPaise = Math.floor((rupees * 100 * 10) / 10000);
+  return {
+    guestPays: rupees + Math.round(rupees * 0.12), earnings: rupees, feePct,
+    fee: feePaise / 100, feeGst: gstPaise / 100, tds: tdsPaise / 100,
+    payout: (rupees * 100 - feePaise - gstPaise - tdsPaise) / 100,
+  };
+}
