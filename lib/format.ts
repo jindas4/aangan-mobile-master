@@ -80,7 +80,7 @@ export function hostPayoutEstimate(pricePerNight: number, cleaning: number, nigh
   const gstPaise = Math.floor((feePaise * 18 + 50) / 100);
   const tdsPaise = Math.floor((rupees * 100 * 10) / 10000);
   return {
-    guestPays: rupees + Math.round(rupees * 0.12), earnings: rupees, feePct,
+    guestPays: rupees + Math.round(rupees * gstPct(pricePerNight) / 100), earnings: rupees, feePct,
     fee: feePaise / 100, feeGst: gstPaise / 100, tds: tdsPaise / 100,
     payout: (rupees * 100 - feePaise - gstPaise - tdsPaise) / 100,
   };
@@ -89,4 +89,14 @@ export function hostPayoutEstimate(pricePerNight: number, cleaning: number, nigh
 /** Rupees with two decimals always — for columns of amounts that must line up. */
 export function inr2(n: number): string {
   return "₹" + (n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/** GST on a stay, by the price of a night. Keep in step with backend pricing.py. */
+export function gstPct(pricePerNight: number): number {
+  return pricePerNight <= 7500 ? 5 : 18;
+}
+/** A night's price with GST added — what a guest actually pays per night.
+ *  Uses the server's figure when it sent one. */
+export function nightWithTax(item: { price_inr: number; price_incl_tax_inr?: number }): number {
+  return item.price_incl_tax_inr || item.price_inr + Math.round(item.price_inr * gstPct(item.price_inr) / 100);
 }

@@ -346,6 +346,11 @@
             "title": "Tax Inr",
             "type": "integer"
           },
+          "tax_pct": {
+            "default": 0,
+            "title": "Tax Pct",
+            "type": "integer"
+          },
           "total_inr": {
             "title": "Total Inr",
             "type": "integer"
@@ -707,6 +712,17 @@
             "title": "Tax Inr",
             "type": "integer"
           },
+          "tax_pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Pct"
+          },
           "total_inr": {
             "title": "Total Inr",
             "type": "integer"
@@ -756,6 +772,18 @@
             ],
             "default": "flexible",
             "title": "Cancellation Policy"
+          },
+          "checkin_problem_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkin Problem At"
           },
           "cleaning_inr": {
             "title": "Cleaning Inr",
@@ -894,6 +922,17 @@
           "tax_inr": {
             "title": "Tax Inr",
             "type": "integer"
+          },
+          "tax_pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tax Pct"
           },
           "total_inr": {
             "title": "Total Inr",
@@ -1312,6 +1351,21 @@
           "message"
         ],
         "title": "ChatRequest",
+        "type": "object"
+      },
+      "CheckinProblem": {
+        "properties": {
+          "details": {
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Details",
+            "type": "string"
+          }
+        },
+        "required": [
+          "details"
+        ],
+        "title": "CheckinProblem",
         "type": "object"
       },
       "CollectionWrite": {
@@ -1834,8 +1888,89 @@
         "title": "KycDecision",
         "type": "object"
       },
+      "LeadIn": {
+        "properties": {
+          "city": {
+            "default": "",
+            "maxLength": 80,
+            "title": "City",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 600,
+            "title": "Note",
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 20,
+            "minLength": 10,
+            "title": "Phone",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 40,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "phone"
+        ],
+        "title": "LeadIn",
+        "type": "object"
+      },
+      "LeadUpdate": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 600,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "pattern": "^(contacted|interested|not_interested)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "LeadUpdate",
+        "type": "object"
+      },
       "ListingCardOut": {
         "properties": {
+          "alcohol_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alcohol Ok"
+          },
           "area": {
             "title": "Area",
             "type": "string"
@@ -1856,6 +1991,17 @@
           "city": {
             "title": "City",
             "type": "string"
+          },
+          "couples_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Couples Ok"
           },
           "distance_note": {
             "title": "Distance Note",
@@ -1895,9 +2041,30 @@
             "title": "Lng",
             "type": "number"
           },
+          "local_id_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Id Ok"
+          },
           "min_nights": {
             "default": 1,
             "title": "Min Nights",
+            "type": "integer"
+          },
+          "pet_friendly": {
+            "default": false,
+            "title": "Pet Friendly",
+            "type": "boolean"
+          },
+          "price_incl_tax_inr": {
+            "default": 0,
+            "title": "Price Incl Tax Inr",
             "type": "integer"
           },
           "price_inr": {
@@ -1925,6 +2092,33 @@
             "title": "Slug",
             "type": "string"
           },
+          "state_registered": {
+            "default": false,
+            "title": "State Registered",
+            "type": "boolean"
+          },
+          "stay_nights": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stay Nights"
+          },
+          "stay_total_inr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stay Total Inr"
+          },
           "tags": {
             "default": [],
             "items": {
@@ -1932,6 +2126,11 @@
             },
             "title": "Tags",
             "type": "array"
+          },
+          "tax_pct": {
+            "default": 0,
+            "title": "Tax Pct",
+            "type": "integer"
           },
           "title": {
             "title": "Title",
@@ -1970,6 +2169,17 @@
       },
       "ListingCreate": {
         "properties": {
+          "alcohol_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alcohol Ok"
+          },
           "amenities": {
             "default": [],
             "items": {
@@ -2018,6 +2228,17 @@
             "title": "Cleaning Fee Inr",
             "type": "integer"
           },
+          "couples_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Couples Ok"
+          },
           "description": {
             "default": "",
             "title": "Description",
@@ -2061,6 +2282,17 @@
             "title": "Lng",
             "type": "number"
           },
+          "local_id_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Id Ok"
+          },
           "min_nights": {
             "default": 1,
             "maximum": 90.0,
@@ -2082,6 +2314,18 @@
             "default": true,
             "title": "Published",
             "type": "boolean"
+          },
+          "registration_no": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration No"
           },
           "scene": {
             "title": "Scene",
@@ -2212,6 +2456,17 @@
               }
             ],
             "title": "Reason"
+          },
+          "registration_verified": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration Verified"
           }
         },
         "title": "ListingModerate",
@@ -2219,6 +2474,17 @@
       },
       "ListingOut": {
         "properties": {
+          "alcohol_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alcohol Ok"
+          },
           "amenities": {
             "default": [],
             "items": {
@@ -2251,6 +2517,17 @@
           "cleaning_fee_inr": {
             "title": "Cleaning Fee Inr",
             "type": "integer"
+          },
+          "couples_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Couples Ok"
           },
           "description": {
             "title": "Description",
@@ -2297,9 +2574,30 @@
             "title": "Lng",
             "type": "number"
           },
+          "local_id_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Id Ok"
+          },
           "min_nights": {
             "default": 1,
             "title": "Min Nights",
+            "type": "integer"
+          },
+          "pet_friendly": {
+            "default": false,
+            "title": "Pet Friendly",
+            "type": "boolean"
+          },
+          "price_incl_tax_inr": {
+            "default": 0,
+            "title": "Price Incl Tax Inr",
             "type": "integer"
           },
           "price_inr": {
@@ -2315,6 +2613,17 @@
             "title": "Rating",
             "type": "number"
           },
+          "registration_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration No"
+          },
           "reviews_count": {
             "title": "Reviews Count",
             "type": "integer"
@@ -2327,6 +2636,33 @@
             "title": "Slug",
             "type": "string"
           },
+          "state_registered": {
+            "default": false,
+            "title": "State Registered",
+            "type": "boolean"
+          },
+          "stay_nights": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stay Nights"
+          },
+          "stay_total_inr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stay Total Inr"
+          },
           "tags": {
             "default": [],
             "items": {
@@ -2334,6 +2670,11 @@
             },
             "title": "Tags",
             "type": "array"
+          },
+          "tax_pct": {
+            "default": 0,
+            "title": "Tax Pct",
+            "type": "integer"
           },
           "title": {
             "title": "Title",
@@ -2375,6 +2716,17 @@
       },
       "ListingUpdate": {
         "properties": {
+          "alcohol_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alcohol Ok"
+          },
           "amenities": {
             "anyOf": [
               {
@@ -2434,6 +2786,17 @@
             ],
             "title": "Cleaning Fee Inr"
           },
+          "couples_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Couples Ok"
+          },
           "description": {
             "anyOf": [
               {
@@ -2455,6 +2818,20 @@
               }
             ],
             "title": "Guests"
+          },
+          "house_rules_set": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "House Rules Set"
           },
           "images": {
             "anyOf": [
@@ -2491,6 +2868,17 @@
               }
             ],
             "title": "Jain Friendly"
+          },
+          "local_id_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Id Ok"
           },
           "min_nights": {
             "anyOf": [
@@ -2537,6 +2925,18 @@
               }
             ],
             "title": "Published"
+          },
+          "registration_no": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration No"
           },
           "tags": {
             "anyOf": [
@@ -3735,6 +4135,11 @@
           "min_booking_inr": {
             "default": 2000,
             "title": "Min Booking Inr",
+            "type": "integer"
+          },
+          "min_qualifying_stay_inr": {
+            "default": 4000,
+            "title": "Min Qualifying Stay Inr",
             "type": "integer"
           },
           "pending_inr": {
@@ -6442,6 +6847,66 @@
         ]
       }
     },
+    "/api/admin/funnel": {
+      "get": {
+        "description": "Guest funnel for the last `days` days (each step counts people, not\nevents) and the host funnel to date.",
+        "operationId": "funnel_report_api_admin_funnel_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 365,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Funnel Report",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/kyc": {
       "get": {
         "description": "Hosts by KYC state (default: pending \u2014 the actionable queue), with the\nmoney impact (payouts held for KYC) so ops can prioritise.",
@@ -6655,6 +7120,174 @@
           }
         },
         "summary": "Kyc Reject",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads": {
+      "get": {
+        "operationId": "list_leads_api_admin_leads_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Leads",
+        "tags": [
+          "admin"
+        ]
+      },
+      "post": {
+        "operationId": "add_lead_api_admin_leads_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Lead",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}": {
+      "patch": {
+        "operationId": "update_lead_api_admin_leads__lead_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Lead",
         "tags": [
           "admin"
         ]
@@ -10569,6 +11202,73 @@
         ]
       }
     },
+    "/api/bookings/{booking_id}/checkin-problem": {
+      "post": {
+        "description": "The check-in promise: a guest with a confirmed booking who is refused at\nthe door, or finds the place is not what they booked, reports it here on\nthe day. Support is alerted at once and the host's payout is held until\nit is looked at; support then refunds in full and helps find another stay\n(legal/cancellation). Reporting twice changes nothing.",
+        "operationId": "checkin_problem_api_bookings__booking_id__checkin_problem_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckinProblem"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Checkin Problem",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
     "/api/bookings/{booking_id}/decline": {
       "post": {
         "description": "Host declines a pending booking. Always a 100% refund \u2014 same as a\nhost-initiated cancellation.",
@@ -12586,6 +13286,54 @@
                 }
               ],
               "title": "Pet Friendly"
+            }
+          },
+          {
+            "in": "query",
+            "name": "couples",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Couples"
+            }
+          },
+          {
+            "in": "query",
+            "name": "local_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Local Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "alcohol",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Alcohol"
             }
           },
           {

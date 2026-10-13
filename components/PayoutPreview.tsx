@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, inr2, hostPayoutEstimate, HOST_FEE_PCT, HOST_FEE_DIRECT_PCT, HostPayoutEstimate } from "@/lib/format";
+import { inr, inr2, gstPct, hostPayoutEstimate, HOST_FEE_PCT, HOST_FEE_DIRECT_PCT, HostPayoutEstimate } from "@/lib/format";
 
 const MAX_NIGHTS = 90;
 
@@ -64,7 +64,7 @@ export function PayoutPreview({ price, cleaning }: { price: number; cleaning: nu
         </Text>
       </View>
       <Text style={styles.note}>
-        The guest pays {inr(m.guestPays)} either way, including 12% GST on the stay, and no service fee.
+        The guest pays {inr(m.guestPays)} either way, including {gstPct(price)}% GST on the stay, and no service fee.
         TDS is income tax paid in your name; you can claim it in your tax return.
       </Text>
     </View>

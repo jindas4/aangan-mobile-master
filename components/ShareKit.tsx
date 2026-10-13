@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Share,
+  ScrollView,
   Linking,
   Alert,
 } from "react-native";
@@ -24,6 +25,7 @@ interface Props {
 export function ShareKit({ slug, title, city }: Props) {
   const [copied, setCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
+  const [guestKitOpen, setGuestKitOpen] = useState(false);
   const url = `${WEB_BASE}/p/${slug}`;
 
   const copyLink = async () => {
@@ -77,6 +79,13 @@ export function ShareKit({ slug, title, city }: Props) {
           onPress={() => setQrOpen(true)}
         />
         <Chip
+          icon="people-outline"
+          label="Bring your guests"
+          color={Colors.charcoal2}
+          borderColor={Colors.edge}
+          onPress={() => setGuestKitOpen(true)}
+        />
+        <Chip
           icon="share-outline"
           label="Share"
           color={Colors.charcoal2}
@@ -88,6 +97,7 @@ export function ShareKit({ slug, title, city }: Props) {
       {qrOpen && (
         <QRModal url={url} title={title} city={city} onClose={() => setQrOpen(false)} />
       )}
+      {guestKitOpen && <GuestKit url={url} title={title} city={city} onClose={() => setGuestKitOpen(false)} />}
     </>
   );
 }
@@ -116,6 +126,80 @@ function Chip({
     </TouchableOpacity>
   );
 }
+
+/** Messages a host can send to people who have stayed with them, or enquired, before. */
+function guestMessages(title: string, city: string, url: string): { lang: string; text: string }[] {
+  return [
+    { lang: "English",
+      text: `Namaste! ${title} in ${city} can now be booked online. Choose your dates, pay safely by UPI or card, and get a GST invoice — no service fee for you.\n\nBook here: ${url}` },
+    { lang: "हिंदी",
+      text: `नमस्ते! ${city} में ${title} अब ऑनलाइन बुक किया जा सकता है। अपनी तारीखें चुनें, UPI या कार्ड से सुरक्षित भुगतान करें और GST बिल पाएँ — आपसे कोई सेवा शुल्क नहीं।\n\nयहाँ बुक करें: ${url}` },
+  ];
+}
+
+// "Bring your guests" — ready-made messages and where to put the link.
+function GuestKit({ url, title, city, onClose }: { url: string; title: string; city: string; onClose: () => void }) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = async (key: string, text: string) => {
+    await Clipboard.setStringAsync(text);
+    setCopied(key);
+    setTimeout(() => setCopied(null), 2000);
+  };
+  const sendWhatsApp = async (text: string) => {
+    const waUrl = `whatsapp://send?text=${encodeURIComponent(text)}`;
+    Linking.openURL((await Linking.canOpenURL(waUrl)) ? waUrl : `https://wa.me/?text=${encodeURIComponent(text)}`);
+  };
+  const tips: [string, string][] = [
+    ["Google Maps", "Open your Google Business Profile, choose Edit profile, and paste the link under Website (and under Booking, if your profile offers it)."],
+    ["Instagram and Facebook", "Put the link in your bio and in the page's Book now button."],
+    ["WhatsApp Business", "Add it to your business profile and to your quick replies for \"price?\" and \"available?\"."],
+    ["At the property", "Show the QR code at your reception or gate."],
+  ];
+  return (
+    <GlassSheet onClose={onClose} title="Bring your own guests">
+      <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+        <Text style={kit.lead}>
+          A guest whose first visit is through your own link is charged to you at 8% instead of 15.5% — about half — on every booking they make with you.
+        </Text>
+        <Text style={kit.step}>1 · MESSAGE PEOPLE WHO HAVE STAYED OR ENQUIRED BEFORE</Text>
+        {guestMessages(title, city, url).map((m) => (
+          <View key={m.lang} style={kit.card}>
+            <Text style={kit.lang}>{m.lang}</Text>
+            <Text style={kit.msg}>{m.text}</Text>
+            <View style={kit.btnRow}>
+              <TouchableOpacity style={kit.btn} onPress={() => copy(m.lang, m.text)} accessibilityRole="button">
+                <Text style={kit.btnText}>{copied === m.lang ? "Copied!" : "Copy message"}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={kit.btn} onPress={() => sendWhatsApp(m.text)} accessibilityRole="button">
+                <Text style={kit.btnText}>Send on WhatsApp</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+        <Text style={kit.step}>2 · PUT YOUR LINK WHERE PEOPLE ALREADY FIND YOU</Text>
+        {tips.map(([head, body]) => (
+          <Text key={head} style={kit.tip}><Text style={kit.tipHead}>{head}. </Text>{body}</Text>
+        ))}
+        <TouchableOpacity style={[kit.btn, { alignSelf: "flex-start", marginTop: 12 }]} onPress={() => copy("link", url)} accessibilityRole="button">
+          <Text style={kit.btnText}>{copied === "link" ? "Copied!" : "Copy your link"}</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </GlassSheet>
+  );
+}
+
+const kit = StyleSheet.create({
+  lead: { fontSize: 13.5, lineHeight: 20, color: Colors.charcoal2 },
+  step: { fontSize: 10.5, fontWeight: "800", letterSpacing: 1, color: Colors.charcoal3, marginTop: 20, marginBottom: 8 },
+  card: { borderWidth: 1, borderColor: Colors.line, borderRadius: Radius.md, padding: 12, marginBottom: 10, backgroundColor: Colors.cream },
+  lang: { fontSize: 11, fontWeight: "800", color: Colors.charcoal3, marginBottom: 4 },
+  msg: { fontSize: 13.5, lineHeight: 20, color: Colors.charcoal },
+  btnRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 10 },
+  btn: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, borderWidth: 1, borderColor: Colors.line, backgroundColor: Colors.paper },
+  btnText: { fontSize: 12.5, fontWeight: "700", color: Colors.charcoal },
+  tip: { fontSize: 13.5, lineHeight: 20, color: Colors.charcoal2, marginBottom: 8 },
+  tipHead: { fontWeight: "700", color: Colors.charcoal },
+});
 
 function QRModal({
   url,

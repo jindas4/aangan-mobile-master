@@ -24,6 +24,7 @@ import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { inr, fullDate, imageUrl } from "@/lib/format";
 import { PayoutPreview } from "@/components/PayoutPreview";
+import { HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
 
@@ -46,6 +47,8 @@ export default function ManageListingScreen() {
   const [editPrice, setEditPrice] = useState("");
   const [editCleaning, setEditCleaning] = useState("");
   const [editPolicy, setEditPolicy] = useState<CancellationPolicy>("flexible");
+  const [editRegNo, setEditRegNo] = useState("");
+  const [editRules, setEditRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
   const [editDescription, setEditDescription] = useState("");
   const [editGuests, setEditGuests] = useState("");
   const [editBedrooms, setEditBedrooms] = useState("");
@@ -65,6 +68,9 @@ export default function ManageListingScreen() {
     if (l) {
       setEditTitle(l.title);
       setEditPrice(String(l.price_inr));
+      setEditRegNo(l.registration_no ?? "");
+      setEditRules({ couples_ok: l.couples_ok ?? null, local_id_ok: l.local_id_ok ?? null,
+                     alcohol_ok: l.alcohol_ok ?? null, pet_friendly: !!l.pet_friendly });
       setEditCleaning(String(l.cleaning_fee_inr ?? 0));
       setEditPolicy(l.cancellation_policy === "non_refundable" ? "non_refundable" : "flexible");
       setEditDescription(l.description || "");
@@ -137,6 +143,9 @@ export default function ManageListingScreen() {
           baths: parseInt(editBaths) || listing.baths,
           amenities: editAmenities,
           cancellation_policy: editPolicy,
+          ...editRules,
+          registration_no: editRegNo.trim(),
+          house_rules_set: ["couples_ok", "local_id_ok", "alcohol_ok"],
         },
       });
       setListing(updated);
@@ -336,6 +345,14 @@ export default function ManageListingScreen() {
               <Text style={styles.policyLabel}>If a guest cancels</Text>
               <CancellationChoice value={editPolicy} onChange={setEditPolicy} />
               <Text style={styles.policyNote}>Applies to new bookings. Bookings already made keep the policy they were booked under.</Text>
+              <EditField label="State tourism registration number (optional)" value={editRegNo} onChangeText={setEditRegNo} />
+              <Text style={styles.policyNote}>
+                {listing.state_registered
+                  ? "Checked — your listing shows the State-registered badge. Changing the number removes it until we check again."
+                  : "Once we have checked the number, your listing shows a State-registered badge."}
+              </Text>
+              <Text style={styles.policyLabel}>House rules</Text>
+              <HouseRulesEditor value={editRules} onChange={setEditRules} />
               <View style={styles.editRow}>
                 <EditField label="Guests" value={editGuests} onChangeText={setEditGuests} keyboardType="number-pad" style={{ flex: 1 }} />
                 <EditField label="Bedrooms" value={editBedrooms} onChangeText={setEditBedrooms} keyboardType="number-pad" style={{ flex: 1 }} />

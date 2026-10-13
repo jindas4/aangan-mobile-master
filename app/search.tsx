@@ -50,6 +50,8 @@ export default function SearchScreen() {
   const [guests, setGuests] = useState(1);
   const [instant, setInstant] = useState(false);
   const [veg, setVeg] = useState(false);
+  // House rules: only stays whose host has said yes.
+  const [rules, setRules] = useState<Record<string, boolean>>({});
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [datesOpen, setDatesOpen] = useState(false);
@@ -69,6 +71,7 @@ export default function SearchScreen() {
     if (guests > 1) qs.set("guests", String(guests));
     if (instant) qs.set("instant", "true");
     if (veg) qs.set("veg", "true");
+    for (const [k, on] of Object.entries(rules)) if (on) qs.set(k, "true");
     if (checkIn && checkOut) {
       qs.set("start_date", checkIn);
       qs.set("end_date", checkOut);
@@ -79,7 +82,7 @@ export default function SearchScreen() {
     qs.set("limit", String(PAGE));
     if (offset > 0) qs.set("offset", String(offset));
     return qs;
-  }, [where, scene, guests, instant, veg, checkIn, checkOut, priceMin, priceMax, sort]);
+  }, [where, scene, guests, instant, veg, rules, checkIn, checkOut, priceMin, priceMax, sort]);
 
   const runSearch = useCallback(async () => {
     setLoading(true);
@@ -181,6 +184,13 @@ export default function SearchScreen() {
         <TouchableOpacity style={[styles.toggle, veg && styles.toggleActive]} onPress={() => setVeg((v) => !v)}>
           <Text style={[styles.toggleLabel, veg && styles.toggleLabelActive]}>Veg kitchen</Text>
         </TouchableOpacity>
+        {([["couples", "Couples welcome"], ["local_id", "Local ID accepted"], ["pet_friendly", "Pets welcome"], ["alcohol", "Alcohol allowed"]] as const).map(([k, label]) => (
+          <TouchableOpacity key={k} style={[styles.toggle, rules[k] && styles.toggleActive]}
+                            accessibilityRole="switch" accessibilityState={{ checked: !!rules[k] }}
+                            onPress={() => setRules((r) => ({ ...r, [k]: !r[k] }))}>
+            <Text style={[styles.toggleLabel, rules[k] && styles.toggleLabelActive]}>{label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       {/* dates + price */}

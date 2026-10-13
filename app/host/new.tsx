@@ -16,6 +16,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, Scene } from "@/lib/api";
 import { PayoutPreview } from "@/components/PayoutPreview";
+import { HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
@@ -48,6 +49,8 @@ export default function NewListingScreen() {
   const [price, setPrice] = useState("");
   const [cleaning, setCleaning] = useState("800");
   const [policy, setPolicy] = useState<CancellationPolicy>("flexible");
+  const [regNo, setRegNo] = useState("");
+  const [rules, setRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
   const [guests, setGuests] = useState("2");
   const [bedrooms, setBedrooms] = useState("1");
   const [baths, setBaths] = useState("1");
@@ -85,6 +88,8 @@ export default function NewListingScreen() {
           description: description.trim(),
           amenities,
           cancellation_policy: policy,
+          ...rules,
+          registration_no: regNo.trim() || null,
           images: uploadedImages,
           published,
         },
@@ -209,6 +214,17 @@ export default function NewListingScreen() {
 
           <Text style={[styles.sectionLabel, { marginTop: 24 }]}>IF A GUEST CANCELS</Text>
           <CancellationChoice value={policy} onChange={setPolicy} />
+
+          <Field label="State tourism registration number (optional)">
+            <TextInput value={regNo} onChangeText={setRegNo} maxLength={60} autoCapitalize="characters"
+                       placeholder="As printed on your certificate" placeholderTextColor={Colors.charcoal3} style={styles.input} />
+            <Text style={{ fontSize: 12, color: Colors.charcoal3, marginTop: 6, lineHeight: 17 }}>
+              Once we have checked it, your listing shows a "State-registered" badge.
+            </Text>
+          </Field>
+
+          <Text style={[styles.sectionLabel, { marginTop: 24 }]}>HOUSE RULES</Text>
+          <HouseRulesEditor value={rules} onChange={setRules} />
 
           <Text style={[styles.sectionLabel, { marginTop: 24 }]} testID="amenities-section" accessibilityLabel="AMENITIES">AMENITIES</Text>
           <View style={styles.amenGrid}>

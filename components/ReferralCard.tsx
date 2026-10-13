@@ -76,7 +76,7 @@ export function ReferralCard() {
       <Text style={styles.title}>Give ₹{data.referee_bonus_inr}, get ₹{data.referrer_reward_inr}</Text>
       <Text style={styles.body}>
         Friends get ₹{data.referee_bonus_inr} off their first stay. You get ₹{data.referrer_reward_inr} in
-        travel credit when they complete it.
+        travel credit when they complete a stay of {inr(data.min_qualifying_stay_inr ?? 4000)} or more booked on Aangan Stay.
       </Text>
 
       <View style={styles.codeRow}>
@@ -105,7 +105,8 @@ export function ReferralCard() {
         )}
       </View>
       <Text style={styles.note}>
-        Credits auto-apply on bookings of {inr(data.min_booking_inr)} or more.
+        Credits auto-apply on bookings of {inr(data.min_booking_inr)} or more. They are not applied to bookings made
+        through a host's own link.
       </Text>
 
       <View style={styles.applyRow}>

@@ -19,7 +19,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { api, ListingFull, Review, AvailabilityResponse, CalendarResponse, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITY_ICON_MAP } from "@/constants/Amenities";
-import { inr, imageUrl, shortDate } from "@/lib/format";
+import { HouseRulesList, houseRuleLines } from "@/components/HouseRules";
+import { inr, imageUrl, shortDate, nightWithTax, gstPct } from "@/lib/format";
 import { useAuth, useWishlist } from "@/lib/auth";
 import { Button } from "@/components/Button";
 import { DateRangeCalendar } from "@/components/DateRangeCalendar";
@@ -355,6 +356,24 @@ export default function ListingDetailScreen() {
             <Text style={styles.description}>{listing.description}</Text>
           </View>
 
+          {listing.state_registered ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>State-registered</Text>
+              <Text style={{ fontSize: 14, lineHeight: 20, color: Colors.charcoal2 }}>
+                This home is registered with the state tourism department. We checked the registration number
+                {listing.registration_no ? `: ${listing.registration_no}` : "."}
+              </Text>
+            </View>
+          ) : null}
+
+          {/* House rules — stated before booking so nobody is turned away at the door */}
+          {houseRuleLines(listing).length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>House rules</Text>
+              <HouseRulesList item={listing} />
+            </View>
+          )}
+
           {/* Amenities */}
           {listing.amenities?.length > 0 && (
             <View style={styles.section}>
@@ -456,8 +475,8 @@ export default function ListingDetailScreen() {
           <View style={styles.bookingSection}>
             <Text style={styles.sectionTitle} testID="reserve-title" accessibilityLabel="Reserve">Reserve</Text>
             <View style={styles.priceRow}>
-              <Text style={styles.priceLabel}>{inr(listing.price_inr)}</Text>
-              <Text style={styles.priceNight}> / night</Text>
+              <Text style={styles.priceLabel}>{inr(nightWithTax(listing))}</Text>
+              <Text style={styles.priceNight}> / night incl. taxes</Text>
             </View>
 
             <TouchableOpacity style={styles.dateRow} onPress={() => setDatePickerOpen(true)} activeOpacity={0.8} testID="date-picker-btn" accessibilityLabel="Select dates">
@@ -542,7 +561,7 @@ export default function ListingDetailScreen() {
                 />
                 <QuoteLine label="Cleaning fee" value={inr(quote.cleaning_inr)} />
                 {quote.service_inr > 0 ? <QuoteLine label="Service fee" value={inr(quote.service_inr)} /> : null}
-                <QuoteLine label="Taxes" value={inr(quote.tax_inr)} />
+                <QuoteLine label={`Taxes (GST ${quote.tax_pct || gstPct(listing.price_inr)}%)`} value={inr(quote.tax_inr)} />
                 <View style={styles.quoteDivider} />
                 <QuoteLine label="Total" value={inr(quote.total_inr)} bold />
               </View>

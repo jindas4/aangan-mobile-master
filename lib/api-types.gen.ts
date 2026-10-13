@@ -381,6 +381,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/funnel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Funnel Report
+         * @description Guest funnel for the last `days` days (each step counts people, not
+         *     events) and the host funnel to date.
+         */
+        get: operations["funnel_report_api_admin_funnel_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/kyc": {
         parameters: {
             query?: never;
@@ -434,6 +455,41 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Leads */
+        get: operations["list_leads_api_admin_leads_get"];
+        put?: never;
+        /** Add Lead */
+        post: operations["add_lead_api_admin_leads_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Lead */
+        patch: operations["update_lead_api_admin_leads__lead_id__patch"];
         trace?: never;
     };
     "/api/admin/listings": {
@@ -1534,6 +1590,30 @@ export interface paths {
          *     same response without re-issuing the refund.
          */
         post: operations["cancel_api_bookings__booking_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{booking_id}/checkin-problem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Checkin Problem
+         * @description The check-in promise: a guest with a confirmed booking who is refused at
+         *     the door, or finds the place is not what they booked, reports it here on
+         *     the day. Support is alerted at once and the host's payout is held until
+         *     it is looked at; support then refunds in full and helps find another stay
+         *     (legal/cancellation). Reporting twice changes nothing.
+         */
+        post: operations["checkin_problem_api_bookings__booking_id__checkin_problem_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3127,6 +3207,11 @@ export interface components {
             service_inr: number;
             /** Tax Inr */
             tax_inr: number;
+            /**
+             * Tax Pct
+             * @default 0
+             */
+            tax_pct: number;
             /** Total Inr */
             total_inr: number;
         };
@@ -3286,6 +3371,8 @@ export interface components {
             status: components["schemas"]["BookingStatus"];
             /** Tax Inr */
             tax_inr: number;
+            /** Tax Pct */
+            tax_pct?: number | null;
             /** Total Inr */
             total_inr: number;
         };
@@ -3301,6 +3388,8 @@ export interface components {
              * @default flexible
              */
             cancellation_policy: string | null;
+            /** Checkin Problem At */
+            checkin_problem_at?: string | null;
             /** Cleaning Inr */
             cleaning_inr: number;
             /**
@@ -3364,6 +3453,8 @@ export interface components {
             status: components["schemas"]["BookingStatus"];
             /** Tax Inr */
             tax_inr: number;
+            /** Tax Pct */
+            tax_pct?: number | null;
             /** Total Inr */
             total_inr: number;
         };
@@ -3546,6 +3637,11 @@ export interface components {
             message: string;
             /** Session Id */
             session_id?: string | null;
+        };
+        /** CheckinProblem */
+        CheckinProblem: {
+            /** Details */
+            details: string;
         };
         /** CollectionWrite */
         CollectionWrite: {
@@ -3767,8 +3863,39 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** LeadIn */
+        LeadIn: {
+            /**
+             * City
+             * @default
+             */
+            city: string;
+            /** Name */
+            name: string;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /** Phone */
+            phone: string;
+            /**
+             * Source
+             * @default
+             */
+            source: string;
+        };
+        /** LeadUpdate */
+        LeadUpdate: {
+            /** Note */
+            note?: string | null;
+            /** Status */
+            status?: string | null;
+        };
         /** ListingCardOut */
         ListingCardOut: {
+            /** Alcohol Ok */
+            alcohol_ok?: boolean | null;
             /** Area */
             area: string;
             /** Baths */
@@ -3782,6 +3909,8 @@ export interface components {
             cancellation_policy: string;
             /** City */
             city: string;
+            /** Couples Ok */
+            couples_ok?: boolean | null;
             /** Distance Note */
             distance_note: string;
             /** Guests */
@@ -3807,11 +3936,23 @@ export interface components {
              * @default 0
              */
             lng: number;
+            /** Local Id Ok */
+            local_id_ok?: boolean | null;
             /**
              * Min Nights
              * @default 1
              */
             min_nights: number;
+            /**
+             * Pet Friendly
+             * @default false
+             */
+            pet_friendly: boolean;
+            /**
+             * Price Incl Tax Inr
+             * @default 0
+             */
+            price_incl_tax_inr: number;
             /** Price Inr */
             price_inr: number;
             /**
@@ -3828,10 +3969,24 @@ export interface components {
             /** Slug */
             slug: string;
             /**
+             * State Registered
+             * @default false
+             */
+            state_registered: boolean;
+            /** Stay Nights */
+            stay_nights?: number | null;
+            /** Stay Total Inr */
+            stay_total_inr?: number | null;
+            /**
              * Tags
              * @default []
              */
             tags: string[];
+            /**
+             * Tax Pct
+             * @default 0
+             */
+            tax_pct: number;
             /** Title */
             title: string;
             /** Type */
@@ -3841,6 +3996,8 @@ export interface components {
         };
         /** ListingCreate */
         ListingCreate: {
+            /** Alcohol Ok */
+            alcohol_ok?: boolean | null;
             /**
              * Amenities
              * @default []
@@ -3872,6 +4029,8 @@ export interface components {
              * @default 800
              */
             cleaning_fee_inr: number;
+            /** Couples Ok */
+            couples_ok?: boolean | null;
             /**
              * Description
              * @default
@@ -3912,6 +4071,8 @@ export interface components {
              * @default 0
              */
             lng: number;
+            /** Local Id Ok */
+            local_id_ok?: boolean | null;
             /**
              * Min Nights
              * @default 1
@@ -3929,6 +4090,8 @@ export interface components {
              * @default true
              */
             published: boolean;
+            /** Registration No */
+            registration_no?: string | null;
             /** Scene */
             scene: string;
             /**
@@ -3969,9 +4132,13 @@ export interface components {
             published?: boolean | null;
             /** Reason */
             reason?: string | null;
+            /** Registration Verified */
+            registration_verified?: boolean | null;
         };
         /** ListingOut */
         ListingOut: {
+            /** Alcohol Ok */
+            alcohol_ok?: boolean | null;
             /**
              * Amenities
              * @default []
@@ -3992,6 +4159,8 @@ export interface components {
             city: string;
             /** Cleaning Fee Inr */
             cleaning_fee_inr: number;
+            /** Couples Ok */
+            couples_ok?: boolean | null;
             /** Description */
             description: string;
             /** Distance Note */
@@ -4020,11 +4189,23 @@ export interface components {
              * @default 0
              */
             lng: number;
+            /** Local Id Ok */
+            local_id_ok?: boolean | null;
             /**
              * Min Nights
              * @default 1
              */
             min_nights: number;
+            /**
+             * Pet Friendly
+             * @default false
+             */
+            pet_friendly: boolean;
+            /**
+             * Price Incl Tax Inr
+             * @default 0
+             */
+            price_incl_tax_inr: number;
             /** Price Inr */
             price_inr: number;
             /**
@@ -4034,6 +4215,8 @@ export interface components {
             published: boolean;
             /** Rating */
             rating: number;
+            /** Registration No */
+            registration_no?: string | null;
             /** Reviews Count */
             reviews_count: number;
             /** Scene */
@@ -4041,10 +4224,24 @@ export interface components {
             /** Slug */
             slug: string;
             /**
+             * State Registered
+             * @default false
+             */
+            state_registered: boolean;
+            /** Stay Nights */
+            stay_nights?: number | null;
+            /** Stay Total Inr */
+            stay_total_inr?: number | null;
+            /**
              * Tags
              * @default []
              */
             tags: string[];
+            /**
+             * Tax Pct
+             * @default 0
+             */
+            tax_pct: number;
             /** Title */
             title: string;
             /** Type */
@@ -4054,6 +4251,8 @@ export interface components {
         };
         /** ListingUpdate */
         ListingUpdate: {
+            /** Alcohol Ok */
+            alcohol_ok?: boolean | null;
             /** Amenities */
             amenities?: string[] | null;
             /** Baths */
@@ -4064,16 +4263,22 @@ export interface components {
             cancellation_policy?: string | null;
             /** Cleaning Fee Inr */
             cleaning_fee_inr?: number | null;
+            /** Couples Ok */
+            couples_ok?: boolean | null;
             /** Description */
             description?: string | null;
             /** Guests */
             guests?: number | null;
+            /** House Rules Set */
+            house_rules_set?: string[] | null;
             /** Images */
             images?: string[] | null;
             /** Instant Book */
             instant_book?: boolean | null;
             /** Jain Friendly */
             jain_friendly?: boolean | null;
+            /** Local Id Ok */
+            local_id_ok?: boolean | null;
             /** Min Nights */
             min_nights?: number | null;
             /** Pet Friendly */
@@ -4082,6 +4287,8 @@ export interface components {
             price_inr?: number | null;
             /** Published */
             published?: boolean | null;
+            /** Registration No */
+            registration_no?: string | null;
             /** Tags */
             tags?: string[] | null;
             /** Title */
@@ -4655,6 +4862,11 @@ export interface components {
              * @default 2000
              */
             min_booking_inr: number;
+            /**
+             * Min Qualifying Stay Inr
+             * @default 4000
+             */
+            min_qualifying_stay_inr: number;
             /** Pending Inr */
             pending_inr: number;
             /**
@@ -5882,6 +6094,39 @@ export interface operations {
             };
         };
     };
+    funnel_report_api_admin_funnel_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     kyc_queue_api_admin_kyc_get: {
         parameters: {
             query?: {
@@ -5968,6 +6213,109 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["KycDecision"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_leads_api_admin_leads_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_lead_api_admin_leads_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_lead_api_admin_leads__lead_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadUpdate"];
             };
         };
         responses: {
@@ -8170,6 +8518,43 @@ export interface operations {
             };
         };
     };
+    checkin_problem_api_bookings__booking_id__checkin_problem_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckinProblem"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     host_decline_api_bookings__booking_id__decline_post: {
         parameters: {
             query?: never;
@@ -9254,6 +9639,9 @@ export interface operations {
                 types?: string | null;
                 amenities?: string | null;
                 pet_friendly?: boolean | null;
+                couples?: boolean | null;
+                local_id?: boolean | null;
+                alcohol?: boolean | null;
                 rating_min?: number | null;
                 power_backup?: boolean | null;
                 women_safe?: boolean | null;

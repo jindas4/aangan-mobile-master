@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ListingCard as LC } from "@/lib/api";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
-import { inr, imageUrl } from "@/lib/format";
+import { inr, imageUrl, nightWithTax } from "@/lib/format";
 import { RemoteImage } from "@/components/RemoteImage";
 import { useWishlist } from "@/lib/auth";
 
@@ -29,7 +29,7 @@ export function ListingCardItem({ listing, wide }: Props) {
       onPress={() => router.push(`/listing/${listing.id}`)}
       style={[styles.card, { width: w }]}
       testID="listing-card"
-      accessibilityLabel={`${listing.title}, ${inr(listing.price_inr)} per night`}
+      accessibilityLabel={`${listing.title}, ${inr(nightWithTax(listing))} per night including taxes`}
     >
       {/* Photo with overlays */}
       <View style={[styles.imageWrap, { width: w, height: w * 0.67 }]}>
@@ -92,9 +92,14 @@ export function ListingCardItem({ listing, wide }: Props) {
           {listing.title}
         </Text>
         <View style={styles.priceRow}>
-          <Text style={styles.price}>{inr(listing.price_inr)}</Text>
-          <Text style={styles.perNight}> / night</Text>
+          <Text style={styles.price}>{inr(nightWithTax(listing))}</Text>
+          <Text style={styles.perNight}> / night incl. taxes</Text>
         </View>
+        {listing.stay_total_inr ? (
+          <Text style={[styles.perNight, { marginTop: 2 }]}>
+            {inr(listing.stay_total_inr)} total · {listing.stay_nights} night{listing.stay_nights === 1 ? "" : "s"}, all included
+          </Text>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

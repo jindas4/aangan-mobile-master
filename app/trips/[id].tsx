@@ -13,6 +13,7 @@ import { RemoteImage } from "@/components/RemoteImage";
 import { CancelBookingModal } from "@/components/CancelBookingModal";
 import { WriteReviewModal } from "@/components/WriteReviewModal";
 import { policyLine } from "@/components/CancellationChoice";
+import { CheckinHelp } from "@/components/CheckinHelp";
 
 const STATUS: Record<string, { label: string; color: string; note: string }> = {
   pending: { label: "Awaiting host", color: Colors.mustard, note: "The host hasn't accepted yet. You'll be told as soon as they do." },
@@ -143,7 +144,7 @@ export default function TripDetailScreen() {
           <PriceRow label={`${inr(b.nightly_inr)} × ${b.nights} night${b.nights === 1 ? "" : "s"}`} value={inr(b.nightly_inr * b.nights)} />
           <PriceRow label="Cleaning fee" value={inr(b.cleaning_inr)} />
           {b.service_inr > 0 ? <PriceRow label="Service fee" value={inr(b.service_inr)} /> : null}
-          <PriceRow label="Taxes" value={inr(b.tax_inr)} />
+          <PriceRow label={`Taxes (GST ${b.tax_pct ?? 12}%)`} value={inr(b.tax_inr)} />
           <View style={styles.divider} />
           <PriceRow label="Total" value={inr(b.total_inr)} bold />
           {credits > 0 && <PriceRow label="Credits applied" value={`− ${inr(credits)}`} />}
@@ -163,6 +164,8 @@ export default function TripDetailScreen() {
           <DetailRow icon="receipt-outline" label="Booking ID" value={`#${b.id}`} />
           <DetailRow icon="time-outline" label="Booked on" value={fullDate(b.created_at)} />
         </View>
+
+        <CheckinHelp booking={b} onReported={load} />
 
         <View style={styles.actions}>
           {active && <Button title="Message host" onPress={messageHost} full />}

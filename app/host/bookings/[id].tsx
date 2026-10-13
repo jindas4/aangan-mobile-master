@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  Linking,
 } from "react-native";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { api, BookingWithListing } from "@/lib/api";
+import { api, BookingWithListing, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { inr, fullDate, imageUrl } from "@/lib/format";
 import { Button } from "@/components/Button";
@@ -187,6 +188,13 @@ export default function HostBookingDetailScreen() {
           <DetailRow icon="moon-outline" label="Nights" value={String(booking.nights)} />
           <DetailRow icon="person-outline" label="Booked by" value={booking.guest_name || "Guest"} />
           <DetailRow icon="people-outline" label="Guests" value={String(booking.guests)} />
+          <Text style={{ fontSize: 12, color: Colors.charcoal3, lineHeight: 17, marginTop: 10 }}>
+            You see the guest's name only: their phone number and email are their personal data. Message them in the
+            app once the booking is confirmed; from two days before check-in until checkout you can exchange phone
+            numbers and directions in the chat.{" "}
+            <Text style={{ textDecorationLine: "underline", color: Colors.charcoal2 }} accessibilityRole="link"
+                  onPress={() => Linking.openURL(`${WEB_BASE}/host/payouts#guest-contact`)}>Why we do this</Text>
+          </Text>
         </View>
 
         {/* Pricing */}
@@ -196,7 +204,7 @@ export default function HostBookingDetailScreen() {
           <PriceRow label={`${inr(booking.nightly_inr)} × ${booking.nights} night${booking.nights === 1 ? "" : "s"}`} value={inr(booking.nightly_inr * booking.nights)} />
           <PriceRow label="Cleaning fee" value={inr(booking.cleaning_inr)} />
           {booking.service_inr > 0 ? <PriceRow label="Service fee" value={inr(booking.service_inr)} /> : null}
-          <PriceRow label="Taxes" value={inr(booking.tax_inr)} />
+          <PriceRow label={`Taxes (GST ${booking.tax_pct ?? 12}%)`} value={inr(booking.tax_inr)} />
           <View style={styles.divider} />
           <PriceRow label="Guest pays" value={inr(booking.total_inr)} bold />
         </View>
@@ -215,6 +223,10 @@ export default function HostBookingDetailScreen() {
             <PriceRow label={`TDS (${booking.host_earnings.tds_pct}%)`} value={`− ${inr(booking.host_earnings.tds_inr)}`} />
             <View style={styles.divider} />
             <PriceRow label="You receive" value={inr(booking.host_earnings.payout_inr)} bold />
+            <Text style={{ fontSize: 12.5, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline", marginTop: 4 }}
+                  accessibilityRole="link" onPress={() => Linking.openURL(`${WEB_BASE}/host/payouts`)}>
+              When and how this is paid
+            </Text>
             {booking.host_earnings.fee_inr > 0 ? (
               <Text style={{ fontSize: 12, color: Colors.charcoal3, marginTop: 6, lineHeight: 17 }}>
                 {booking.host_earnings.introduced_by === "direct"

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { EarningsCalculator } from "@/components/EarningsCalculator";
 import {
   View,
   Text,
@@ -7,13 +8,14 @@ import {
   TouchableOpacity,
   RefreshControl,
   Alert,
+  Linking,
 } from "react-native";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { api, ListingCard as LC, BookingWithListing, HostAnalytics } from "@/lib/api";
+import { api, ListingCard as LC, BookingWithListing, HostAnalytics, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { useAuth } from "@/lib/auth";
 import { inr, imageUrl } from "@/lib/format";
@@ -74,7 +76,7 @@ export default function HostDashboardScreen() {
     return (
       <SafeAreaView style={styles.safe} edges={["top"]}>
         <Header onBack={() => router.back()} />
-        <View style={styles.pitchWrap}>
+        <ScrollView contentContainerStyle={styles.pitchWrap} keyboardShouldPersistTaps="handled">
           <Text style={styles.pitchKicker}>FOR HOMEOWNERS</Text>
           <Text style={styles.pitchTitle}>A booking website for your home. In 5 minutes.</Text>
           <Text style={styles.pitchSub}>
@@ -101,7 +103,12 @@ export default function HostDashboardScreen() {
             size="lg"
             style={{ marginTop: 24 }}
           />
-        </View>
+          <EarningsCalculator />
+          <Text style={{ fontSize: 13.5, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline", textAlign: "center", marginTop: 14 }}
+                accessibilityRole="link" onPress={() => Linking.openURL(`${WEB_BASE}/host/payouts`)}>
+            How and when you get paid, and who to contact
+          </Text>
+        </ScrollView>
       </SafeAreaView>
     );
   }

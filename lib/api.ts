@@ -237,6 +237,19 @@ export interface ListingCard {
   city: string;
   area: string;
   price_inr: number;
+  /** The night's price with GST added, and the GST rate. */
+  price_incl_tax_inr?: number;
+  tax_pct?: number;
+  /** On a search for dates: the whole stay with cleaning and GST included. */
+  stay_nights?: number | null;
+  stay_total_inr?: number | null;
+  /** House rules: true = welcome/allowed, false = not, null = not stated. */
+  pet_friendly?: boolean;
+  couples_ok?: boolean | null;
+  local_id_ok?: boolean | null;
+  alcohol_ok?: boolean | null;
+  /** Registered with the state tourism department, and checked by Aangan Stay. */
+  state_registered?: boolean;
   rating: number;
   reviews_count: number;
   guests: number;
@@ -257,6 +270,8 @@ export interface ListingCard {
 }
 
 export interface ListingFull extends ListingCard {
+  /** State tourism registration number: present for guests once checked, and always for the owner. */
+  registration_no?: string | null;
   description: string;
   amenities: string[];
   cleaning_fee_inr: number;
@@ -290,6 +305,8 @@ export interface BookingOut {
   cleaning_inr: number;
   service_inr: number;
   tax_inr: number;
+  /** GST rate on the stay; null on older bookings (12%). */
+  tax_pct?: number | null;
   total_inr: number;
   /** Referral credits applied — the guest pays total_inr - credits_inr. */
   credits_inr?: number;
@@ -310,6 +327,8 @@ export interface BookingWithListing extends BookingOut {
   host_name?: string | null;
   /** The guest has already reviewed this stay (one review per booking). */
   reviewed?: boolean;
+  /** When the guest reported a problem at check-in, if they did. */
+  checkin_problem_at?: string | null;
   /** What the host is paid and what is taken off first — present only when the viewer is the host. */
   host_earnings?: HostEarnings | null;
 }
@@ -337,6 +356,8 @@ export interface AvailabilityResponse {
   cleaning_inr: number;
   service_inr: number;
   tax_inr: number;
+  /** GST rate on the stay; null on older bookings (12%). */
+  tax_pct?: number | null;
   total_inr: number;
   min_nights: number;
 }
@@ -394,6 +415,8 @@ export interface ReferralMe {
   referee_bonus_inr: number;
   referrer_reward_inr: number;
   min_booking_inr: number;
+  /** The friend's stay must be worth at least this for the referrer's reward. */
+  min_qualifying_stay_inr?: number;
   history: ReferralEventOut[];
 }
 
