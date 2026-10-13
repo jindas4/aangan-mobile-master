@@ -215,6 +215,13 @@ export default function HostBookingDetailScreen() {
             <PriceRow label={`TDS (${booking.host_earnings.tds_pct}%)`} value={`− ${inr(booking.host_earnings.tds_inr)}`} />
             <View style={styles.divider} />
             <PriceRow label="You receive" value={inr(booking.host_earnings.payout_inr)} bold />
+            {booking.host_earnings.fee_inr > 0 ? (
+              <Text style={{ fontSize: 12, color: Colors.charcoal3, marginTop: 6, lineHeight: 17 }}>
+                {booking.host_earnings.introduced_by === "direct"
+                  ? "This guest first came through your own link, so the lower fee applies."
+                  : "This guest first found you on Aangan Stay, so the marketplace fee applies — including on bookings through your link."}
+              </Text>
+            ) : null}
           </View>
         ) : null}
 

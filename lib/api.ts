@@ -1,4 +1,5 @@
 import * as SecureStore from "expo-secure-store";
+import * as Crypto from "expo-crypto";
 
 export const API_BASE =
   process.env.EXPO_PUBLIC_API_URL ||
@@ -29,6 +30,24 @@ export async function setToken(t: string | null) {
     if (t) await SecureStore.setItemAsync(TOKEN_KEY, t);
     else await SecureStore.deleteItemAsync(TOKEN_KEY);
   } catch {}
+}
+
+// This install's id. The backend uses it to remember how someone first found
+// a host before they signed in (backend services/introductions.py).
+const DEVICE_KEY = "hm_device_id";
+let deviceId: string | null = null;
+
+function getDeviceId(): string | null {
+  if (deviceId) return deviceId;
+  try {
+    let id = SecureStore.getItem(DEVICE_KEY);
+    if (!id) {
+      id = "app_" + Array.from(Crypto.getRandomBytes(16), (b) => b.toString(16).padStart(2, "0")).join("");
+      SecureStore.setItem(DEVICE_KEY, id);
+    }
+    deviceId = id;
+  } catch {}
+  return deviceId;
 }
 
 type ReqInit = Omit<RequestInit, "body"> & {
@@ -71,6 +90,8 @@ export async function api<T = any>(path: string, init: ReqInit = {}): Promise<T>
   };
   const token = init.token === undefined ? getToken() : init.token;
   if (token) headers["authorization"] = `Bearer ${token}`;
+  const did = getDeviceId();
+  if (did) headers["x-device-id"] = did;
 
   const body =
     init.body !== undefined && typeof init.body !== "string"
@@ -301,6 +322,8 @@ export interface HostEarnings {
   tds_pct: number;
   tds_inr: number;
   payout_inr: number;
+  /** Who introduced the guest: Aangan Stay ("marketplace") or the host's own link ("direct"). */
+  introduced_by?: "marketplace" | "direct";
 }
 
 export interface AvailabilityResponse {

@@ -281,6 +281,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/direct-bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Direct Bookings Report
+         * @description Where the lower direct-link fee is being used, and where it may be
+         *     misused. The server already charges the marketplace fee when a guest it
+         *     introduced books through a host's link (services/introductions.py); this
+         *     report covers what that cannot see — chiefly a second account.
+         */
+        get: operations["direct_bookings_report_api_admin_direct_bookings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/export/bookings.csv": {
         parameters: {
             query?: never;
@@ -2381,6 +2404,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/listings/{listing_id}/seen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Seen
+         * @description A guest opened this listing — from Aangan Stay ("marketplace") or from
+         *     the host's own link ("direct"). The first such contact with a host decides
+         *     the host fee on every booking between the two (services/introductions.py).
+         */
+        post: operations["seen_api_listings__listing_id__seen_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me/account/deletion": {
         parameters: {
             query?: never;
@@ -3675,6 +3720,11 @@ export interface components {
             fee_inr: number;
             /** Fee Pct */
             fee_pct: number;
+            /**
+             * Introduced By
+             * @default marketplace
+             */
+            introduced_by: string;
             /** Payout Inr */
             payout_inr: number;
             /** Tds Inr */
@@ -5600,6 +5650,39 @@ export interface operations {
         };
     };
     dashboard_trends_api_admin_dashboard_trends_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    direct_bookings_report_api_admin_direct_bookings_get: {
         parameters: {
             query?: {
                 days?: number;
@@ -7920,6 +8003,7 @@ export interface operations {
             query?: never;
             header?: {
                 authorization?: string | null;
+                "x-device-id"?: string | null;
             };
             path?: never;
             cookie?: never;
@@ -9634,7 +9718,10 @@ export interface operations {
             query?: {
                 source?: string;
             };
-            header?: never;
+            header?: {
+                authorization?: string | null;
+                "x-device-id"?: string | null;
+            };
             path: {
                 listing_id: string;
             };
@@ -9858,6 +9945,40 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ReviewOut"][];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    seen_api_listings__listing_id__seen_post: {
+        parameters: {
+            query?: {
+                source?: string;
+            };
+            header?: {
+                authorization?: string | null;
+                "x-device-id"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

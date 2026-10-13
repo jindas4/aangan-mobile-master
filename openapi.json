@@ -1706,6 +1706,11 @@
             "title": "Fee Pct",
             "type": "number"
           },
+          "introduced_by": {
+            "default": "marketplace",
+            "title": "Introduced By",
+            "type": "string"
+          },
           "payout_inr": {
             "title": "Payout Inr",
             "type": "number"
@@ -6051,6 +6056,66 @@
         ]
       }
     },
+    "/api/admin/direct-bookings": {
+      "get": {
+        "description": "Where the lower direct-link fee is being used, and where it may be\nmisused. The server already charges the marketplace fee when a guest it\nintroduced books through a host's link (services/introductions.py); this\nreport covers what that cannot see \u2014 chiefly a second account.",
+        "operationId": "direct_bookings_report_api_admin_direct_bookings_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 90,
+              "maximum": 365,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Direct Bookings Report",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/export/bookings.csv": {
       "get": {
         "description": "Finance export \u2014 one row per booking with payment + refund amounts.\nDate range filters on created_at; omit both for everything.",
@@ -10188,6 +10253,22 @@
               ],
               "title": "Authorization"
             }
+          },
+          {
+            "in": "header",
+            "name": "x-device-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Id"
+            }
           }
         ],
         "requestBody": {
@@ -13449,6 +13530,38 @@
               "title": "Source",
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Id"
+            }
           }
         ],
         "requestBody": {
@@ -13852,6 +13965,84 @@
         "summary": "List Reviews",
         "tags": [
           "reviews"
+        ]
+      }
+    },
+    "/api/listings/{listing_id}/seen": {
+      "post": {
+        "description": "A guest opened this listing \u2014 from Aangan Stay (\"marketplace\") or from\nthe host's own link (\"direct\"). The first such contact with a host decides\nthe host fee on every booking between the two (services/introductions.py).",
+        "operationId": "seen_api_listings__listing_id__seen_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "listing_id",
+            "required": true,
+            "schema": {
+              "title": "Listing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "default": "marketplace",
+              "title": "Source",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-device-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Device-Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Seen",
+        "tags": [
+          "listings"
         ]
       }
     },

@@ -75,6 +75,8 @@ export default function ListingDetailScreen() {
       api<CalendarResponse>(`/api/listings/${id}/calendar`).catch(() => null),
     ]).then(([l, r, c]) => {
       setListing(l);
+      // Everything opened in the app counts as found on Aangan Stay.
+      if (l) api(`/api/listings/${l.id}/seen`, { method: "POST", retries: 0 }).catch(() => {});
       setReviews(r);
       setCalendar(c);
       setLoading(false);
