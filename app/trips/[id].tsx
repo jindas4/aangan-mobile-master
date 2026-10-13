@@ -142,7 +142,7 @@ export default function TripDetailScreen() {
           <Text style={styles.cardTitle}>What you paid</Text>
           <PriceRow label={`${inr(b.nightly_inr)} × ${b.nights} night${b.nights === 1 ? "" : "s"}`} value={inr(b.nightly_inr * b.nights)} />
           <PriceRow label="Cleaning fee" value={inr(b.cleaning_inr)} />
-          <PriceRow label="Service fee" value={inr(b.service_inr)} />
+          {b.service_inr > 0 ? <PriceRow label="Service fee" value={inr(b.service_inr)} /> : null}
           <PriceRow label="Taxes" value={inr(b.tax_inr)} />
           <View style={styles.divider} />
           <PriceRow label="Total" value={inr(b.total_inr)} bold />

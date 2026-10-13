@@ -195,11 +195,28 @@ export default function HostBookingDetailScreen() {
           {/* A booking's nightly_inr is the per-night rate (booking_svc sets it from the listing price). */}
           <PriceRow label={`${inr(booking.nightly_inr)} × ${booking.nights} night${booking.nights === 1 ? "" : "s"}`} value={inr(booking.nightly_inr * booking.nights)} />
           <PriceRow label="Cleaning fee" value={inr(booking.cleaning_inr)} />
-          <PriceRow label="Service fee" value={inr(booking.service_inr)} />
+          {booking.service_inr > 0 ? <PriceRow label="Service fee" value={inr(booking.service_inr)} /> : null}
           <PriceRow label="Taxes" value={inr(booking.tax_inr)} />
           <View style={styles.divider} />
-          <PriceRow label="Total" value={inr(booking.total_inr)} bold />
+          <PriceRow label="Guest pays" value={inr(booking.total_inr)} bold />
         </View>
+
+        {/* What the host is paid */}
+        {booking.host_earnings ? (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Your payout</Text>
+            <PriceRow label="Your earnings (nights + cleaning)" value={inr(booking.host_earnings.earnings_inr)} />
+            {booking.host_earnings.fee_inr > 0 ? (
+              <>
+                <PriceRow label={`Aangan Stay fee (${booking.host_earnings.fee_pct}%)`} value={`− ${inr(booking.host_earnings.fee_inr)}`} />
+                <PriceRow label="GST on the fee (18%)" value={`− ${inr(booking.host_earnings.fee_gst_inr)}`} />
+              </>
+            ) : null}
+            <PriceRow label={`TDS (${booking.host_earnings.tds_pct}%)`} value={`− ${inr(booking.host_earnings.tds_inr)}`} />
+            <View style={styles.divider} />
+            <PriceRow label="You receive" value={inr(booking.host_earnings.payout_inr)} bold />
+          </View>
+        ) : null}
 
         {/* Booking ID & payment */}
         <View style={styles.card}>

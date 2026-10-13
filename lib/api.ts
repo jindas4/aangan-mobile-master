@@ -289,6 +289,18 @@ export interface BookingWithListing extends BookingOut {
   host_name?: string | null;
   /** The guest has already reviewed this stay (one review per booking). */
   reviewed?: boolean;
+  /** What the host is paid and what is taken off first — present only when the viewer is the host. */
+  host_earnings?: HostEarnings | null;
+}
+
+export interface HostEarnings {
+  earnings_inr: number;
+  fee_pct: number;
+  fee_inr: number;
+  fee_gst_inr: number;
+  tds_pct: number;
+  tds_inr: number;
+  payout_inr: number;
 }
 
 export interface AvailabilityResponse {

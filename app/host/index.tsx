@@ -63,7 +63,7 @@ export default function HostDashboardScreen() {
         <Header onBack={() => router.back()} />
         <View style={styles.pitchWrap}>
           <Text style={styles.pitchTitle}>Get your own booking website</Text>
-          <Text style={styles.pitchSub}>List your home, earn in ₹. 0% commission forever.</Text>
+          <Text style={styles.pitchSub}>List your home free, earn in ₹. You pay a fee only when you get a booking.</Text>
           <Button title="Log in to start" onPress={() => router.push("/login")} full style={{ marginTop: 20 }} />
         </View>
       </SafeAreaView>
@@ -80,11 +80,11 @@ export default function HostDashboardScreen() {
           <Text style={styles.pitchSub}>
             Every home on Aangan Stay gets a shareable page at aanganstay.com/p/your-home.{"\n"}
             Post it on WhatsApp, Instagram, anywhere.{"\n"}
-            0% commission — forever.
+            Free to list — a 5% fee on bookings through your link, 15.5% when we bring the guest.
           </Text>
           <View style={styles.pitchFeatures}>
             <FeatureItem icon="link-outline" title="Your own URL" sub="aanganstay.com/p/your-home" />
-            <FeatureItem icon="cash-outline" title="0% commission" sub="UPI, ₹, in your bank" />
+            <FeatureItem icon="cash-outline" title="Free to list" sub="Pay only per booking" />
             <FeatureItem icon="calendar-outline" title="Calendar + bookings" sub="Manage availability" />
           </View>
           <Button

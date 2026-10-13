@@ -57,3 +57,12 @@ export function imageVariantUrl(url: string, size: "thumb" | "medium" | "large")
   const m = UPLOAD_RE.exec(url);
   return m ? `${MEDIA_BASE}/api/media/images/${m[1]}/${size}/${m[2]}.webp` : url;
 }
+
+/** Aangan Stay's host fee on marketplace bookings, and the GST charged on it.
+ *  Keep in step with backend/app/services/pricing.py. */
+export const HOST_FEE_PCT = 15.5;
+export const HOST_FEE_DIRECT_PCT = 5;
+/** What a host keeps from an amount after the fee and the 18% GST on it (before TDS). */
+export function hostTakeHome(amount: number, feePct: number = HOST_FEE_PCT): number {
+  return Math.round((amount || 0) * (1 - (feePct / 100) * 1.18));
+}

@@ -795,6 +795,16 @@
             "title": "Guests",
             "type": "integer"
           },
+          "host_earnings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HostEarnings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "host_id": {
             "title": "Host Id",
             "type": "string"
@@ -1675,6 +1685,50 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HostEarnings": {
+        "description": "What the host is paid for a booking, and what is taken off first.",
+        "properties": {
+          "earnings_inr": {
+            "title": "Earnings Inr",
+            "type": "number"
+          },
+          "fee_gst_inr": {
+            "title": "Fee Gst Inr",
+            "type": "number"
+          },
+          "fee_inr": {
+            "title": "Fee Inr",
+            "type": "number"
+          },
+          "fee_pct": {
+            "title": "Fee Pct",
+            "type": "number"
+          },
+          "payout_inr": {
+            "title": "Payout Inr",
+            "type": "number"
+          },
+          "tds_inr": {
+            "title": "Tds Inr",
+            "type": "number"
+          },
+          "tds_pct": {
+            "title": "Tds Pct",
+            "type": "number"
+          }
+        },
+        "required": [
+          "earnings_inr",
+          "fee_pct",
+          "fee_inr",
+          "fee_gst_inr",
+          "tds_pct",
+          "tds_inr",
+          "payout_inr"
+        ],
+        "title": "HostEarnings",
         "type": "object"
       },
       "HostMini": {
@@ -14385,6 +14439,58 @@
           }
         },
         "summary": "My Tds Statement",
+        "tags": [
+          "payouts"
+        ]
+      }
+    },
+    "/api/payouts/{payout_id}/fee-invoice": {
+      "get": {
+        "description": "Tax invoice from Aangan Stay to the host for the fee on one payout.\nAvailable once the payout has been paid.",
+        "operationId": "fee_invoice_api_payouts__payout_id__fee_invoice_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Fee Invoice",
         "tags": [
           "payouts"
         ]

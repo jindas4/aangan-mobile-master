@@ -539,7 +539,7 @@ export default function ListingDetailScreen() {
                   value={inr(quote.nights_total_inr ?? quote.nightly_inr)}
                 />
                 <QuoteLine label="Cleaning fee" value={inr(quote.cleaning_inr)} />
-                <QuoteLine label="Service fee" value={inr(quote.service_inr)} />
+                {quote.service_inr > 0 ? <QuoteLine label="Service fee" value={inr(quote.service_inr)} /> : null}
                 <QuoteLine label="Taxes" value={inr(quote.tax_inr)} />
                 <View style={styles.quoteDivider} />
                 <QuoteLine label="Total" value={inr(quote.total_inr)} bold />

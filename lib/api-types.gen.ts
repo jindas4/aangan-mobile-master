@@ -2627,6 +2627,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/payouts/{payout_id}/fee-invoice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fee Invoice
+         * @description Tax invoice from Aangan Stay to the host for the fee on one payout.
+         *     Available once the payout has been paid.
+         */
+        get: operations["fee_invoice_api_payouts__payout_id__fee_invoice_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/push/register": {
         parameters: {
             query?: never;
@@ -3258,6 +3279,7 @@ export interface components {
             guest_name?: string | null;
             /** Guests */
             guests: number;
+            host_earnings?: components["schemas"]["HostEarnings"] | null;
             /** Host Id */
             host_id: string;
             /** Host Name */
@@ -3639,6 +3661,26 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * HostEarnings
+         * @description What the host is paid for a booking, and what is taken off first.
+         */
+        HostEarnings: {
+            /** Earnings Inr */
+            earnings_inr: number;
+            /** Fee Gst Inr */
+            fee_gst_inr: number;
+            /** Fee Inr */
+            fee_inr: number;
+            /** Fee Pct */
+            fee_pct: number;
+            /** Payout Inr */
+            payout_inr: number;
+            /** Tds Inr */
+            tds_inr: number;
+            /** Tds Pct */
+            tds_pct: number;
         };
         /** HostMini */
         HostMini: {
@@ -10200,6 +10242,37 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fee_invoice_api_payouts__payout_id__fee_invoice_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                payout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
