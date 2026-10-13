@@ -80,7 +80,7 @@ export default function HostDashboardScreen() {
           <Text style={styles.pitchSub}>
             Every home on Aangan Stay gets a shareable page at aanganstay.com/p/your-home.{"\n"}
             Post it on WhatsApp, Instagram, anywhere.{"\n"}
-            Free to list — a 5% fee on bookings through your link, 15.5% when we bring the guest.
+            Free to list — bring your own guests and pay about half the fee: 8% on your link, 15.5% when we bring the guest.
           </Text>
           <View style={styles.pitchFeatures}>
             <FeatureItem icon="link-outline" title="Your own URL" sub="aanganstay.com/p/your-home" />
