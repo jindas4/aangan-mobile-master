@@ -100,3 +100,12 @@ export function gstPct(pricePerNight: number): number {
 export function nightWithTax(item: { price_inr: number; price_incl_tax_inr?: number }): number {
   return item.price_incl_tax_inr || item.price_inr + Math.round(item.price_inr * gstPct(item.price_inr) / 100);
 }
+
+/** Whether a booking can still be cancelled: until its check-in day. Uses the
+ *  server's answer when it sent one. */
+export function canCancelBooking(b: { status: string; start_date: string; can_cancel?: boolean }): boolean {
+  if (typeof b.can_cancel === "boolean") return b.can_cancel;
+  const d = new Date();
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return (b.status === "pending" || b.status === "confirmed") && today <= b.start_date;
+}

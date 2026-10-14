@@ -7,13 +7,14 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, CancelResponse } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, fullDate } from "@/lib/format";
+import { inr, fullDate, canCancelBooking } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { RemoteImage } from "@/components/RemoteImage";
 import { CancelBookingModal } from "@/components/CancelBookingModal";
 import { WriteReviewModal } from "@/components/WriteReviewModal";
 import { policyLine } from "@/components/CancellationChoice";
 import { CheckinHelp } from "@/components/CheckinHelp";
+import { DamageClaim } from "@/components/DamageClaim";
 
 const STATUS: Record<string, { label: string; color: string; note: string }> = {
   pending: { label: "Awaiting host", color: Colors.mustard, note: "The host hasn't accepted yet. You'll be told as soon as they do." },
@@ -93,7 +94,7 @@ export default function TripDetailScreen() {
   const b = booking;
   const st = STATUS[b.status] ?? STATUS.pending;
   const credits = b.credits_inr ?? 0;
-  const canCancel = b.status === "pending" || b.status === "confirmed";
+  const canCancel = canCancelBooking(b);
   const canReview = !b.reviewed && (b.status === "confirmed" || b.status === "completed");
   const active = b.status !== "cancelled" && b.status !== "refunded";
 
@@ -166,6 +167,7 @@ export default function TripDetailScreen() {
         </View>
 
         <CheckinHelp booking={b} onReported={load} />
+        <DamageClaim bookingId={b.id} role="guest" />
 
         <View style={styles.actions}>
           {active && <Button title="Message host" onPress={messageHost} full />}

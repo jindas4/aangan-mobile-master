@@ -327,6 +327,8 @@ export interface BookingWithListing extends BookingOut {
   host_name?: string | null;
   /** The guest has already reviewed this stay (one review per booking). */
   reviewed?: boolean;
+  /** Whether the booking can still be cancelled (until its check-in day). */
+  can_cancel?: boolean;
   /** When the guest reported a problem at check-in, if they did. */
   checkin_problem_at?: string | null;
   /** What the host is paid and what is taken off first — present only when the viewer is the host. */

@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, CancelResponse } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { useAuth } from "@/lib/auth";
-import { inr, fullDate, imageUrl } from "@/lib/format";
+import { inr, fullDate, imageUrl, canCancelBooking } from "@/lib/format";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/Button";
 import { CancelBookingModal } from "@/components/CancelBookingModal";
@@ -178,7 +178,7 @@ function BookingCard({
         </View>
 
         {(() => {
-          const canCancel = booking.status === "pending" || booking.status === "confirmed";
+          const canCancel = canCancelBooking(booking);
           const canReview = !booking.reviewed && (booking.status === "confirmed" || booking.status === "completed");
           if (!canCancel && !canReview) return null;
           return (

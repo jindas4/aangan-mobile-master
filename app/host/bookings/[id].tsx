@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { DamageClaim } from "@/components/DamageClaim";
 import {
   View,
   Text,
@@ -16,7 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, fullDate, imageUrl } from "@/lib/format";
+import { inr, fullDate, imageUrl, canCancelBooking } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
@@ -237,6 +238,8 @@ export default function HostBookingDetailScreen() {
           </View>
         ) : null}
 
+        <DamageClaim bookingId={booking.id} role="host" />
+
         {/* Booking ID & payment */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Reference</Text>
@@ -277,7 +280,7 @@ export default function HostBookingDetailScreen() {
           </View>
         )}
 
-        {isConfirmed && (
+        {isConfirmed && canCancelBooking(booking) && (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Cancel booking</Text>
             <Text style={styles.actionHint}>
