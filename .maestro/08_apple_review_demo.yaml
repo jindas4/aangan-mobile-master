@@ -1,0 +1,99 @@
+appId: in.aangan.app
+tags:
+  - apple-review
+  - demo
+env:
+  REVIEW_EMAIL: review@aanganstay.com
+  REVIEW_PASSWORD: CHANGE_ME
+---
+# Apple review demo walkthrough.
+#
+# Intended use:
+# 1. Seed the review account described in RELEASE.md.
+# 2. Set REVIEW_PASSWORD before running.
+# 3. Start iPhone screen recording.
+# 4. Run this flow as a rehearsal or guided capture.
+#
+# Note: the seeded message thread is part of the review path, but the current
+# messages list has no stable testID on the first conversation row, so this flow
+# stops at the Messages screen and the operator should open the visible seeded
+# conversation manually during the recording.
+
+- launchApp
+- tapOn:
+    text: "Continue"
+    optional: true
+
+# Explore / listing detail
+- assertVisible:
+    id: "search-bar"
+- tapOn:
+    id: "listing-card"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible:
+    id: "reserve-title"
+- tapOn:
+    id: "date-picker-btn"
+    optional: true
+- waitForAnimationToEnd
+- pressKey: back
+- pressKey: back
+
+# Profile / login
+- tapOn: "Profile"
+- tapOn:
+    id: "login-btn"
+    optional: true
+- assertVisible:
+    id: "email-input"
+    optional: true
+- tapOn:
+    id: "email-input"
+    optional: true
+- inputText: ${REVIEW_EMAIL}
+- tapOn:
+    text: "Password"
+    optional: true
+- inputText: ${REVIEW_PASSWORD}
+- tapOn:
+    text: "Log in"
+    optional: true
+- waitForAnimationToEnd
+
+# Authenticated proof points
+- tapOn: "Messages"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Messages"
+- tapOn:
+    id: "conversation-row"
+    index: 0
+- waitForAnimationToEnd
+- assertVisible:
+    id: "message-thread-title"
+- tapOn:
+    id: "message-thread-menu"
+- tapOn: "Report"
+- assertVisible:
+    id: "report-sheet-title"
+- tapOn:
+    id: "report-reason-other"
+- tapOn:
+    id: "report-sheet-close"
+- waitForAnimationToEnd
+- pressKey: back
+
+- tapOn: "Profile"
+- waitForAnimationToEnd
+- assertVisible:
+    id: "profile-header"
+
+# Host surface is optional and only appears if the seeded review account is a host.
+- tapOn:
+    id: "menu-host-dashboard"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: "host-header"
+    optional: true

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useRouter } from "expo-router";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { api, Conversation } from "@/lib/api";
@@ -33,10 +33,6 @@ export default function MessagesScreen() {
     setLoading(true);
     fetchConversations().finally(() => setLoading(false));
   }, [fetchConversations]);
-
-  // Refresh whenever the tab comes back into view — e.g. after blocking
-  // someone or sending a message, the inbox must not show stale threads.
-  useFocusEffect(useCallback(() => { fetchConversations(); }, [fetchConversations]));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -81,6 +77,7 @@ export default function MessagesScreen() {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.convoRow}
+              testID="conversation-row"
               activeOpacity={0.8}
               onPress={() => router.push(`/messages/${item.id}`)}
             >

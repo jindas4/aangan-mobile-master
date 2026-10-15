@@ -116,7 +116,7 @@ export default function MessageThreadScreen() {
           <Ionicons name="chevron-back" size={22} color={Colors.charcoal} />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
-          <Text style={styles.headerName} numberOfLines={1}>
+          <Text style={styles.headerName} testID="message-thread-title" numberOfLines={1}>
             {otherName}
           </Text>
           {convo?.listing_title && (
@@ -125,7 +125,13 @@ export default function MessageThreadScreen() {
             </Text>
           )}
         </View>
-        <TouchableOpacity onPress={openMenu} style={styles.menuBtn} hitSlop={8} disabled={!otherId}>
+        <TouchableOpacity
+          onPress={openMenu}
+          style={styles.menuBtn}
+          testID="message-thread-menu"
+          hitSlop={8}
+          disabled={!otherId}
+        >
           <Ionicons name="ellipsis-horizontal" size={22} color={Colors.charcoal} />
         </TouchableOpacity>
       </View>

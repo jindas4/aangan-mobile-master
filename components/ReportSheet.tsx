@@ -52,8 +52,8 @@ export function ReportSheet({ visible, title = "Report", onClose, onSubmit }: Pr
         <View style={styles.sheet}>
           <View style={styles.handle} />
           <View style={styles.headerRow}>
-            <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity onPress={close} hitSlop={8}>
+            <Text style={styles.title} testID="report-sheet-title">{title}</Text>
+            <TouchableOpacity onPress={close} testID="report-sheet-close" hitSlop={8}>
               <Ionicons name="close" size={22} color={Colors.charcoal} />
             </TouchableOpacity>
           </View>
@@ -67,6 +67,7 @@ export function ReportSheet({ visible, title = "Report", onClose, onSubmit }: Pr
               <TouchableOpacity
                 key={r.code}
                 style={[styles.reasonRow, reason === r.code && styles.reasonRowActive]}
+                testID={`report-reason-${r.code}`}
                 onPress={() => setReason(r.code)}
                 activeOpacity={0.7}
               >
@@ -91,6 +92,7 @@ export function ReportSheet({ visible, title = "Report", onClose, onSubmit }: Pr
 
           <TouchableOpacity
             style={[styles.submitBtn, (!reason || busy) && styles.submitBtnDisabled]}
+            testID="report-submit-button"
             onPress={submit}
             disabled={!reason || busy}
           >
