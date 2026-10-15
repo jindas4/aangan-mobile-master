@@ -379,6 +379,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/export/leads.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Leads Csv
+         * @description CRM export — one row per lead, for spreadsheets or an external CRM.
+         */
+        get: operations["export_leads_csv_api_admin_export_leads_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/export/payouts.csv": {
         parameters: {
             query?: never;
@@ -529,7 +549,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/leads/{lead_id}": {
+    "/api/admin/leads/import": {
         parameters: {
             query?: never;
             header?: never;
@@ -538,12 +558,95 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /**
+         * Import Leads
+         * @description Bulk CSV import. Flexible headers — recognised columns:
+         *     name, property/property_name, phone, email, instagram, location/city,
+         *     region, score, segment, decision_maker, channel/source, angle, status,
+         *     note/notes. Dedupes on phone (when present) else (property, city).
+         */
+        post: operations["import_leads_api_admin_leads_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Leads Summary
+         * @description Pipeline counts for the dashboard header on /admin/leads.
+         */
+        get: operations["leads_summary_api_admin_leads_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Lead */
+        get: operations["get_lead_api_admin_leads__lead_id__get"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         /** Update Lead */
         patch: operations["update_lead_api_admin_leads__lead_id__patch"];
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Lead Activity */
+        post: operations["add_lead_activity_api_admin_leads__lead_id__activities_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/convert": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Convert Lead
+         * @description Won a lead? Turn it into a PropertyCapture so it flows into the existing
+         *     capture → claim → draft-listing onboarding (services/capture_claim.py).
+         *     Needs the owner's phone — that is what the claim match runs on.
+         */
+        post: operations["convert_lead_api_admin_leads__lead_id__convert_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/admin/listings": {
@@ -3462,6 +3565,14 @@ export interface components {
             /** Photos */
             photos?: string | null;
         };
+        /** Body_import_leads_api_admin_leads_import_post */
+        Body_import_leads_api_admin_leads_import_post: {
+            /**
+             * Csv File
+             * Format: binary
+             */
+            csv_file: string;
+        };
         /** Body_upload_image_api_uploads_image_post */
         Body_upload_image_api_uploads_image_post: {
             /**
@@ -4070,13 +4181,40 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** LeadActivityIn */
+        LeadActivityIn: {
+            /** Body */
+            body: string;
+            /** Kind */
+            kind: string;
+        };
         /** LeadIn */
         LeadIn: {
+            /**
+             * Angle
+             * @default
+             */
+            angle: string;
             /**
              * City
              * @default
              */
             city: string;
+            /**
+             * Decision Maker
+             * @default
+             */
+            decision_maker: string;
+            /**
+             * Email
+             * @default
+             */
+            email: string;
+            /**
+             * Instagram
+             * @default
+             */
+            instagram: string;
             /** Name */
             name: string;
             /**
@@ -4084,20 +4222,73 @@ export interface components {
              * @default
              */
             note: string;
-            /** Phone */
+            /**
+             * Phone
+             * @default
+             */
             phone: string;
+            /**
+             * Property Name
+             * @default
+             */
+            property_name: string;
+            /**
+             * Region
+             * @default
+             */
+            region: string;
+            /** Score */
+            score?: number | null;
+            /**
+             * Segment
+             * @default
+             */
+            segment: string;
             /**
              * Source
              * @default
              */
             source: string;
         };
-        /** LeadUpdate */
+        /**
+         * LeadUpdate
+         * @description None = leave unchanged. For next_follow_up / assigned_to, "" clears.
+         */
         LeadUpdate: {
+            /** Angle */
+            angle?: string | null;
+            /** Assigned To */
+            assigned_to?: string | null;
+            /** City */
+            city?: string | null;
+            /** Decision Maker */
+            decision_maker?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Instagram */
+            instagram?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Next Follow Up */
+            next_follow_up?: string | null;
             /** Note */
             note?: string | null;
+            /** Phone */
+            phone?: string | null;
+            /** Property Name */
+            property_name?: string | null;
+            /** Region */
+            region?: string | null;
+            /** Score */
+            score?: number | null;
+            /** Segment */
+            segment?: string | null;
+            /** Source */
+            source?: string | null;
             /** Status */
             status?: string | null;
+            /** Status Note */
+            status_note?: string | null;
         };
         /** ListingCardOut */
         ListingCardOut: {
@@ -6271,6 +6462,37 @@ export interface operations {
             };
         };
     };
+    export_leads_csv_api_admin_export_leads_csv_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     export_payouts_csv_api_admin_export_payouts_csv_get: {
         parameters: {
             query?: {
@@ -6548,7 +6770,15 @@ export interface operations {
     };
     list_leads_api_admin_leads_get: {
         parameters: {
-            query?: never;
+            query?: {
+                q?: string | null;
+                status?: string | null;
+                region?: string | null;
+                assigned?: string | null;
+                overdue?: boolean;
+                limit?: number;
+                offset?: number;
+            };
             header?: {
                 authorization?: string | null;
             };
@@ -6612,6 +6842,107 @@ export interface operations {
             };
         };
     };
+    import_leads_api_admin_leads_import_post: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_import_leads_api_admin_leads_import_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    leads_summary_api_admin_leads_summary_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_lead_api_admin_leads__lead_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     update_lead_api_admin_leads__lead_id__patch: {
         parameters: {
             query?: never;
@@ -6628,6 +6959,76 @@ export interface operations {
                 "application/json": components["schemas"]["LeadUpdate"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_lead_activity_api_admin_leads__lead_id__activities_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadActivityIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    convert_lead_api_admin_leads__lead_id__convert_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

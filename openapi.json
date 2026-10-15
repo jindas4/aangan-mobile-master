@@ -562,6 +562,20 @@
         "title": "Body_import_captures_admin_api_admin_captures_import_post",
         "type": "object"
       },
+      "Body_import_leads_api_admin_leads_import_post": {
+        "properties": {
+          "csv_file": {
+            "format": "binary",
+            "title": "Csv File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "csv_file"
+        ],
+        "title": "Body_import_leads_api_admin_leads_import_post",
+        "type": "object"
+      },
       "Body_upload_image_api_uploads_image_post": {
         "properties": {
           "file": {
@@ -1998,12 +2012,57 @@
         "title": "KycDecision",
         "type": "object"
       },
+      "LeadActivityIn": {
+        "properties": {
+          "body": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          },
+          "kind": {
+            "pattern": "^(note|call|whatsapp|email|visit)$",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "body"
+        ],
+        "title": "LeadActivityIn",
+        "type": "object"
+      },
       "LeadIn": {
         "properties": {
+          "angle": {
+            "default": "",
+            "maxLength": 600,
+            "title": "Angle",
+            "type": "string"
+          },
           "city": {
             "default": "",
             "maxLength": 80,
             "title": "City",
+            "type": "string"
+          },
+          "decision_maker": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Decision Maker",
+            "type": "string"
+          },
+          "email": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Email",
+            "type": "string"
+          },
+          "instagram": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Instagram",
             "type": "string"
           },
           "name": {
@@ -2019,9 +2078,40 @@
             "type": "string"
           },
           "phone": {
+            "default": "",
             "maxLength": 20,
-            "minLength": 10,
             "title": "Phone",
+            "type": "string"
+          },
+          "property_name": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Property Name",
+            "type": "string"
+          },
+          "region": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Region",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "segment": {
+            "default": "",
+            "maxLength": 60,
+            "title": "Segment",
             "type": "string"
           },
           "source": {
@@ -2032,14 +2122,111 @@
           }
         },
         "required": [
-          "name",
-          "phone"
+          "name"
         ],
         "title": "LeadIn",
         "type": "object"
       },
       "LeadUpdate": {
+        "description": "None = leave unchanged. For next_follow_up / assigned_to, \"\" clears.",
         "properties": {
+          "angle": {
+            "anyOf": [
+              {
+                "maxLength": 600,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Angle"
+          },
+          "assigned_to": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned To"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "decision_maker": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Maker"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 254,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "instagram": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instagram"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "next_follow_up": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Follow Up"
+          },
           "note": {
             "anyOf": [
               {
@@ -2052,10 +2239,83 @@
             ],
             "title": "Note"
           },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "property_name": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Property Name"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "segment": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Segment"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
           "status": {
             "anyOf": [
               {
-                "pattern": "^(contacted|interested|not_interested)$",
+                "pattern": "^(new|contacted|responded|visit_scheduled|onboarding|won|lost)$",
                 "type": "string"
               },
               {
@@ -2063,6 +2323,18 @@
               }
             ],
             "title": "Status"
+          },
+          "status_note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Note"
           }
         },
         "title": "LeadUpdate",
@@ -6894,6 +7166,54 @@
         ]
       }
     },
+    "/api/admin/export/leads.csv": {
+      "get": {
+        "description": "CRM export \u2014 one row per lead, for spreadsheets or an external CRM.",
+        "operationId": "export_leads_csv_api_admin_export_leads_csv_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Leads Csv",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/export/payouts.csv": {
       "get": {
         "description": "Finance export \u2014 one row per payout with gross/TDS/net, rail reference\nfor bank reconciliation, and FY for 26Q TDS filing.",
@@ -7421,6 +7741,107 @@
         "operationId": "list_leads_api_admin_leads_get",
         "parameters": [
           {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 120,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^(new|contacted|responded|visit_scheduled|onboarding|won|lost)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "region",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 80,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region"
+            }
+          },
+          {
+            "in": "query",
+            "name": "assigned",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Assigned"
+            }
+          },
+          {
+            "in": "query",
+            "name": "overdue",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Overdue",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
             "in": "header",
             "name": "authorization",
             "required": false,
@@ -7518,7 +7939,177 @@
         ]
       }
     },
+    "/api/admin/leads/import": {
+      "post": {
+        "description": "Bulk CSV import. Flexible headers \u2014 recognised columns:\nname, property/property_name, phone, email, instagram, location/city,\nregion, score, segment, decision_maker, channel/source, angle, status,\nnote/notes. Dedupes on phone (when present) else (property, city).",
+        "operationId": "import_leads_api_admin_leads_import_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "dry_run",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Dry Run",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_leads_api_admin_leads_import_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Leads",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/summary": {
+      "get": {
+        "description": "Pipeline counts for the dashboard header on /admin/leads.",
+        "operationId": "leads_summary_api_admin_leads_summary_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Leads Summary",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/leads/{lead_id}": {
+      "get": {
+        "operationId": "get_lead_api_admin_leads__lead_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Lead",
+        "tags": [
+          "admin"
+        ]
+      },
       "patch": {
         "operationId": "update_lead_api_admin_leads__lead_id__patch",
         "parameters": [
@@ -7579,6 +8170,129 @@
           }
         },
         "summary": "Update Lead",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}/activities": {
+      "post": {
+        "operationId": "add_lead_activity_api_admin_leads__lead_id__activities_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadActivityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Lead Activity",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}/convert": {
+      "post": {
+        "description": "Won a lead? Turn it into a PropertyCapture so it flows into the existing\ncapture \u2192 claim \u2192 draft-listing onboarding (services/capture_claim.py).\nNeeds the owner's phone \u2014 that is what the claim match runs on.",
+        "operationId": "convert_lead_api_admin_leads__lead_id__convert_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Convert Lead",
         "tags": [
           "admin"
         ]
