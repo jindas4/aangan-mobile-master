@@ -432,6 +432,13 @@ export default function ListingDetailScreen() {
                   </View>
                 </View>
                 <Text style={styles.reviewBody}>{r.body}</Text>
+                {(r.photos?.length ?? 0) > 0 && (
+                  <View style={styles.reviewPhotoRow}>
+                    {r.photos.slice(0, 4).map((u) => (
+                      <RemoteImage key={u} url={u} size="thumb" style={styles.reviewPhoto} contentFit="cover" />
+                    ))}
+                  </View>
+                )}
                 {user && (
                   <TouchableOpacity
                     onPress={() =>
@@ -895,6 +902,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.charcoal2,
     lineHeight: 20,
+  },
+  reviewPhotoRow: {
+    flexDirection: "row",
+    gap: 6,
+    marginTop: 8,
+  },
+  reviewPhoto: {
+    width: 64,
+    height: 64,
+    borderRadius: Radius.sm,
+    backgroundColor: Colors.cream,
   },
   reportLink: {
     fontSize: 12,

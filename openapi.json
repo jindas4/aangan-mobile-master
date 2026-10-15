@@ -4786,6 +4786,14 @@
             "title": "Booking Id",
             "type": "string"
           },
+          "photos": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 6,
+            "title": "Photos",
+            "type": "array"
+          },
           "rating": {
             "maximum": 5.0,
             "minimum": 1.0,
@@ -4853,6 +4861,14 @@
           "listing_id": {
             "title": "Listing Id",
             "type": "string"
+          },
+          "photos": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Photos",
+            "type": "array"
           },
           "rating": {
             "title": "Rating",

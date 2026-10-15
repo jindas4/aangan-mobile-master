@@ -5,6 +5,7 @@ import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { api } from "@/lib/api";
 import { Button } from "@/components/Button";
 import { GlassSheet } from "@/components/GlassSheet";
+import { PhotoPicker, Photo } from "@/components/PhotoPicker";
 
 interface Props {
   bookingId: string;
@@ -16,6 +17,7 @@ interface Props {
 export function WriteReviewModal({ bookingId, listingTitle, onClose, onPosted }: Props) {
   const [rating, setRating] = useState(5);
   const [body, setBody] = useState("");
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -24,12 +26,21 @@ export function WriteReviewModal({ bookingId, listingTitle, onClose, onPosted }:
       setErr("Tell us a little more (8+ characters).");
       return;
     }
+    if (photos.some((p) => p.uploading)) {
+      setErr("Hold on — your photos are still uploading.");
+      return;
+    }
     setBusy(true);
     setErr(null);
     try {
       await api("/api/reviews", {
         method: "POST",
-        body: { booking_id: bookingId, rating, body: body.trim() },
+        body: {
+          booking_id: bookingId, rating, body: body.trim(),
+          // PhotoPicker shrinks each photo on the phone before upload, so
+          // these are already small; the server makes the WebP variants.
+          photos: photos.filter((p) => p.remoteUrl).map((p) => p.remoteUrl).slice(0, 6),
+        },
       });
       onPosted();
     } catch (e: any) {
@@ -72,6 +83,9 @@ export function WriteReviewModal({ bookingId, listingTitle, onClose, onPosted }:
             style={styles.textArea}
           />
           <Text style={styles.charCount}>{body.length}/2000 characters</Text>
+
+          <Text style={styles.fieldLabel}>Photos — optional</Text>
+          <PhotoPicker value={photos} onChange={setPhotos} />
 
           {err && <Text style={styles.errorText}>{err}</Text>}
 

@@ -447,6 +447,7 @@ export interface Review {
   author_name: string | null;
   rating: number;
   body: string;
+  photos: string[];
   created_at: string;
 }
 

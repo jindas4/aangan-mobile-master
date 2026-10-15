@@ -5374,6 +5374,8 @@ export interface components {
             body: string;
             /** Booking Id */
             booking_id: string;
+            /** Photos */
+            photos?: string[];
             /** Rating */
             rating: number;
         };
@@ -5401,6 +5403,11 @@ export interface components {
             id: number;
             /** Listing Id */
             listing_id: string;
+            /**
+             * Photos
+             * @default []
+             */
+            photos: string[];
             /** Rating */
             rating: number;
         };
