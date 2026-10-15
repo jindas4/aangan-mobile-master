@@ -8105,6 +8105,54 @@
         ]
       }
     },
+    "/api/admin/leads/sign-in-check": {
+      "get": {
+        "description": "Can an owner created from a lead (phone number only) sign in today?\nOnly by an SMS code \u2014 so not until SMS is connected.",
+        "operationId": "leads_sign_in_check_api_admin_leads_sign_in_check_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Leads Sign In Check",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/leads/summary": {
       "get": {
         "description": "Pipeline counts for the dashboard header on /admin/leads.",

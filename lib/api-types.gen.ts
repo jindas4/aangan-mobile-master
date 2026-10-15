@@ -592,6 +592,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/sign-in-check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Leads Sign In Check
+         * @description Can an owner created from a lead (phone number only) sign in today?
+         *     Only by an SMS code — so not until SMS is connected.
+         */
+        get: operations["leads_sign_in_check_api_admin_leads_sign_in_check_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/summary": {
         parameters: {
             query?: never;
@@ -6944,6 +6965,37 @@ export interface operations {
                 "multipart/form-data": components["schemas"]["Body_import_leads_api_admin_leads_import_post"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    leads_sign_in_check_api_admin_leads_sign_in_check_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
