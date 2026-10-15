@@ -21,6 +21,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/boards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Boards
+         * @description The board list, for the access editor.
+         */
+        get: operations["boards_api_admin_boards_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/bookings": {
         parameters: {
             query?: never;
@@ -1232,6 +1252,27 @@ export interface paths {
          *     agents or escalate themselves.
          */
         put: operations["set_admin_role_api_admin_users__user_id__role_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{user_id}/sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Admin Sections
+         * @description Choose which admin boards a support agent can open. Full admins always
+         *     have every board; the audit log and feature flags are never granted.
+         */
+        put: operations["set_admin_sections_api_admin_users__user_id__sections_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -3328,6 +3369,11 @@ export interface components {
         AdminRoleSet: {
             /** Role */
             role: string;
+        };
+        /** AdminSectionsSet */
+        AdminSectionsSet: {
+            /** Sections */
+            sections?: string[] | null;
         };
         /** AiDescriptionRequest */
         AiDescriptionRequest: {
@@ -5533,6 +5579,8 @@ export interface components {
         UserOut: {
             /** Admin Role */
             admin_role?: string | null;
+            /** Admin Sections */
+            admin_sections?: string[] | null;
             /** Avatar Url */
             avatar_url?: string | null;
             /** Email */
@@ -5685,6 +5733,37 @@ export interface operations {
                 limit?: number;
                 offset?: number;
             };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    boards_api_admin_boards_get: {
+        parameters: {
+            query?: never;
             header?: {
                 authorization?: string | null;
             };
@@ -8252,6 +8331,43 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["AdminRoleSet"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_admin_sections_api_admin_users__user_id__sections_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminSectionsSet"];
             };
         };
         responses: {

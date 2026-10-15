@@ -107,6 +107,26 @@
         "title": "AdminRoleSet",
         "type": "object"
       },
+      "AdminSectionsSet": {
+        "properties": {
+          "sections": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sections"
+          }
+        },
+        "title": "AdminSectionsSet",
+        "type": "object"
+      },
       "AiDescriptionRequest": {
         "properties": {
           "amenities": {
@@ -5252,6 +5272,20 @@
             ],
             "title": "Admin Role"
           },
+          "admin_sections": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Sections"
+          },
           "avatar_url": {
             "anyOf": [
               {
@@ -5753,6 +5787,54 @@
           }
         },
         "summary": "List Audit",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/boards": {
+      "get": {
+        "description": "The board list, for the access editor.",
+        "operationId": "boards_api_admin_boards_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Boards",
         "tags": [
           "admin"
         ]
@@ -10710,6 +10792,73 @@
           }
         },
         "summary": "Set Admin Role",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/users/{user_id}/sections": {
+      "put": {
+        "description": "Choose which admin boards a support agent can open. Full admins always\nhave every board; the audit log and feature flags are never granted.",
+        "operationId": "set_admin_sections_api_admin_users__user_id__sections_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminSectionsSet"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Admin Sections",
         "tags": [
           "admin"
         ]
