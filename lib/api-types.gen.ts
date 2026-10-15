@@ -569,6 +569,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/ai-description": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Leads Ai Description
+         * @description A first draft of the listing description while converting a lead (the
+         *     host-side helper needs a host account, which admins don't have).
+         */
+        post: operations["leads_ai_description_api_admin_leads_ai_description_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/import": {
         parameters: {
             query?: never;
@@ -680,7 +701,8 @@ export interface paths {
         /**
          * Convert Lead
          * @description Won a lead? Turn it into a PropertyCapture so it flows into the existing
-         *     capture → claim → draft-listing onboarding (services/capture_claim.py).
+         *     capture → claim → draft-listing onboarding (services/capture_claim.py),
+         *     carrying the listing details and photos entered in the convert form.
          *     Needs the owner's phone — that is what the claim match runs on.
          */
         post: operations["convert_lead_api_admin_leads__lead_id__convert_post"];
@@ -4255,6 +4277,116 @@ export interface components {
             /** Kind */
             kind: string;
         };
+        /** LeadAiDescriptionIn */
+        LeadAiDescriptionIn: {
+            /**
+             * Amenities
+             * @default []
+             */
+            amenities: string[];
+            /**
+             * Area
+             * @default
+             */
+            area: string;
+            /**
+             * Baths
+             * @default 1
+             */
+            baths: number;
+            /**
+             * Bedrooms
+             * @default 1
+             */
+            bedrooms: number;
+            /**
+             * City
+             * @default
+             */
+            city: string;
+            /**
+             * Guests
+             * @default 2
+             */
+            guests: number;
+            /**
+             * Scene
+             * @default
+             */
+            scene: string;
+            /**
+             * Title
+             * @default
+             */
+            title: string;
+            /**
+             * Type
+             * @default
+             */
+            type: string;
+        };
+        /**
+         * LeadConvertIn
+         * @description The draft listing made when a lead is converted. Only the title and the
+         *     description are required; everything else can be filled in by the owner
+         *     (or the team) before publishing.
+         */
+        LeadConvertIn: {
+            /** Alcohol Ok */
+            alcohol_ok?: boolean | null;
+            /** Amenities */
+            amenities?: string[];
+            /**
+             * Area
+             * @default
+             */
+            area: string;
+            /** Baths */
+            baths?: number | null;
+            /** Bedrooms */
+            bedrooms?: number | null;
+            /**
+             * City
+             * @default
+             */
+            city: string;
+            /** Cleaning Fee Inr */
+            cleaning_fee_inr?: number | null;
+            /** Couples Ok */
+            couples_ok?: boolean | null;
+            /** Description */
+            description: string;
+            /** Guests */
+            guests?: number | null;
+            /** Images */
+            images?: string[];
+            /** Local Id Ok */
+            local_id_ok?: boolean | null;
+            /** Min Nights */
+            min_nights?: number | null;
+            /** Pet Friendly */
+            pet_friendly?: boolean | null;
+            /** Phone */
+            phone?: string | null;
+            /** Price Inr */
+            price_inr?: number | null;
+            /** Registration No */
+            registration_no?: string | null;
+            /**
+             * Scene
+             * @default
+             */
+            scene: string;
+            /** Title */
+            title: string;
+            /**
+             * Type
+             * @default
+             */
+            type: string;
+            /** Veg Kitchen */
+            veg_kitchen?: boolean | null;
+        };
         /** LeadIn */
         LeadIn: {
             /**
@@ -6949,6 +7081,41 @@ export interface operations {
             };
         };
     };
+    leads_ai_description_api_admin_leads_ai_description_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadAiDescriptionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     import_leads_api_admin_leads_import_post: {
         parameters: {
             query?: {
@@ -7166,7 +7333,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadConvertIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

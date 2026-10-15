@@ -2053,6 +2053,279 @@
         "title": "LeadActivityIn",
         "type": "object"
       },
+      "LeadAiDescriptionIn": {
+        "properties": {
+          "amenities": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Amenities",
+            "type": "array"
+          },
+          "area": {
+            "default": "",
+            "title": "Area",
+            "type": "string"
+          },
+          "baths": {
+            "default": 1,
+            "title": "Baths",
+            "type": "integer"
+          },
+          "bedrooms": {
+            "default": 1,
+            "title": "Bedrooms",
+            "type": "integer"
+          },
+          "city": {
+            "default": "",
+            "title": "City",
+            "type": "string"
+          },
+          "guests": {
+            "default": 2,
+            "title": "Guests",
+            "type": "integer"
+          },
+          "scene": {
+            "default": "",
+            "title": "Scene",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "default": "",
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "title": "LeadAiDescriptionIn",
+        "type": "object"
+      },
+      "LeadConvertIn": {
+        "description": "The draft listing made when a lead is converted. Only the title and the\ndescription are required; everything else can be filled in by the owner\n(or the team) before publishing.",
+        "properties": {
+          "alcohol_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alcohol Ok"
+          },
+          "amenities": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 40,
+            "title": "Amenities",
+            "type": "array"
+          },
+          "area": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Area",
+            "type": "string"
+          },
+          "baths": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baths"
+          },
+          "bedrooms": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bedrooms"
+          },
+          "city": {
+            "default": "",
+            "maxLength": 80,
+            "title": "City",
+            "type": "string"
+          },
+          "cleaning_fee_inr": {
+            "anyOf": [
+              {
+                "maximum": 100000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cleaning Fee Inr"
+          },
+          "couples_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Couples Ok"
+          },
+          "description": {
+            "maxLength": 4000,
+            "minLength": 20,
+            "title": "Description",
+            "type": "string"
+          },
+          "guests": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guests"
+          },
+          "images": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Images",
+            "type": "array"
+          },
+          "local_id_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Id Ok"
+          },
+          "min_nights": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Nights"
+          },
+          "pet_friendly": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pet Friendly"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "price_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Inr"
+          },
+          "registration_no": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registration No"
+          },
+          "scene": {
+            "default": "",
+            "pattern": "^(|mountain|beach|city|forest|lake|desert|backwater|heritage)$",
+            "title": "Scene",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 160,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "default": "",
+            "maxLength": 60,
+            "title": "Type",
+            "type": "string"
+          },
+          "veg_kitchen": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Veg Kitchen"
+          }
+        },
+        "required": [
+          "title",
+          "description"
+        ],
+        "title": "LeadConvertIn",
+        "type": "object"
+      },
       "LeadIn": {
         "properties": {
           "angle": {
@@ -8037,6 +8310,64 @@
         ]
       }
     },
+    "/api/admin/leads/ai-description": {
+      "post": {
+        "description": "A first draft of the listing description while converting a lead (the\nhost-side helper needs a host account, which admins don't have).",
+        "operationId": "leads_ai_description_api_admin_leads_ai_description_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadAiDescriptionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Leads Ai Description",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/leads/import": {
       "post": {
         "description": "Bulk CSV import. Flexible headers \u2014 recognised columns:\nname, property/property_name, phone, email, instagram, location/city,\nregion, score, segment, decision_maker, channel/source, angle, status,\nnote/notes. Dedupes on phone (when present) else (property, city).",
@@ -8389,7 +8720,7 @@
     },
     "/api/admin/leads/{lead_id}/convert": {
       "post": {
-        "description": "Won a lead? Turn it into a PropertyCapture so it flows into the existing\ncapture \u2192 claim \u2192 draft-listing onboarding (services/capture_claim.py).\nNeeds the owner's phone \u2014 that is what the claim match runs on.",
+        "description": "Won a lead? Turn it into a PropertyCapture so it flows into the existing\ncapture \u2192 claim \u2192 draft-listing onboarding (services/capture_claim.py),\ncarrying the listing details and photos entered in the convert form.\nNeeds the owner's phone \u2014 that is what the claim match runs on.",
         "operationId": "convert_lead_api_admin_leads__lead_id__convert_post",
         "parameters": [
           {
@@ -8418,6 +8749,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadConvertIn"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
