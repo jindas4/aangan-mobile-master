@@ -12958,6 +12958,63 @@
         ]
       }
     },
+    "/api/bookings/{booking_id}/release": {
+      "post": {
+        "description": "The guest closed checkout without paying: free the dates now. Quiet \u2014\nnothing was booked, so nobody is notified. A no-op once money is in.",
+        "operationId": "release_hold_api_bookings__booking_id__release_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Release Hold",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
     "/api/chat": {
       "post": {
         "description": "Non-streaming fallback for simpler clients.",

@@ -604,7 +604,12 @@ export default function ListingDetailScreen() {
           bookingId={checkoutBookingId}
           totalInr={quote.total_inr}
           cancellationPolicy={listing.cancellation_policy}
-          onClose={() => setCheckoutBookingId(null)}
+          onClose={() => {
+            // Leaving checkout without paying frees the dates straight away
+            // (a no-op on the server once money is in).
+            api(`/api/bookings/${checkoutBookingId}/release`, { method: "POST" }).catch(() => {});
+            setCheckoutBookingId(null);
+          }}
           onPaid={onPaid}
         />
       )}
