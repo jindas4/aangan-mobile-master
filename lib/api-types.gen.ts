@@ -672,6 +672,27 @@ export interface paths {
         patch: operations["update_lead_api_admin_leads__lead_id__patch"];
         trace?: never;
     };
+    "/api/admin/leads/{lead_id}/action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Lead Action
+         * @description One playbook button: logs the activity, moves the status forward and
+         *     sets the next follow-up — the board updates from the same row.
+         */
+        post: operations["lead_action_api_admin_leads__lead_id__action_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/{lead_id}/activities": {
         parameters: {
             query?: never;
@@ -706,6 +727,50 @@ export interface paths {
          *     Needs the owner's phone — that is what the claim match runs on.
          */
         post: operations["convert_lead_api_admin_leads__lead_id__convert_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/playbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lead Playbook
+         * @description Everything the playbook panel needs for one lead: the next step, each
+         *     message filled in for this owner, and whether it can go out through
+         *     WhatsApp Business or SMS right now (and if not, why).
+         */
+        get: operations["lead_playbook_api_admin_leads__lead_id__playbook_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Lead Send
+         * @description Send a playbook message to the owner through WhatsApp Business (Zoho)
+         *     or SMS (MSG91). Only with the owner's consent, an approved template and
+         *     within 9 am – 9 pm IST; every attempt is logged on the lead.
+         */
+        post: operations["lead_send_api_admin_leads__lead_id__send_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4291,6 +4356,31 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** LeadActionIn */
+        LeadActionIn: {
+            /** Action */
+            action: string;
+            /** Channel */
+            channel?: string | null;
+            /** Message */
+            message?: string | null;
+            /**
+             * Note
+             * @default
+             */
+            note: string;
+            /** Outcome */
+            outcome?: string | null;
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+            /** Value */
+            value?: boolean | null;
+            /** When */
+            when?: string | null;
+        };
         /** LeadActivityIn */
         LeadActivityIn: {
             /** Body */
@@ -4469,6 +4559,13 @@ export interface components {
              * @default
              */
             source: string;
+        };
+        /** LeadSendIn */
+        LeadSendIn: {
+            /** Channel */
+            channel: string;
+            /** Message */
+            message: string;
         };
         /**
          * LeadUpdate
@@ -7306,6 +7403,43 @@ export interface operations {
             };
         };
     };
+    lead_action_api_admin_leads__lead_id__action_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadActionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     add_lead_activity_api_admin_leads__lead_id__activities_post: {
         parameters: {
             query?: never;
@@ -7357,6 +7491,76 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["LeadConvertIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_playbook_api_admin_leads__lead_id__playbook_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_send_api_admin_leads__lead_id__send_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadSendIn"];
             };
         };
         responses: {

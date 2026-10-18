@@ -2032,6 +2032,91 @@
         "title": "KycDecision",
         "type": "object"
       },
+      "LeadActionIn": {
+        "properties": {
+          "action": {
+            "pattern": "^(call|message_logged|consent|visit|visit_done|photos_received|lost|reopen)$",
+            "title": "Action",
+            "type": "string"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "pattern": "^(whatsapp|sms)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 600,
+            "title": "Note",
+            "type": "string"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "pattern": "^(interested|callback|no_answer|not_interested)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Reason",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "when": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "When"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "LeadActionIn",
+        "type": "object"
+      },
       "LeadActivityIn": {
         "properties": {
           "body": {
@@ -2041,7 +2126,7 @@
             "type": "string"
           },
           "kind": {
-            "pattern": "^(note|call|whatsapp|email|visit)$",
+            "pattern": "^(note|call|whatsapp|sms|email|visit)$",
             "title": "Kind",
             "type": "string"
           }
@@ -2418,6 +2503,26 @@
           "name"
         ],
         "title": "LeadIn",
+        "type": "object"
+      },
+      "LeadSendIn": {
+        "properties": {
+          "channel": {
+            "pattern": "^(whatsapp|sms)$",
+            "title": "Channel",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 30,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "channel"
+        ],
+        "title": "LeadSendIn",
         "type": "object"
       },
       "LeadUpdate": {
@@ -8652,6 +8757,73 @@
         ]
       }
     },
+    "/api/admin/leads/{lead_id}/action": {
+      "post": {
+        "description": "One playbook button: logs the activity, moves the status forward and\nsets the next follow-up \u2014 the board updates from the same row.",
+        "operationId": "lead_action_api_admin_leads__lead_id__action_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadActionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Action",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/leads/{lead_id}/activities": {
       "post": {
         "operationId": "add_lead_activity_api_admin_leads__lead_id__activities_post",
@@ -8780,6 +8952,130 @@
           }
         },
         "summary": "Convert Lead",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}/playbook": {
+      "get": {
+        "description": "Everything the playbook panel needs for one lead: the next step, each\nmessage filled in for this owner, and whether it can go out through\nWhatsApp Business or SMS right now (and if not, why).",
+        "operationId": "lead_playbook_api_admin_leads__lead_id__playbook_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Playbook",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}/send": {
+      "post": {
+        "description": "Send a playbook message to the owner through WhatsApp Business (Zoho)\nor SMS (MSG91). Only with the owner's consent, an approved template and\nwithin 9 am \u2013 9 pm IST; every attempt is logged on the lead.",
+        "operationId": "lead_send_api_admin_leads__lead_id__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadSendIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Send",
         "tags": [
           "admin"
         ]
