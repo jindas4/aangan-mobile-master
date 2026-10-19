@@ -578,8 +578,14 @@ export default function ListingDetailScreen() {
               {policyLine(listing.cancellation_policy)}
             </Text>
 
+            {quote?.bookings_open === false && (
+              <Text style={[styles.cancelPolicy, { marginTop: 12 }]}>
+                Bookings open soon. We're finishing our payment set-up — you can message the host about your dates meanwhile.
+              </Text>
+            )}
             <Button
               title={
+                quote?.bookings_open === false ? "Bookings open soon" :
                 booking ? "Booking…" :
                 checkingAvailability ? "Checking…" :
                 !checkIn || !checkOut ? "Select dates" :
@@ -587,7 +593,7 @@ export default function ListingDetailScreen() {
               }
               onPress={bookNow}
               loading={booking || checkingAvailability}
-              disabled={!checkIn || !checkOut || checkingAvailability || !quote?.available}
+              disabled={!checkIn || !checkOut || checkingAvailability || !quote?.available || quote?.bookings_open === false}
               full
               size="lg"
               testID="book-button"

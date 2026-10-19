@@ -3639,6 +3639,11 @@ export interface components {
         AvailabilityResponse: {
             /** Available */
             available: boolean;
+            /**
+             * Bookings Open
+             * @default true
+             */
+            bookings_open: boolean;
             /** Cleaning Inr */
             cleaning_inr: number;
             /**

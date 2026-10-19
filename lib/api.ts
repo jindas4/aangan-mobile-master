@@ -362,6 +362,8 @@ export interface AvailabilityResponse {
   tax_pct?: number | null;
   total_inr: number;
   min_nights: number;
+  /** False while new bookings are paused (until live payments are on). */
+  bookings_open?: boolean;
 }
 
 export interface CalendarRange {

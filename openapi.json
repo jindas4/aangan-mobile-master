@@ -333,6 +333,11 @@
             "title": "Available",
             "type": "boolean"
           },
+          "bookings_open": {
+            "default": true,
+            "title": "Bookings Open",
+            "type": "boolean"
+          },
           "cleaning_inr": {
             "title": "Cleaning Inr",
             "type": "integer"
