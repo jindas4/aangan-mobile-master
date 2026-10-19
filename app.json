@@ -141,7 +141,8 @@
           "sounds": []
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      "./plugins/withPodsDeploymentTarget"
     ],
     "experiments": {
       "typedRoutes": true
