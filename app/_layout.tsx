@@ -10,6 +10,7 @@ import { Colors } from "@/constants/Colors";
 import { AnimatedSplash } from "@/components/AnimatedSplash";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ChatFab } from "@/components/ChatSheet";
+import { EnvBadge } from "@/components/EnvBadge";
 import { configureGoogleSignIn } from "@/lib/googleAuth";
 import { registerPushToken } from "@/lib/pushNotifications";
 
@@ -98,6 +99,7 @@ function RootLayout() {
         <Stack.Screen name="account/delete" />
       </Stack>
       <ChatFab />
+      <EnvBadge />
       {showSplash && <AnimatedSplash onFinish={() => setShowSplash(false)} />}
     </ErrorBoundary>
   );

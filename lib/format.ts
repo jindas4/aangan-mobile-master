@@ -31,16 +31,17 @@ export function timeAgo(iso: string): string {
   return shortDate(iso);
 }
 
+const MEDIA_BASE = process.env.EXPO_PUBLIC_API_URL || "https://backend-service-production-2df4.up.railway.app";
+
 export function imageUrl(url: string): string {
   if (!url) return "";
   if (url.startsWith("http")) return url;
   if (url.startsWith("scene://")) return "";
-  return `https://backend-service-production-2df4.up.railway.app${url}`;
+  return `${MEDIA_BASE}${url}`;
 }
 
 // One of our uploads: …/images/<owner>/<id>.<ext>, with or without a signature after it.
 const UPLOAD_RE = /\/images\/(usr_[A-Za-z0-9_-]+)\/([A-Za-z0-9_-]+)\.[A-Za-z0-9]+(?:\?|$)/;
-const MEDIA_BASE = process.env.EXPO_PUBLIC_API_URL || "https://backend-service-production-2df4.up.railway.app";
 
 /**
  * The address of a small copy of a listing photo — thumb (320 px), medium
