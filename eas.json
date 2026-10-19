@@ -61,6 +61,21 @@
         "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "417909183220-p7qgrmjagb4eaunh76tmmqcnbdoe2re9.apps.googleusercontent.com",
         "EXPO_PUBLIC_APP_ENV": "production"
       }
+    },
+    "staging": {
+      "extends": "production",
+      "channel": "staging",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://backend-service-staging-c0e0.up.railway.app",
+        "EXPO_PUBLIC_WEB_URL": "https://frontend-staging-5326.up.railway.app",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://disabled@o0.ingest.sentry.io/0",
+        "EXPO_PUBLIC_SENTRY_ENVIRONMENT": "staging",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "417909183220-ghq1hml43c1pahmt2gjd6pulguo30he9.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "417909183220-ok3a21qr22063kgh783tbrn1vo6n2h9k.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "417909183220-p7qgrmjagb4eaunh76tmmqcnbdoe2re9.apps.googleusercontent.com",
+        "EXPO_PUBLIC_APP_ENV": "staging"
+      }
     }
   },
   "submit": {
@@ -73,6 +88,13 @@
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",
         "track": "internal"
+      }
+    },
+    "staging": {
+      "ios": {
+        "appleId": "sudhir.jindal10@gmail.com",
+        "ascAppId": "6805300002",
+        "appleTeamId": "LRYVMJZY77"
       }
     }
   }
