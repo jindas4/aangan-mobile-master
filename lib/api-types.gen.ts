@@ -3792,6 +3792,10 @@ export interface components {
              * @default flexible
              */
             cancellation_policy: string | null;
+            /** Checkin Time */
+            checkin_time?: string | null;
+            /** Checkout Time */
+            checkout_time?: string | null;
             /** Cleaning Inr */
             cleaning_inr: number;
             /**
@@ -3859,6 +3863,10 @@ export interface components {
             cancellation_policy: string | null;
             /** Checkin Problem At */
             checkin_problem_at?: string | null;
+            /** Checkin Time */
+            checkin_time?: string | null;
+            /** Checkout Time */
+            checkout_time?: string | null;
             /** Cleaning Inr */
             cleaning_inr: number;
             /**
@@ -4627,6 +4635,16 @@ export interface components {
              * @default flexible
              */
             cancellation_policy: string;
+            /**
+             * Checkin Time
+             * @default 14:00
+             */
+            checkin_time: string;
+            /**
+             * Checkout Time
+             * @default 11:00
+             */
+            checkout_time: string;
             /** City */
             city: string;
             /** Couples Ok */
@@ -4742,6 +4760,16 @@ export interface components {
             cancellation_policy: string;
             /** Capture Code */
             capture_code?: string | null;
+            /**
+             * Checkin Time
+             * @default 14:00
+             */
+            checkin_time: string;
+            /**
+             * Checkout Time
+             * @default 11:00
+             */
+            checkout_time: string;
             /** City */
             city: string;
             /**
@@ -4875,6 +4903,16 @@ export interface components {
              * @default flexible
              */
             cancellation_policy: string;
+            /**
+             * Checkin Time
+             * @default 14:00
+             */
+            checkin_time: string;
+            /**
+             * Checkout Time
+             * @default 11:00
+             */
+            checkout_time: string;
             /** City */
             city: string;
             /** Cleaning Fee Inr */
@@ -4981,6 +5019,10 @@ export interface components {
             bedrooms?: number | null;
             /** Cancellation Policy */
             cancellation_policy?: string | null;
+            /** Checkin Time */
+            checkin_time?: string | null;
+            /** Checkout Time */
+            checkout_time?: string | null;
             /** Cleaning Fee Inr */
             cleaning_fee_inr?: number | null;
             /** Couples Ok */

@@ -4,6 +4,7 @@
 // true = welcome/allowed, false = not, null = the host has not said.
 import { View, Text, StyleSheet, TouchableOpacity, Switch } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { fmtTime } from "@/lib/format";
 
 export type Rule = boolean | null;
 export interface HouseRulesValue { couples_ok: Rule; local_id_ok: Rule; alcohol_ok: Rule; pet_friendly: boolean }
@@ -26,11 +27,18 @@ export function houseRuleLines(v: Partial<HouseRulesValue>): { text: string; ok:
   return out;
 }
 
-export function HouseRulesList({ item }: { item: Partial<HouseRulesValue> }) {
+export function HouseRulesList({ item }: { item: Partial<HouseRulesValue> & { checkin_time?: string; checkout_time?: string } }) {
   const lines = houseRuleLines(item);
-  if (!lines.length) return null;
+  // Every listing has check-in / check-out times (default 2 PM / 11 AM).
+  const times = [`Check-in from ${fmtTime(item.checkin_time, "2:00 PM")}`, `Check-out by ${fmtTime(item.checkout_time, "11:00 AM")}`];
   return (
     <View>
+      {times.map((t) => (
+        <View key={t} style={styles.line}>
+          <View style={[styles.mark, styles.markOk]}><Text style={styles.markText}>🕑</Text></View>
+          <Text style={styles.lineText}>{t}</Text>
+        </View>
+      ))}
       {lines.map((l) => (
         <View key={l.text} style={styles.line}>
           <View style={[styles.mark, l.ok ? styles.markOk : styles.markNo]}>

@@ -261,6 +261,9 @@ export interface ListingCard {
   veg_kitchen: boolean;
   jain_friendly: boolean;
   min_nights?: number;
+  /** Check-in from / check-out by, "HH:MM" Indian time (required on every listing). */
+  checkin_time?: string;
+  checkout_time?: string;
   distance_note: string;
   tags: string[];
   lat: number;
@@ -300,6 +303,9 @@ export interface BookingOut {
   guests: number;
   /** Fixed when the booking was made. */
   cancellation_policy?: "flexible" | "non_refundable" | null;
+  /** This stay's check-in from / check-out by ("HH:MM"), fixed when booked. */
+  checkin_time?: string | null;
+  checkout_time?: string | null;
   /** Per-night rate on a booking (the stay costs nightly_inr × nights). */
   nightly_inr: number;
   cleaning_inr: number;

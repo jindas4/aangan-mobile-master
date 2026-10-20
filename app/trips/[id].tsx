@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, CancelResponse } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, fullDate, canCancelBooking } from "@/lib/format";
+import { inr, fullDate, canCancelBooking, fmtTime } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { RemoteImage } from "@/components/RemoteImage";
 import { CancelBookingModal } from "@/components/CancelBookingModal";
@@ -134,8 +134,8 @@ export default function TripDetailScreen() {
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Your stay</Text>
-          <DetailRow icon="calendar-outline" label="Check-in" value={fullDate(b.start_date)} />
-          <DetailRow icon="calendar-outline" label="Check-out" value={fullDate(b.end_date)} />
+          <DetailRow icon="calendar-outline" label="Check-in" value={`${fullDate(b.start_date)}, from ${fmtTime(b.checkin_time, "2:00 PM")}`} />
+          <DetailRow icon="calendar-outline" label="Check-out" value={`${fullDate(b.end_date)}, by ${fmtTime(b.checkout_time, "11:00 AM")}`} />
           <DetailRow icon="moon-outline" label="Nights" value={String(b.nights)} />
           <DetailRow icon="people-outline" label="Guests" value={String(b.guests)} />
         </View>

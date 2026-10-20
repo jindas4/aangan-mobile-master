@@ -110,3 +110,14 @@ export function canCancelBooking(b: { status: string; start_date: string; can_ca
   const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   return (b.status === "pending" || b.status === "confirmed") && today <= b.start_date;
 }
+
+/** "14:00" → "2:00 PM" (check-in / check-out times). */
+export function fmtTime(hhmm: string | null | undefined, fallback = ""): string {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm || "");
+  if (!m) return fallback;
+  const h = Number(m[1]);
+  return `${h % 12 || 12}:${m[2]} ${h < 12 ? "AM" : "PM"}`;
+}
+
+/** A valid 24-hour "HH:MM" time. */
+export const isHHMM = (v: string) => /^([01]\d|2[0-3]):[0-5]\d$/.test(v.trim());

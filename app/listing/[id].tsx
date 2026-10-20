@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api, ListingFull, Review, AvailabilityResponse, CalendarResponse, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITY_ICON_MAP } from "@/constants/Amenities";
-import { HouseRulesList, houseRuleLines } from "@/components/HouseRules";
+import { HouseRulesList } from "@/components/HouseRules";
 import { inr, imageUrl, shortDate, nightWithTax, gstPct } from "@/lib/format";
 import { useAuth, useWishlist } from "@/lib/auth";
 import { Button } from "@/components/Button";
@@ -367,12 +367,10 @@ export default function ListingDetailScreen() {
           ) : null}
 
           {/* House rules — stated before booking so nobody is turned away at the door */}
-          {houseRuleLines(listing).length > 0 && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>House rules</Text>
-              <HouseRulesList item={listing} />
-            </View>
-          )}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>House rules</Text>
+            <HouseRulesList item={listing} />
+          </View>
 
           {/* Amenities */}
           {listing.amenities?.length > 0 && (

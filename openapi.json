@@ -677,6 +677,28 @@
             "default": "flexible",
             "title": "Cancellation Policy"
           },
+          "checkin_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkin Time"
+          },
+          "checkout_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkout Time"
+          },
           "cleaning_inr": {
             "title": "Cleaning Inr",
             "type": "integer"
@@ -828,6 +850,28 @@
               }
             ],
             "title": "Checkin Problem At"
+          },
+          "checkin_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkin Time"
+          },
+          "checkout_time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkout Time"
           },
           "cleaning_inr": {
             "title": "Cleaning Inr",
@@ -2773,6 +2817,16 @@
             "title": "Cancellation Policy",
             "type": "string"
           },
+          "checkin_time": {
+            "default": "14:00",
+            "title": "Checkin Time",
+            "type": "string"
+          },
+          "checkout_time": {
+            "default": "11:00",
+            "title": "Checkout Time",
+            "type": "string"
+          },
           "city": {
             "title": "City",
             "type": "string"
@@ -3003,6 +3057,18 @@
               }
             ],
             "title": "Capture Code"
+          },
+          "checkin_time": {
+            "default": "14:00",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+            "title": "Checkin Time",
+            "type": "string"
+          },
+          "checkout_time": {
+            "default": "11:00",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+            "title": "Checkout Time",
+            "type": "string"
           },
           "city": {
             "title": "City",
@@ -3295,6 +3361,16 @@
             "title": "Cancellation Policy",
             "type": "string"
           },
+          "checkin_time": {
+            "default": "14:00",
+            "title": "Checkin Time",
+            "type": "string"
+          },
+          "checkout_time": {
+            "default": "11:00",
+            "title": "Checkout Time",
+            "type": "string"
+          },
           "city": {
             "title": "City",
             "type": "string"
@@ -3559,6 +3635,30 @@
               }
             ],
             "title": "Cancellation Policy"
+          },
+          "checkin_time": {
+            "anyOf": [
+              {
+                "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkin Time"
+          },
+          "checkout_time": {
+            "anyOf": [
+              {
+                "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkout Time"
           },
           "cleaning_fee_inr": {
             "anyOf": [

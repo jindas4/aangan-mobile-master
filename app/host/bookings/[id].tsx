@@ -17,7 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, fullDate, imageUrl, canCancelBooking } from "@/lib/format";
+import { inr, fullDate, imageUrl, canCancelBooking, fmtTime } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
@@ -184,8 +184,8 @@ export default function HostBookingDetailScreen() {
         {/* Dates & guests */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Stay details</Text>
-          <DetailRow icon="calendar-outline" label="Check-in" value={fullDate(booking.start_date)} />
-          <DetailRow icon="calendar-outline" label="Check-out" value={fullDate(booking.end_date)} />
+          <DetailRow icon="calendar-outline" label="Check-in" value={`${fullDate(booking.start_date)}, from ${fmtTime(booking.checkin_time, "2:00 PM")}`} />
+          <DetailRow icon="calendar-outline" label="Check-out" value={`${fullDate(booking.end_date)}, by ${fmtTime(booking.checkout_time, "11:00 AM")}`} />
           <DetailRow icon="moon-outline" label="Nights" value={String(booking.nights)} />
           <DetailRow icon="person-outline" label="Booked by" value={booking.guest_name || "Guest"} />
           <DetailRow icon="people-outline" label="Guests" value={String(booking.guests)} />

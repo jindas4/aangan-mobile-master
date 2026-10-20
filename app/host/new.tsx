@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, Scene } from "@/lib/api";
+import { fmtTime, isHHMM } from "@/lib/format";
 import { PayoutPreview } from "@/components/PayoutPreview";
 import { HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
@@ -48,6 +49,8 @@ export default function NewListingScreen() {
   const [type, setType] = useState("Apartment");
   const [price, setPrice] = useState("");
   const [cleaning, setCleaning] = useState("800");
+  const [checkin, setCheckin] = useState("14:00");    // required, "HH:MM"
+  const [checkout, setCheckout] = useState("11:00");
   const [policy, setPolicy] = useState<CancellationPolicy>("flexible");
   const [regNo, setRegNo] = useState("");
   const [rules, setRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
@@ -61,7 +64,8 @@ export default function NewListingScreen() {
 
   const uploadedImages = photos.filter((p) => p.remoteUrl).map((p) => p.remoteUrl!);
   const stillUploading = photos.some((p) => p.uploading);
-  const valid = title.trim() && city.trim() && price.trim() && description.trim() && uploadedImages.length > 0;
+  const valid = title.trim() && city.trim() && price.trim() && description.trim() && uploadedImages.length > 0
+    && isHHMM(checkin) && isHHMM(checkout);
 
   const saveDraftThenVerify = async () => {
     const ok = await handleCreate(false, { quiet: true });
@@ -88,6 +92,8 @@ export default function NewListingScreen() {
           description: description.trim(),
           amenities,
           cancellation_policy: policy,
+          checkin_time: checkin.trim(),
+          checkout_time: checkout.trim(),
           ...rules,
           registration_no: regNo.trim() || null,
           images: uploadedImages,
@@ -199,6 +205,20 @@ export default function NewListingScreen() {
             <TextInput value={cleaning} onChangeText={setCleaning} keyboardType="number-pad" placeholder="800" placeholderTextColor={Colors.charcoal3} style={styles.input} />
           </Field>
           <PayoutPreview price={parseInt(price) || 0} cleaning={parseInt(cleaning) || 0} />
+
+          <View style={styles.row}>
+            <Field label="Check-in from (24h) *" style={{ flex: 1 }}>
+              <TextInput value={checkin} onChangeText={setCheckin} keyboardType="numbers-and-punctuation" placeholder="14:00" maxLength={5}
+                         placeholderTextColor={Colors.charcoal3} style={[styles.input, !isHHMM(checkin) && { borderColor: Colors.terra }]} />
+            </Field>
+            <Field label="Check-out by (24h) *" style={{ flex: 1 }}>
+              <TextInput value={checkout} onChangeText={setCheckout} keyboardType="numbers-and-punctuation" placeholder="11:00" maxLength={5}
+                         placeholderTextColor={Colors.charcoal3} style={[styles.input, !isHHMM(checkout) && { borderColor: Colors.terra }]} />
+            </Field>
+          </View>
+          <Text style={styles.helperText}>
+            Guests see these before they book ({fmtTime(checkin, "—")} / {fmtTime(checkout, "—")}). Your payout is created 24 hours after the check-out time.
+          </Text>
 
           <View style={styles.row}>
             <Field label="Guests" style={{ flex: 1 }}>

@@ -22,7 +22,7 @@ import { api, ListingFull, BookingWithListing, WEB_BASE } from "@/lib/api";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
-import { inr, fullDate, imageUrl } from "@/lib/format";
+import { inr, fullDate, imageUrl, fmtTime, isHHMM } from "@/lib/format";
 import { PayoutPreview } from "@/components/PayoutPreview";
 import { HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
 import { Button } from "@/components/Button";
@@ -46,6 +46,8 @@ export default function ManageListingScreen() {
   const [editTitle, setEditTitle] = useState("");
   const [editPrice, setEditPrice] = useState("");
   const [editCleaning, setEditCleaning] = useState("");
+  const [editCheckin, setEditCheckin] = useState("14:00");
+  const [editCheckout, setEditCheckout] = useState("11:00");
   const [editPolicy, setEditPolicy] = useState<CancellationPolicy>("flexible");
   const [editRegNo, setEditRegNo] = useState("");
   const [editRules, setEditRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
@@ -72,6 +74,8 @@ export default function ManageListingScreen() {
       setEditRules({ couples_ok: l.couples_ok ?? null, local_id_ok: l.local_id_ok ?? null,
                      alcohol_ok: l.alcohol_ok ?? null, pet_friendly: !!l.pet_friendly });
       setEditCleaning(String(l.cleaning_fee_inr ?? 0));
+      setEditCheckin(l.checkin_time || "14:00");
+      setEditCheckout(l.checkout_time || "11:00");
       setEditPolicy(l.cancellation_policy === "non_refundable" ? "non_refundable" : "flexible");
       setEditDescription(l.description || "");
       setEditGuests(String(l.guests));
@@ -143,6 +147,8 @@ export default function ManageListingScreen() {
           baths: parseInt(editBaths) || listing.baths,
           amenities: editAmenities,
           cancellation_policy: editPolicy,
+          checkin_time: editCheckin.trim(),
+          checkout_time: editCheckout.trim(),
           ...editRules,
           registration_no: editRegNo.trim(),
           house_rules_set: ["couples_ok", "local_id_ok", "alcohol_ok"],
@@ -342,6 +348,10 @@ export default function ManageListingScreen() {
               <EditField label="Price per night (₹)" value={editPrice} onChangeText={setEditPrice} keyboardType="number-pad" />
               <EditField label="Cleaning fee (₹/stay)" value={editCleaning} onChangeText={setEditCleaning} keyboardType="number-pad" />
               <PayoutPreview price={parseInt(editPrice) || 0} cleaning={parseInt(editCleaning) || 0} />
+              <View style={{ flexDirection: "row", gap: 12 }}>
+                <EditField label="Check-in from (24h) *" value={editCheckin} onChangeText={setEditCheckin} style={{ flex: 1 }} />
+                <EditField label="Check-out by (24h) *" value={editCheckout} onChangeText={setEditCheckout} style={{ flex: 1 }} />
+              </View>
               <Text style={styles.policyLabel}>If a guest cancels</Text>
               <CancellationChoice value={editPolicy} onChange={setEditPolicy} />
               <Text style={styles.policyNote}>Applies to new bookings. Bookings already made keep the policy they were booked under.</Text>
@@ -431,7 +441,7 @@ export default function ManageListingScreen() {
                 title={saving ? "Saving…" : "Save changes"}
                 onPress={saveEdits}
                 loading={saving}
-                disabled={saving || !editTitle.trim() || !editPrice.trim()}
+                disabled={saving || !editTitle.trim() || !editPrice.trim() || !isHHMM(editCheckin) || !isHHMM(editCheckout)}
                 full
                 size="lg"
                 style={{ marginTop: 16 }}
@@ -441,6 +451,9 @@ export default function ManageListingScreen() {
             <>
               <Text style={styles.policyView}>
                 If a guest cancels: {listing.cancellation_policy === "non_refundable" ? "Non-refundable" : "Refundable (standard rules)"}
+              </Text>
+              <Text style={styles.policyView}>
+                Check-in from {fmtTime(listing.checkin_time, "2:00 PM")} · Check-out by {fmtTime(listing.checkout_time, "11:00 AM")}
               </Text>
               {/* Quick stats */}
               <View style={styles.statsRow}>
