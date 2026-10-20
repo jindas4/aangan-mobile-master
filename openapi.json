@@ -2295,6 +2295,18 @@
             ],
             "title": "Bedrooms"
           },
+          "checkin_time": {
+            "default": "14:00",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+            "title": "Checkin Time",
+            "type": "string"
+          },
+          "checkout_time": {
+            "default": "11:00",
+            "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+            "title": "Checkout Time",
+            "type": "string"
+          },
           "city": {
             "default": "",
             "maxLength": 80,

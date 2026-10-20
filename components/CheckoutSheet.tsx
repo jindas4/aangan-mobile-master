@@ -175,7 +175,7 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
         style={{ marginTop: 20 }}
       />
       <Text style={styles.helperText}>
-        You won't be charged until the host confirms your stay.
+        Your booking is confirmed as soon as you pay.
       </Text>
       <Text style={[styles.helperText, cancellationPolicy === "non_refundable" && styles.strictText]}>
         {policyLine(cancellationPolicy)}

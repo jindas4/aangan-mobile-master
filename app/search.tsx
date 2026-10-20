@@ -48,7 +48,6 @@ export default function SearchScreen() {
   const [where, setWhere] = useState(params.where ?? "");
   const [scene, setScene] = useState<Scene | null>((params.scene as Scene) ?? null);
   const [guests, setGuests] = useState(1);
-  const [instant, setInstant] = useState(false);
   const [veg, setVeg] = useState(false);
   // House rules: only stays whose host has said yes.
   const [rules, setRules] = useState<Record<string, boolean>>({});
@@ -69,7 +68,6 @@ export default function SearchScreen() {
     if (where) qs.set("where", where);
     if (scene) qs.set("scene", scene);
     if (guests > 1) qs.set("guests", String(guests));
-    if (instant) qs.set("instant", "true");
     if (veg) qs.set("veg", "true");
     for (const [k, on] of Object.entries(rules)) if (on) qs.set(k, "true");
     if (checkIn && checkOut) {
@@ -82,7 +80,7 @@ export default function SearchScreen() {
     qs.set("limit", String(PAGE));
     if (offset > 0) qs.set("offset", String(offset));
     return qs;
-  }, [where, scene, guests, instant, veg, rules, checkIn, checkOut, priceMin, priceMax, sort]);
+  }, [where, scene, guests, veg, rules, checkIn, checkOut, priceMin, priceMax, sort]);
 
   const runSearch = useCallback(async () => {
     setLoading(true);
@@ -175,12 +173,6 @@ export default function SearchScreen() {
             <Ionicons name="add" size={16} color={Colors.charcoal} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={[styles.toggle, instant && styles.toggleActive]}
-          onPress={() => setInstant((v) => !v)}
-        >
-          <Text style={[styles.toggleLabel, instant && styles.toggleLabelActive]}>Instant book</Text>
-        </TouchableOpacity>
         <TouchableOpacity style={[styles.toggle, veg && styles.toggleActive]} onPress={() => setVeg((v) => !v)}>
           <Text style={[styles.toggleLabel, veg && styles.toggleLabelActive]}>Veg kitchen</Text>
         </TouchableOpacity>

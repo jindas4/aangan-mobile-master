@@ -4470,6 +4470,16 @@ export interface components {
             /** Bedrooms */
             bedrooms?: number | null;
             /**
+             * Checkin Time
+             * @default 14:00
+             */
+            checkin_time: string;
+            /**
+             * Checkout Time
+             * @default 11:00
+             */
+            checkout_time: string;
+            /**
              * City
              * @default
              */
