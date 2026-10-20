@@ -6,7 +6,7 @@ export const API_BASE =
   "https://backend-service-production-2df4.up.railway.app";
 // Overridable per-build via EXPO_PUBLIC_WEB_URL (see eas.json).
 export const WEB_BASE =
-  process.env.EXPO_PUBLIC_WEB_URL || "https://aanganstay.com";
+  process.env.EXPO_PUBLIC_WEB_URL || "https://www.aanganstay.com";
 const TOKEN_KEY = "hm_token";
 
 export function getToken(): string | null {

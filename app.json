@@ -28,8 +28,8 @@
       "associatedDomains": [
         "applinks:aanganstay.com",
         "webcredentials:aanganstay.com",
-        "applinks:aangan.net.in",
-        "webcredentials:aangan.net.in"
+        "applinks:www.aanganstay.com",
+        "webcredentials:www.aanganstay.com"
       ],
       "infoPlist": {
         "NSCameraUsageDescription": "Aangan Stay needs camera access to take photos of your property.",
@@ -105,10 +105,10 @@
             { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/p" },
             { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/messages" },
             { "scheme": "https", "host": "aanganstay.com", "pathPrefix": "/trips" },
-            { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/listing" },
-            { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/p" },
-            { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/messages" },
-            { "scheme": "https", "host": "aangan.net.in", "pathPrefix": "/trips" }
+            { "scheme": "https", "host": "www.aanganstay.com", "pathPrefix": "/listing" },
+            { "scheme": "https", "host": "www.aanganstay.com", "pathPrefix": "/p" },
+            { "scheme": "https", "host": "www.aanganstay.com", "pathPrefix": "/messages" },
+            { "scheme": "https", "host": "www.aanganstay.com", "pathPrefix": "/trips" }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }

@@ -52,7 +52,7 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://backend-service-production-2df4.up.railway.app",
-        "EXPO_PUBLIC_WEB_URL": "https://aanganstay.com",
+        "EXPO_PUBLIC_WEB_URL": "https://www.aanganstay.com",
         "EXPO_PUBLIC_SENTRY_DSN": "https://disabled@o0.ingest.sentry.io/0",
         "EXPO_PUBLIC_SENTRY_ENVIRONMENT": "production",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true",
