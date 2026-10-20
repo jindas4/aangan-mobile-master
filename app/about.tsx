@@ -85,6 +85,11 @@ export default function AboutScreen() {
             label={SUPPORT_EMAIL}
             onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}`)}
           />
+          <LinkRow
+            icon="briefcase-outline"
+            label="Careers — work with us"
+            onPress={() => openWeb(`${WEB_BASE}/careers`)}
+          />
         </View>
 
         {/* Footer */}

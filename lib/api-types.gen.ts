@@ -182,6 +182,100 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/careers/applications/{aid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Application */
+        patch: operations["update_application_api_admin_careers_applications__aid__patch"];
+        trace?: never;
+    };
+    "/api/admin/careers/applications/{aid}/cv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Application Cv
+         * @description A signed link to the uploaded CV, valid for 10 minutes.
+         */
+        get: operations["application_cv_api_admin_careers_applications__aid__cv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/careers/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Jobs */
+        get: operations["admin_jobs_api_admin_careers_jobs_get"];
+        put?: never;
+        /** Create Job */
+        post: operations["create_job_api_admin_careers_jobs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/careers/jobs/{jid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Job */
+        get: operations["admin_job_api_admin_careers_jobs__jid__get"];
+        /** Update Job */
+        put: operations["update_job_api_admin_careers_jobs__jid__put"];
+        post?: never;
+        /**
+         * Delete Job
+         * @description Only a posting with no applications can be deleted; otherwise close it.
+         */
+        delete: operations["delete_job_api_admin_careers_jobs__jid__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/careers/jobs/{jid}/applications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Job Applications */
+        get: operations["job_applications_api_admin_careers_jobs__jid__applications_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/claims": {
         parameters: {
             query?: never;
@@ -1989,6 +2083,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/careers/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Open Jobs
+         * @description Open roles, newest first.
+         */
+        get: operations["open_jobs_api_careers_jobs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/careers/jobs/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Job Detail */
+        get: operations["job_detail_api_careers_jobs__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/careers/jobs/{slug}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apply
+         * @description Multipart form: the fields of ApplicationIn plus an optional `cv` file.
+         */
+        post: operations["apply_api_careers_jobs__slug__apply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/chat": {
         parameters: {
             query?: never;
@@ -3617,6 +3768,13 @@ export interface components {
             /** Suggested Price Inr */
             suggested_price_inr: number;
         };
+        /** ApplicationUpdate */
+        ApplicationUpdate: {
+            /** Admin Note */
+            admin_note?: string | null;
+            /** Status */
+            status?: string | null;
+        };
         /** ApplyIn */
         ApplyIn: {
             /** Code */
@@ -3727,6 +3885,51 @@ export interface components {
         BlockList: {
             /** Blocked Ids */
             blocked_ids: string[];
+        };
+        /** Body_apply_api_careers_jobs__slug__apply_post */
+        Body_apply_api_careers_jobs__slug__apply_post: {
+            /**
+             * City
+             * @default
+             */
+            city: string;
+            /** Cv */
+            cv?: string | null;
+            /**
+             * Email
+             * @default
+             */
+            email: string;
+            /**
+             * Experience
+             * @default
+             */
+            experience: string;
+            /**
+             * Message
+             * @default
+             */
+            message: string;
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /**
+             * Phone
+             * @default
+             */
+            phone: string;
+            /**
+             * Resume Url
+             * @default
+             */
+            resume_url: string;
+            /**
+             * Website
+             * @default
+             */
+            website: string;
         };
         /** Body_import_captures_admin_api_admin_captures_import_post */
         Body_import_captures_admin_api_admin_captures_import_post: {
@@ -4363,6 +4566,59 @@ export interface components {
              * @default false
              */
             superhost: boolean;
+        };
+        /** JobWrite */
+        JobWrite: {
+            /** City */
+            city: string;
+            /** Closes On */
+            closes_on?: string | null;
+            /**
+             * Contact Email
+             * Format: email
+             */
+            contact_email: string;
+            /** Description */
+            description: string;
+            /**
+             * Employment Type
+             * @default full_time
+             */
+            employment_type: string;
+            /**
+             * Experience
+             * @default
+             */
+            experience: string;
+            /** Location */
+            location: string;
+            /** Salary Max Inr */
+            salary_max_inr?: number | null;
+            /** Salary Min Inr */
+            salary_min_inr?: number | null;
+            /**
+             * Salary Note
+             * @default
+             */
+            salary_note: string;
+            /** Slug */
+            slug?: string | null;
+            /** State */
+            state: string;
+            /**
+             * Status
+             * @default draft
+             */
+            status: string;
+            /** Summary */
+            summary: string;
+            /**
+             * Team
+             * @default
+             */
+            team: string;
+            /** Title */
+            title: string;
         };
         /** KycDecision */
         KycDecision: {
@@ -6353,6 +6609,276 @@ export interface operations {
                 "multipart/form-data": components["schemas"]["Body_import_captures_admin_api_admin_captures_import_post"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_application_api_admin_careers_applications__aid__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                aid: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicationUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    application_cv_api_admin_careers_applications__aid__cv_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                aid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_jobs_api_admin_careers_jobs_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_job_api_admin_careers_jobs_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_job_api_admin_careers_jobs__jid__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                jid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_job_api_admin_careers_jobs__jid__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                jid: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_job_api_admin_careers_jobs__jid__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                jid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    job_applications_api_admin_careers_jobs__jid__applications_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                jid: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -9979,6 +10505,92 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    open_jobs_api_careers_jobs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+    job_detail_api_careers_jobs__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    apply_api_careers_jobs__slug__apply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_apply_api_careers_jobs__slug__apply_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

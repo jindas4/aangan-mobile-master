@@ -294,6 +294,35 @@
         "title": "AiPriceEstimateResponse",
         "type": "object"
       },
+      "ApplicationUpdate": {
+        "properties": {
+          "admin_note": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Admin Note"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "title": "ApplicationUpdate",
+        "type": "object"
+      },
       "ApplyIn": {
         "properties": {
           "code": {
@@ -549,6 +578,64 @@
           "blocked_ids"
         ],
         "title": "BlockList",
+        "type": "object"
+      },
+      "Body_apply_api_careers_jobs__slug__apply_post": {
+        "properties": {
+          "city": {
+            "default": "",
+            "title": "City",
+            "type": "string"
+          },
+          "cv": {
+            "anyOf": [
+              {
+                "format": "binary",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cv"
+          },
+          "email": {
+            "default": "",
+            "title": "Email",
+            "type": "string"
+          },
+          "experience": {
+            "default": "",
+            "title": "Experience",
+            "type": "string"
+          },
+          "message": {
+            "default": "",
+            "title": "Message",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "default": "",
+            "title": "Phone",
+            "type": "string"
+          },
+          "resume_url": {
+            "default": "",
+            "title": "Resume Url",
+            "type": "string"
+          },
+          "website": {
+            "default": "",
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "title": "Body_apply_api_careers_jobs__slug__apply_post",
         "type": "object"
       },
       "Body_import_captures_admin_api_admin_captures_import_post": {
@@ -2064,6 +2151,141 @@
           "id"
         ],
         "title": "HostMini",
+        "type": "object"
+      },
+      "JobWrite": {
+        "properties": {
+          "city": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "City",
+            "type": "string"
+          },
+          "closes_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closes On"
+          },
+          "contact_email": {
+            "format": "email",
+            "title": "Contact Email",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 20000,
+            "minLength": 20,
+            "title": "Description",
+            "type": "string"
+          },
+          "employment_type": {
+            "default": "full_time",
+            "title": "Employment Type",
+            "type": "string"
+          },
+          "experience": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Experience",
+            "type": "string"
+          },
+          "location": {
+            "maxLength": 160,
+            "minLength": 2,
+            "title": "Location",
+            "type": "string"
+          },
+          "salary_max_inr": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Max Inr"
+          },
+          "salary_min_inr": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salary Min Inr"
+          },
+          "salary_note": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Salary Note",
+            "type": "string"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "state": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "default": "draft",
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "maxLength": 400,
+            "minLength": 10,
+            "title": "Summary",
+            "type": "string"
+          },
+          "team": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Team",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 160,
+            "minLength": 3,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "location",
+          "city",
+          "state",
+          "summary",
+          "description",
+          "contact_email"
+        ],
+        "title": "JobWrite",
         "type": "object"
       },
       "KycDecision": {
@@ -6888,6 +7110,457 @@
           }
         },
         "summary": "Import Captures Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/careers/applications/{aid}": {
+      "patch": {
+        "operationId": "update_application_api_admin_careers_applications__aid__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "aid",
+            "required": true,
+            "schema": {
+              "title": "Aid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Application",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/careers/applications/{aid}/cv": {
+      "get": {
+        "description": "A signed link to the uploaded CV, valid for 10 minutes.",
+        "operationId": "application_cv_api_admin_careers_applications__aid__cv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "aid",
+            "required": true,
+            "schema": {
+              "title": "Aid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Application Cv",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/careers/jobs": {
+      "get": {
+        "operationId": "admin_jobs_api_admin_careers_jobs_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Jobs",
+        "tags": [
+          "admin"
+        ]
+      },
+      "post": {
+        "operationId": "create_job_api_admin_careers_jobs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Job",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/careers/jobs/{jid}": {
+      "delete": {
+        "description": "Only a posting with no applications can be deleted; otherwise close it.",
+        "operationId": "delete_job_api_admin_careers_jobs__jid__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jid",
+            "required": true,
+            "schema": {
+              "title": "Jid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Job",
+        "tags": [
+          "admin"
+        ]
+      },
+      "get": {
+        "operationId": "admin_job_api_admin_careers_jobs__jid__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jid",
+            "required": true,
+            "schema": {
+              "title": "Jid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admin Job",
+        "tags": [
+          "admin"
+        ]
+      },
+      "put": {
+        "operationId": "update_job_api_admin_careers_jobs__jid__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jid",
+            "required": true,
+            "schema": {
+              "title": "Jid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Job",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/careers/jobs/{jid}/applications": {
+      "get": {
+        "operationId": "job_applications_api_admin_careers_jobs__jid__applications_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jid",
+            "required": true,
+            "schema": {
+              "title": "Jid",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job Applications",
         "tags": [
           "admin"
         ]
@@ -13425,6 +14098,116 @@
         "summary": "Release Hold",
         "tags": [
           "bookings"
+        ]
+      }
+    },
+    "/api/careers/jobs": {
+      "get": {
+        "description": "Open roles, newest first.",
+        "operationId": "open_jobs_api_careers_jobs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Open Jobs",
+        "tags": [
+          "careers"
+        ]
+      }
+    },
+    "/api/careers/jobs/{slug}": {
+      "get": {
+        "operationId": "job_detail_api_careers_jobs__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Job Detail",
+        "tags": [
+          "careers"
+        ]
+      }
+    },
+    "/api/careers/jobs/{slug}/apply": {
+      "post": {
+        "description": "Multipart form: the fields of ApplicationIn plus an optional `cv` file.",
+        "operationId": "apply_api_careers_jobs__slug__apply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_apply_api_careers_jobs__slug__apply_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Apply",
+        "tags": [
+          "careers"
         ]
       }
     },
