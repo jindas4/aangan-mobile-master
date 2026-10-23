@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -18,7 +18,7 @@ import * as WebBrowser from "expo-web-browser";
 // import * as Facebook from "expo-auth-session/providers/facebook";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { Colors, Radius } from "@/constants/Colors";
-import { WEB_BASE, ApiError } from "@/lib/api";
+import { WEB_BASE, ApiError, api } from "@/lib/api";
 import { useAuth, useWishlist } from "@/lib/auth";
 import { Button } from "@/components/Button";
 import { signInWithGoogle, isGoogleSignInConfigured, GoogleSignInCancelledError } from "@/lib/googleAuth";
@@ -28,9 +28,17 @@ import Svg, { Path } from "react-native-svg";
 WebBrowser.maybeCompleteAuthSession();
 
 type Mode = "login" | "register";
-type Flow = "form" | "resetRequest" | "resetCode" | "verifyEmail";
+type Flow = "form" | "resetRequest" | "resetCode" | "verifyEmail" | "phone" | "phoneCode" | "phoneName";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** The 10-digit Indian mobile in whatever the person typed, or "" if it isn't one. */
+function mobile10(raw: string): string {
+  let d = raw.replace(/\D/g, "");
+  if (d.length === 12 && d.startsWith("91")) d = d.slice(2);
+  else if (d.length === 11 && d.startsWith("0")) d = d.slice(1);
+  return /^[6-9]\d{9}$/.test(d) ? d : "";
+}
 
 // const FACEBOOK_CLIENT_ID = process.env.EXPO_PUBLIC_FACEBOOK_CLIENT_ID || "";
 
@@ -58,7 +66,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const {
     socialLogin, loginWithPassword, registerWithPassword, verifySignup, requestEmailOtp,
-    requestPasswordReset, confirmPasswordReset,
+    requestPasswordReset, confirmPasswordReset, requestOtp, verifyOtp, updateProfile,
   } = useAuth();
   const { hydrate: refreshWish } = useWishlist();
   const [mode, setMode] = useState<Mode>("login");
@@ -77,6 +85,54 @@ export default function LoginScreen() {
   const [signupCode, setSignupCode] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
+  // Mobile-number login, offered only when the server can deliver SMS codes.
+  const [phoneReady, setPhoneReady] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
+  const [fullName, setFullName] = useState("");
+  useEffect(() => {
+    api<{ phone: boolean }>("/api/auth/methods").then((m) => setPhoneReady(!!m.phone)).catch(() => setPhoneReady(false));
+  }, []);
+  const phone10 = mobile10(phone);
+
+  const sendPhoneCode = async (again = false) => {
+    if (!phone10) { setErr("Enter a 10-digit Indian mobile number."); return; }
+    setBusy(true); setErr(null); setNotice(null);
+    try {
+      const dev = await requestOtp(phone10);
+      setDevCode(dev ?? null);
+      if (again) setNotice("We've sent a new code.");
+      else { setPhoneCode(""); setFlow("phoneCode"); }
+    } catch (e: any) {
+      setErr(e.message || "Could not send the code");
+    } finally { setBusy(false); }
+  };
+
+  const confirmPhoneCode = async () => {
+    if (phoneCode.length < 4) return;
+    setBusy(true); setErr(null);
+    try {
+      const u = await verifyOtp(phone10, phoneCode);
+      await refreshWish();
+      // A brand-new account has no name yet: ask once, then done.
+      if (!u.name) { setFlow("phoneName"); return; }
+      router.back();
+    } catch (e: any) {
+      setErr(e instanceof ApiError && e.status === 400
+        ? "That code didn't match. Check the SMS and try again." : e.message || "Could not verify the code");
+    } finally { setBusy(false); }
+  };
+
+  const saveName = async () => {
+    if (fullName.trim().length < 2) return;
+    setBusy(true); setErr(null);
+    try {
+      await updateProfile({ name: fullName.trim() });
+      router.back();
+    } catch (e: any) {
+      setErr(e.message || "Could not save your name");
+    } finally { setBusy(false); }
+  };
 
 //   const [, , facebookPrompt] = Facebook.useAuthRequest({
 //     clientId: FACEBOOK_CLIENT_ID,
@@ -275,24 +331,147 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
         >
           <Text style={styles.kicker}>
-            {flow === "form" ? "WELCOME" : flow === "resetRequest" ? "RESET PASSWORD" : "ONE MORE STEP"}
+            {flow === "form" || flow === "phone" ? "WELCOME" : flow === "resetRequest" ? "RESET PASSWORD" : "ONE MORE STEP"}
           </Text>
           <Text style={styles.title} testID="login-title" accessibilityLabel={flow === "form" ? (mode === "login" ? "Welcome back" : "Create your account") : flow === "verifyEmail" ? "Check your email" : "Reset password"}>
             {flow === "form"
               ? mode === "login" ? "Welcome back" : "Create your account"
               : flow === "resetRequest" ? "Forgot your password?"
               : flow === "verifyEmail" ? "Check your email"
+              : flow === "phone" ? "Log in with your mobile"
+              : flow === "phoneCode" ? "Enter the code"
+              : flow === "phoneName" ? "What should we call you?"
               : "Enter your reset code"}
           </Text>
           <Text style={styles.subtitle}>
             {flow === "form"
               ? "Real homes, real hosts — all over India."
+              : flow === "phone" ? "We'll text you a 6-digit code. New here? We'll create your account."
+              : flow === "phoneCode" ? `We sent a 6-digit code by SMS to +91 ${phone10.slice(0, 5)} ${phone10.slice(5)}.`
+              : flow === "phoneName" ? "Hosts see your first name when you book or message them."
               : flow === "resetRequest"
                 ? "We'll email you a code to reset it."
                 : flow === "verifyEmail"
                   ? `We sent a 6-digit code to ${email.trim().toLowerCase()}. Enter it here — or tap the verify link in the email.`
                   : `We've sent a code to ${email.trim().toLowerCase()}.`}
           </Text>
+
+          {flow === "phone" && (
+            <>
+              <View style={[styles.input, styles.phoneRow, !!phone10 && styles.inputValid]}>
+                <Text style={styles.phonePrefix}>+91</Text>
+                <TextInput
+                  value={phone}
+                  onChangeText={(v) => setPhone(v.replace(/[^\d\s+-]/g, "").slice(0, 16))}
+                  onSubmitEditing={() => sendPhoneCode()}
+                  keyboardType="phone-pad"
+                  textContentType="telephoneNumber"
+                  autoComplete="tel"
+                  placeholder="10-digit mobile number"
+                  placeholderTextColor={Colors.charcoal3}
+                  autoFocus
+                  testID="phone-input"
+                  accessibilityLabel="Mobile number"
+                  style={styles.phoneInput}
+                />
+              </View>
+              {err && <Text style={styles.error}>{err}</Text>}
+              <Button
+                title={busy ? "Sending…" : "Send code"}
+                onPress={() => sendPhoneCode()}
+                disabled={!phone10 || busy}
+                loading={busy}
+                full
+                size="lg"
+                style={{ marginTop: 20 }}
+              />
+              <Text style={[styles.termsText, { marginTop: 12 }]}>
+                By continuing you agree to the{" "}
+                <Text style={styles.termsLink} onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/terms`)}>Terms</Text>{" "}
+                &{" "}
+                <Text style={styles.termsLink} onPress={() => WebBrowser.openBrowserAsync(`${WEB_BASE}/legal/privacy`)}>Privacy Policy</Text>
+                , and to Aangan Stay's zero-tolerance policy for objectionable content and abusive behaviour.
+              </Text>
+              <TouchableOpacity onPress={() => { setFlow("form"); setErr(null); }} style={styles.editBtn}>
+                <Text style={styles.editText}>Use email instead</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {flow === "phoneCode" && (
+            <>
+              <TextInput
+                value={phoneCode}
+                onChangeText={(v) => setPhoneCode(v.replace(/\D/g, "").slice(0, 6))}
+                onSubmitEditing={confirmPhoneCode}
+                keyboardType="number-pad"
+                textContentType="oneTimeCode"
+                autoComplete="sms-otp"
+                placeholder="6-digit code"
+                placeholderTextColor={Colors.charcoal3}
+                autoFocus
+                testID="phone-code-input"
+                accessibilityLabel="6-digit code"
+                style={[styles.input, { textAlign: "center", letterSpacing: 4 }]}
+              />
+              {devCode && (
+                <Text style={styles.devCode}>
+                  Dev mode — your code: <Text style={{ fontWeight: "800" }}>{devCode}</Text>
+                </Text>
+              )}
+              {notice && <Text style={styles.devCode}>{notice}</Text>}
+              {err && <Text style={styles.error}>{err}</Text>}
+              <Button
+                title={busy ? "Checking…" : "Verify"}
+                onPress={confirmPhoneCode}
+                disabled={phoneCode.length < 4 || busy}
+                loading={busy}
+                full
+                size="lg"
+                style={{ marginTop: 20 }}
+              />
+              <View style={styles.pwLinksRow}>
+                <TouchableOpacity onPress={() => sendPhoneCode(true)} disabled={busy}>
+                  <Text style={styles.editText}>Resend code</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { setFlow("phone"); setErr(null); setNotice(null); setDevCode(null); }}>
+                  <Text style={styles.editText}>Change number</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {flow === "phoneName" && (
+            <>
+              <TextInput
+                value={fullName}
+                onChangeText={setFullName}
+                onSubmitEditing={saveName}
+                textContentType="name"
+                autoComplete="name"
+                placeholder="Your full name"
+                placeholderTextColor={Colors.charcoal3}
+                autoFocus
+                maxLength={80}
+                testID="phone-name-input"
+                accessibilityLabel="Your full name"
+                style={[styles.input, fullName.trim().length >= 2 && styles.inputValid]}
+              />
+              {err && <Text style={styles.error}>{err}</Text>}
+              <Button
+                title={busy ? "Please wait…" : "Continue"}
+                onPress={saveName}
+                disabled={fullName.trim().length < 2 || busy}
+                loading={busy}
+                full
+                size="lg"
+                style={{ marginTop: 20 }}
+              />
+              <TouchableOpacity onPress={() => router.back()} style={styles.editBtn}>
+                <Text style={styles.editText}>Skip for now</Text>
+              </TouchableOpacity>
+            </>
+          )}
 
           {flow === "verifyEmail" && (
             <>
@@ -464,6 +643,19 @@ export default function LoginScreen() {
                   style={styles.appleBtn}
                   onPress={handleAppleLogin}
                 />
+              )}
+
+              {phoneReady && (
+                <TouchableOpacity
+                  style={styles.socialBtn}
+                  onPress={() => { setFlow("phone"); setErr(null); setNotice(null); setDevCode(null); }}
+                  disabled={busy}
+                  activeOpacity={0.7}
+                  testID="phone-login-btn"
+                >
+                  <Ionicons name="phone-portrait-outline" size={20} color={Colors.charcoal} />
+                  <Text style={styles.socialBtnText}>Continue with mobile number</Text>
+                </TouchableOpacity>
               )}
 
               <TouchableOpacity
@@ -745,6 +937,9 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     marginBottom: 12,
   },
+  phoneRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  phonePrefix: { fontSize: 16, fontWeight: "700", color: Colors.charcoal2 },
+  phoneInput: { flex: 1, fontSize: 16, fontWeight: "700", color: Colors.charcoal, paddingVertical: 0 },
   socialBtn: {
     flexDirection: "row",
     alignItems: "center",

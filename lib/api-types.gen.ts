@@ -1673,6 +1673,28 @@ export interface paths {
         patch: operations["update_me_api_auth_me_patch"];
         trace?: never;
     };
+    "/api/auth/methods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Login Methods
+         * @description Which sign-in options the login screens should offer. Mobile-number login
+         *     is shown only when SMS codes can actually be delivered (or in dev mode,
+         *     where the code is shown on screen).
+         */
+        get: operations["login_methods_api_auth_methods_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/mobile/social-login": {
         parameters: {
             query?: never;
@@ -9784,6 +9806,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login_methods_api_auth_methods_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };

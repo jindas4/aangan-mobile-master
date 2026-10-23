@@ -12934,6 +12934,26 @@
         ]
       }
     },
+    "/api/auth/methods": {
+      "get": {
+        "description": "Which sign-in options the login screens should offer. Mobile-number login\nis shown only when SMS codes can actually be delivered (or in dev mode,\nwhere the code is shown on screen).",
+        "operationId": "login_methods_api_auth_methods_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Login Methods",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/api/auth/mobile/social-login": {
       "post": {
         "description": "Verify a Google ID token, Facebook access token, or Apple identity\ntoken from a mobile client and return a backend JWT. No\nINTERNAL_API_SECRET needed \u2014 the provider token itself proves identity.",
