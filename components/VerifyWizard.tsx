@@ -334,7 +334,8 @@ function DigilockerStepForm({ onDone }: { onDone: () => void }) {
     setBusy(true);
     setErr(null);
     try {
-      const r = await api<{ url: string }>("/api/kyc/digilocker/start", { method: "POST", body: { client: "app" } });
+      const r = await api<{ url: string | null; already_verified?: boolean }>("/api/kyc/digilocker/start", { method: "POST", body: { client: "app" } });
+      if (!r.url) return onDone();   // an earlier DigiLocker attempt had already finished
       setStarted(true);
       // Closes by itself when DigiLocker hands back to the app; the result
       // comes from the server either way, never from the browser.
