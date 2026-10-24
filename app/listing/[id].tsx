@@ -170,10 +170,10 @@ export default function ListingDetailScreen() {
     setCheckoutBookingId(null);
     const confirmed = bookingStatus === "confirmed";
     Alert.alert(
-      confirmed ? "Booking confirmed!" : "Payment received",
+      confirmed ? "Booking confirmed!" : "Request sent",
       confirmed
         ? "Your stay is booked. The host has been notified."
-        : "The host has 24 hours to confirm your stay. You'll be notified as soon as they do.",
+        : "Your request is with the host. They have up to 24 hours to accept; if they don't, you're refunded in full automatically.",
       [{ text: "View trips", onPress: () => router.push("/(tabs)/trips") }],
     );
   };
@@ -587,7 +587,7 @@ export default function ListingDetailScreen() {
                 booking ? "Booking…" :
                 checkingAvailability ? "Checking…" :
                 !checkIn || !checkOut ? "Select dates" :
-                quote?.available ? "Continue to payment" : "Not available"
+                quote?.available ? (listing.instant_book === false ? "Request to book" : "Continue to payment") : "Not available"
               }
               onPress={bookNow}
               loading={booking || checkingAvailability}
@@ -608,6 +608,7 @@ export default function ListingDetailScreen() {
           bookingId={checkoutBookingId}
           totalInr={quote.total_inr}
           cancellationPolicy={listing.cancellation_policy}
+          instantBook={listing.instant_book !== false}
           onClose={() => {
             // Leaving checkout without paying frees the dates straight away
             // (a no-op on the server once money is in).

@@ -1982,11 +1982,10 @@ export interface paths {
         put?: never;
         /**
          * Host Accept
-         * @description Host accepts a pending booking. Flips status → confirmed.
-         *
-         *     Only valid when the listing has instant_book=False (so the booking sat in
-         *     `pending` after payment capture awaiting host approval). Idempotent — if
-         *     the booking is already confirmed, returns it as-is.
+         * @description Host accepts a paid booking request (services/booking_requests.py):
+         *     confirmed, invoiced, both sides told. Idempotent — an already confirmed
+         *     booking is returned as-is. Too late once the deadline has passed (the
+         *     request is then refunded by the expiry sweep).
          */
         post: operations["host_accept_api_bookings__booking_id__accept_post"];
         delete?: never;
@@ -4054,6 +4053,8 @@ export interface components {
             nights: number;
             /** Payment Id */
             payment_id?: string | null;
+            /** Respond By */
+            respond_by?: string | null;
             /** Service Inr */
             service_inr: number;
             /**
@@ -4140,6 +4141,8 @@ export interface components {
             nights: number;
             /** Payment Id */
             payment_id?: string | null;
+            /** Respond By */
+            respond_by?: string | null;
             /**
              * Reviewed
              * @default false

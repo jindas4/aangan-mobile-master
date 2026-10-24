@@ -306,6 +306,8 @@ export interface BookingOut {
   /** This stay's check-in from / check-out by ("HH:MM"), fixed when booked. */
   checkin_time?: string | null;
   checkout_time?: string | null;
+  /** Request to book: the host must accept or decline by then (ISO time); null otherwise. */
+  respond_by?: string | null;
   /** Per-night rate on a booking (the stay costs nightly_inr × nights). */
   nightly_inr: number;
   cleaning_inr: number;

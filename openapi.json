@@ -844,6 +844,18 @@
             ],
             "title": "Payment Id"
           },
+          "respond_by": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Respond By"
+          },
           "service_inr": {
             "title": "Service Inr",
             "type": "integer"
@@ -1076,6 +1088,18 @@
               }
             ],
             "title": "Payment Id"
+          },
+          "respond_by": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Respond By"
           },
           "reviewed": {
             "default": false,
@@ -13739,7 +13763,7 @@
     },
     "/api/bookings/{booking_id}/accept": {
       "post": {
-        "description": "Host accepts a pending booking. Flips status \u2192 confirmed.\n\nOnly valid when the listing has instant_book=False (so the booking sat in\n`pending` after payment capture awaiting host approval). Idempotent \u2014 if\nthe booking is already confirmed, returns it as-is.",
+        "description": "Host accepts a paid booking request (services/booking_requests.py):\nconfirmed, invoiced, both sides told. Idempotent \u2014 an already confirmed\nbooking is returned as-is. Too late once the deadline has passed (the\nrequest is then refunded by the expiry sweep).",
         "operationId": "host_accept_api_bookings__booking_id__accept_post",
         "parameters": [
           {

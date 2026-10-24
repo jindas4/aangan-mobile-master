@@ -44,9 +44,11 @@ interface Props {
   onClose: () => void;
   /** Called with the booking status the server reported after payment. */
   onPaid: (bookingStatus: string) => void;
+  /** False when the host approves each booking (24 hours to answer). */
+  instantBook?: boolean;
 }
 
-export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose, onPaid }: Props) {
+export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose, onPaid, instantBook = true }: Props) {
   const [method, setMethod] = useState<Method>("upi");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -175,7 +177,9 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
         style={{ marginTop: 20 }}
       />
       <Text style={styles.helperText}>
-        Your booking is confirmed as soon as you pay.
+        {instantBook
+          ? "Your booking is confirmed as soon as you pay."
+          : "The host approves each booking and has up to 24 hours to accept. If they don't, you're refunded in full."}
       </Text>
       <Text style={[styles.helperText, cancellationPolicy === "non_refundable" && styles.strictText]}>
         {policyLine(cancellationPolicy)}

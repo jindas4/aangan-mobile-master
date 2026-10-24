@@ -11,6 +11,7 @@ const SUPPORT_EMAIL = "support@aanganstay.com";
 const COMPANY = "Meera Stay India Private Limited";
 const COMPANY_CIN = "U55101HR2026PTC151172";
 const COMPANY_OFFICE = "223/8 Krishna Colony, Bhiwani, Haryana 127021";
+const COMPANY_GSTIN = "06AAVCM5796R1Z1";
 
 // In-app browser sheet (SFSafariViewController page-sheet / Chrome Custom Tab)
 // — the user never leaves the app for legal pages.
@@ -41,15 +42,18 @@ export default function AboutScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>About Aangan Stay</Text>
           <Text style={styles.body}>
-            Aangan Stay connects travellers with verified homestay hosts across India.
-            Every price is all-inclusive in rupees — no hidden fees, no surprises.
-            Hosts are government-ID verified, and payments happen securely via UPI
-            and cards through Razorpay.
+            The aangan is the courtyard at the heart of an Indian home, where guests are
+            welcomed. Aangan Stay brings travellers into real homes across India, and helps
+            the families who live there host them well.
           </Text>
           <Text style={[styles.body, { marginTop: 12 }]}>
-            Whether it's a Himalayan cabin, a Goan villa, or a heritage haveli —
-            Aangan Stay helps you find a home away from home.
+            Every price is in rupees with GST included. Hosts verify their Aadhaar, PAN and
+            bank account. House rules are shown before you book, and your booking is confirmed
+            the moment you pay by UPI or card through Cashfree Payments.
           </Text>
+          <TouchableOpacity onPress={() => openWeb(`${WEB_BASE}/about`)} style={{ marginTop: 12 }}>
+            <Text style={[styles.body, { color: Colors.terra, fontWeight: "700" }]}>Read more about us</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Quick links */}
@@ -95,6 +99,7 @@ export default function AboutScreen() {
         {/* Footer */}
         <Text style={styles.copyright}>{"©"} 2026 {COMPANY}</Text>
         <Text style={styles.copyright}>CIN {COMPANY_CIN}</Text>
+        <Text style={styles.copyright}>GSTIN {COMPANY_GSTIN}</Text>
         <Text style={styles.copyright}>{COMPANY_OFFICE}</Text>
         <Text style={styles.motto}>अपना आँगन, सारे जहाँ में</Text>
         <View style={{ height: 40 }} />

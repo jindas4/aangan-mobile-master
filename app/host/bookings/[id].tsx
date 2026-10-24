@@ -17,7 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, fullDate, imageUrl, canCancelBooking, fmtTime } from "@/lib/format";
+import { inr, fullDate, imageUrl, canCancelBooking, fmtTime, fmtDeadline } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
@@ -255,7 +255,7 @@ export default function HostBookingDetailScreen() {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Action needed</Text>
             <Text style={styles.actionHint}>
-              This booking is awaiting your response. Accept to confirm or decline to refund the guest.
+              {`The guest has paid and is waiting for your answer${booking.respond_by ? ` — please respond by ${fmtDeadline(booking.respond_by)}` : ""}. Accept to confirm the booking, or decline to refund the guest in full. If you don't answer in time, the guest is refunded automatically.`}
             </Text>
             <View style={styles.actionRow}>
               <TouchableOpacity

@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { CancellationChoice, type CancellationPolicy } from "@/components/CancellationChoice";
+import { BookingModeChoice } from "@/components/BookingModeChoice";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,6 +50,7 @@ export default function ManageListingScreen() {
   const [editCheckin, setEditCheckin] = useState("14:00");
   const [editCheckout, setEditCheckout] = useState("11:00");
   const [editPolicy, setEditPolicy] = useState<CancellationPolicy>("flexible");
+  const [editInstant, setEditInstant] = useState(true);
   const [editRegNo, setEditRegNo] = useState("");
   const [editRules, setEditRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
   const [editDescription, setEditDescription] = useState("");
@@ -77,6 +79,7 @@ export default function ManageListingScreen() {
       setEditCheckin(l.checkin_time || "14:00");
       setEditCheckout(l.checkout_time || "11:00");
       setEditPolicy(l.cancellation_policy === "non_refundable" ? "non_refundable" : "flexible");
+      setEditInstant(l.instant_book !== false);
       setEditDescription(l.description || "");
       setEditGuests(String(l.guests));
       setEditBedrooms(String(l.bedrooms));
@@ -147,6 +150,7 @@ export default function ManageListingScreen() {
           baths: parseInt(editBaths) || listing.baths,
           amenities: editAmenities,
           cancellation_policy: editPolicy,
+          instant_book: editInstant,
           checkin_time: editCheckin.trim(),
           checkout_time: editCheckout.trim(),
           ...editRules,
@@ -352,6 +356,9 @@ export default function ManageListingScreen() {
                 <EditField label="Check-in from (24h) *" value={editCheckin} onChangeText={setEditCheckin} style={{ flex: 1 }} />
                 <EditField label="Check-out by (24h) *" value={editCheckout} onChangeText={setEditCheckout} style={{ flex: 1 }} />
               </View>
+              <Text style={styles.policyLabel}>How guests book</Text>
+              <BookingModeChoice value={editInstant} onChange={setEditInstant} />
+              <Text style={styles.policyNote}>Applies to new bookings. Requests already waiting keep their deadline.</Text>
               <Text style={styles.policyLabel}>If a guest cancels</Text>
               <CancellationChoice value={editPolicy} onChange={setEditPolicy} />
               <Text style={styles.policyNote}>Applies to new bookings. Bookings already made keep the policy they were booked under.</Text>

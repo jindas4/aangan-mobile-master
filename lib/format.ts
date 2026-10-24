@@ -121,3 +121,12 @@ export function fmtTime(hhmm: string | null | undefined, fallback = ""): string 
 
 /** A valid 24-hour "HH:MM" time. */
 export const isHHMM = (v: string) => /^([01]\d|2[0-3]):[0-5]\d$/.test(v.trim());
+
+/** "Sat 28 Nov, 3:15 PM" in Indian time — deadlines such as a host's time to answer a request. */
+export function fmtDeadline(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const day = d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", timeZone: "Asia/Kolkata" });
+  const t = d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" });
+  return `${day}, ${t.toUpperCase()}`;
+}

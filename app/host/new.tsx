@@ -11,6 +11,7 @@ import {
   Platform,
 } from "react-native";
 import { CancellationChoice, type CancellationPolicy } from "@/components/CancellationChoice";
+import { BookingModeChoice } from "@/components/BookingModeChoice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -52,6 +53,7 @@ export default function NewListingScreen() {
   const [checkin, setCheckin] = useState("14:00");    // required, "HH:MM"
   const [checkout, setCheckout] = useState("11:00");
   const [policy, setPolicy] = useState<CancellationPolicy>("flexible");
+  const [instantBook, setInstantBook] = useState(true);
   const [regNo, setRegNo] = useState("");
   const [rules, setRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
   const [guests, setGuests] = useState("2");
@@ -92,6 +94,7 @@ export default function NewListingScreen() {
           description: description.trim(),
           amenities,
           cancellation_policy: policy,
+          instant_book: instantBook,
           checkin_time: checkin.trim(),
           checkout_time: checkout.trim(),
           ...rules,
@@ -231,6 +234,9 @@ export default function NewListingScreen() {
               <TextInput value={baths} onChangeText={setBaths} keyboardType="number-pad" style={styles.input} />
             </Field>
           </View>
+
+          <Text style={[styles.sectionLabel, { marginTop: 24 }]}>HOW GUESTS BOOK</Text>
+          <BookingModeChoice value={instantBook} onChange={setInstantBook} />
 
           <Text style={[styles.sectionLabel, { marginTop: 24 }]}>IF A GUEST CANCELS</Text>
           <CancellationChoice value={policy} onChange={setPolicy} />

@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, CancelResponse } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
-import { inr, fullDate, canCancelBooking, fmtTime } from "@/lib/format";
+import { inr, fullDate, canCancelBooking, fmtTime, fmtDeadline } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { RemoteImage } from "@/components/RemoteImage";
 import { CancelBookingModal } from "@/components/CancelBookingModal";
@@ -110,7 +110,11 @@ export default function TripDetailScreen() {
           <View style={[styles.statusDot, { backgroundColor: st.color }]} />
           <View style={{ flex: 1 }}>
             <Text style={[styles.statusText, { color: st.color }]}>{st.label}</Text>
-            <Text style={styles.statusNote}>{st.note}</Text>
+            <Text style={styles.statusNote}>
+              {b.status === "pending" && b.respond_by
+                ? `The host has until ${fmtDeadline(b.respond_by)} to accept. If they don't, you're refunded in full automatically, or you can withdraw the request below for a full refund.`
+                : st.note}
+            </Text>
           </View>
         </View>
 
