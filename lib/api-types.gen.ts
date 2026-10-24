@@ -1851,6 +1851,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/phone/add/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Phone Add Request */
+        post: operations["phone_add_request_api_auth_phone_add_request_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/phone/add/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Phone Add Verify */
+        post: operations["phone_add_verify_api_auth_phone_add_verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/social-login": {
         parameters: {
             query?: never;
@@ -5528,6 +5562,18 @@ export interface components {
         PayoutHoldReq: {
             /** Reason */
             reason: string;
+        };
+        /** PhoneAdd */
+        PhoneAdd: {
+            /** Phone */
+            phone: string;
+        };
+        /** PhoneAddVerify */
+        PhoneAddVerify: {
+            /** Code */
+            code: string;
+            /** Phone */
+            phone: string;
         };
         /** PropertyCaptureCreate */
         PropertyCaptureCreate: {
@@ -10084,6 +10130,76 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OtpRequestResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    phone_add_request_api_auth_phone_add_request_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhoneAdd"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OtpRequestResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    phone_add_verify_api_auth_phone_add_verify_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhoneAddVerify"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
                 };
             };
             /** @description Validation Error */

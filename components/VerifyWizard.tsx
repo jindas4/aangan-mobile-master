@@ -117,7 +117,9 @@ export function VerifyWizard() {
 }
 
 function PhoneStepForm({ onDone }: { onDone: () => void }) {
-  const { requestOtp, verifyOtp, user } = useAuth();
+  // Adds the number to THIS account. (The login endpoints would sign in to
+  // whichever account owns the number, or create a new one for it.)
+  const { user, refresh } = useAuth();
   const [stage, setStage] = useState<"identifier" | "code">("identifier");
   const [phone, setPhone] = useState(user?.phone?.replace(/\D/g, "").slice(-10) || "");
   const [code, setCode] = useState("");
@@ -133,7 +135,8 @@ function PhoneStepForm({ onDone }: { onDone: () => void }) {
     setBusy(true);
     setErr(null);
     try {
-      const dev = await requestOtp(digits);
+      const dev = (await api<{ ok: boolean; dev_code?: string }>("/api/auth/phone/add/request",
+        { method: "POST", body: { phone: digits } })).dev_code;
       if (dev) setDevCode(dev);
       setStage("code");
     } catch (e: any) {
@@ -148,7 +151,8 @@ function PhoneStepForm({ onDone }: { onDone: () => void }) {
     setBusy(true);
     setErr(null);
     try {
-      await verifyOtp(digits, code);
+      await api("/api/auth/phone/add/verify", { method: "POST", body: { phone: digits, code } });
+      await refresh();
       onDone();
     } catch (e: any) {
       setErr(e.message || "Invalid code");
