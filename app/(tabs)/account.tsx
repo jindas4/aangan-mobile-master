@@ -282,35 +282,41 @@ function VerificationBanner({
   isHost: boolean;
 }) {
   const router = useRouter();
-  const [eligible, setEligible] = useState<boolean | null>(null);
+  const [status, setStatus] = useState<VerificationStatus | null>(null);
 
   useEffect(() => {
-    api<VerificationStatus>("/api/me/account/verification")
-      .then((s) => setEligible(s.eligible))
-      .catch(() => {});
+    api<VerificationStatus>("/api/me/account/verification").then(setStatus).catch(() => {});
   }, [user]);
 
-  if (eligible === null) return null;
+  if (!status) return null;
+  const verified = status.eligible;
+  const go = () => router.push(isHost ? "/host/verify" : "/account/verify");
 
-  if (eligible) {
-    return (
-      <View style={styles.verifiedBanner}>
-        <Ionicons name="shield-checkmark" size={18} color={Colors.success} />
-        <Text style={styles.verifiedText}>Verified account</Text>
-      </View>
-    );
-  }
-
+  // One row per step, so people see exactly what is verified and what isn't.
   return (
-    <TouchableOpacity
-      style={styles.verifyBanner}
-      onPress={() =>
-        router.push(isHost ? "/host/verify" : "/account/verify")
-      }
-    >
-      <Ionicons name="shield-outline" size={18} color={Colors.terra} />
-      <Text style={styles.verifyText}>Complete verification</Text>
-      <Ionicons name="chevron-forward" size={16} color={Colors.terra} />
+    <TouchableOpacity style={[styles.verifyCard, verified && styles.verifyCardDone]} onPress={go} activeOpacity={0.85}
+                      accessibilityRole="button" accessibilityLabel={verified ? "Verified account" : "Finish verification"}>
+      <View style={styles.verifyHead}>
+        <Ionicons name={verified ? "shield-checkmark" : "shield-outline"} size={18} color={verified ? Colors.success : Colors.terra} />
+        <Text style={[styles.verifyTitle, { color: verified ? Colors.success : Colors.terra }]}>
+          {verified ? "Verified account" : "Finish verification"}
+        </Text>
+        <Ionicons name="chevron-forward" size={16} color={verified ? Colors.success : Colors.terra} />
+      </View>
+      {status.steps.map((s) => {
+        const pending = s.status === "pending" || s.status === "rejected";
+        const ok = s.done && !pending;
+        return (
+          <View key={s.key} style={styles.verifyRow}>
+            <Ionicons name={ok ? "checkmark-circle" : pending ? "alert-circle" : "ellipse-outline"} size={18}
+                      color={ok ? Colors.success : pending ? Colors.mustard : Colors.charcoal3} />
+            <Text style={styles.verifyStep}>{s.label}{!s.required ? "  (optional)" : ""}</Text>
+            <Text style={[styles.verifyState, { color: ok ? Colors.success : pending ? Colors.mustard : Colors.charcoal3 }]}>
+              {ok ? "Verified" : s.status === "pending" ? "Being checked" : s.status === "rejected" ? "Needs attention" : "Not done"}
+            </Text>
+          </View>
+        );
+      })}
     </TouchableOpacity>
   );
 }
@@ -448,6 +454,20 @@ const styles = StyleSheet.create({
     color: Colors.charcoal2,
     fontWeight: "600",
   },
+  verifyCard: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    padding: 14,
+    gap: 8,
+    backgroundColor: Colors.warmBg,
+    borderRadius: Radius.md,
+  },
+  verifyCardDone: { backgroundColor: "#dcfce7" },
+  verifyHead: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 2 },
+  verifyTitle: { fontSize: 14, fontWeight: "800", flex: 1 },
+  verifyRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  verifyStep: { fontSize: 13.5, color: Colors.charcoal, flex: 1 },
+  verifyState: { fontSize: 12.5, fontWeight: "700" },
   verifiedBanner: {
     flexDirection: "row",
     alignItems: "center",
