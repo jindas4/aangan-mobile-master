@@ -16,7 +16,7 @@
 // react-native-razorpay is a native module — required lazily so Expo Go
 // (where it isn't linked) still runs the dev-mode path.
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
@@ -210,6 +210,11 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
               {booking.host_name ? <Text style={styles.cardSub}>Hosted by {booking.host_name}</Text> : null}
             </View>
           </View>
+          <TouchableOpacity onPress={onClose} accessibilityRole="button" accessibilityLabel="Edit dates or guests"
+                            style={styles.editBtn} hitSlop={8}>
+            <Ionicons name="create-outline" size={14} color={Colors.terra} />
+            <Text style={styles.editText}>Edit dates or guests</Text>
+          </TouchableOpacity>
           <View style={styles.ends}>
             <View style={styles.end}>
               <Text style={styles.endLabel}>CHECK-IN</Text>
@@ -323,6 +328,8 @@ const styles = StyleSheet.create({
   cardKicker: { fontSize: 10.5, fontWeight: "700", letterSpacing: 1.2, color: Colors.terraDeep, textTransform: "uppercase" },
   cardTitle: { fontFamily: Fonts.display, fontSize: 17, fontWeight: "700", color: Colors.charcoal, marginTop: 2 },
   cardSub: { fontSize: 12, color: Colors.charcoal2, marginTop: 2 },
+  editBtn: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", marginTop: 10 },
+  editText: { fontSize: 13, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline" },
   ends: { flexDirection: "row", marginTop: 12, borderRadius: 12, borderWidth: 1, borderColor: Colors.edge },
   end: { flex: 1, paddingHorizontal: 12, paddingVertical: 9 },
   endRight: { borderLeftWidth: 1, borderLeftColor: Colors.edge },
