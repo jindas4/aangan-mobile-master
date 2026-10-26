@@ -609,6 +609,7 @@ export default function ListingDetailScreen() {
           totalInr={quote.total_inr}
           cancellationPolicy={listing.cancellation_policy}
           instantBook={listing.instant_book !== false}
+          stayLine={`${shortDate(checkIn)} → ${shortDate(checkOut)} · ${quote.nights} night${quote.nights === 1 ? "" : "s"} · ${guests} guest${guests === 1 ? "" : "s"}`}
           onClose={() => {
             // Leaving checkout without paying frees the dates straight away
             // (a no-op on the server once money is in).

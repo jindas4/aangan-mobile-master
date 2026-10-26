@@ -15,7 +15,7 @@
 //
 // react-native-razorpay is a native module — required lazily so Expo Go
 // (where it isn't linked) still runs the dev-mode path.
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
@@ -27,14 +27,16 @@ import { inr } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { GlassSheet } from "@/components/GlassSheet";
 
-type Method = "upi" | "card" | "wallet" | "netbanking";
-
-const METHODS: { key: Method; label: string; sub: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: "upi", label: "UPI", sub: "GPay, PhonePe, Paytm, BHIM", icon: "phone-portrait-outline" },
-  { key: "card", label: "Credit / Debit card", sub: "Visa, Mastercard, RuPay", icon: "card-outline" },
-  { key: "wallet", label: "Wallets", sub: "Paytm, Amazon Pay", icon: "wallet-outline" },
-  { key: "netbanking", label: "Netbanking", sub: "All major banks", icon: "business-outline" },
+// The guest picks how to pay inside Cashfree's own secure window (real UPI
+// apps, banks, card networks), so we only list the options — no picker.
+const METHODS: { label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { label: "UPI (any app or QR)", icon: "phone-portrait-outline" },
+  { label: "Debit or credit card", icon: "card-outline" },
+  { label: "Net banking", icon: "business-outline" },
+  { label: "Wallets", icon: "wallet-outline" },
 ];
+// While checkout is open the dates are held; ping well inside the server's 10 minutes.
+const HOLD_PING_MS = 2 * 60 * 1000;
 
 interface Props {
   bookingId: string;
@@ -46,11 +48,21 @@ interface Props {
   onPaid: (bookingStatus: string) => void;
   /** False when the host approves each booking (24 hours to answer). */
   instantBook?: boolean;
+  /** e.g. "Mon 23 Nov → Thu 26 Nov · 3 nights · 2 guests" */
+  stayLine?: string;
 }
 
-export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose, onPaid, instantBook = true }: Props) {
-  const [method, setMethod] = useState<Method>("upi");
+export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose, onPaid, instantBook = true, stayLine }: Props) {
   const [busy, setBusy] = useState(false);
+  const [holdLost, setHoldLost] = useState(false);
+  // Keep the dates held only while this sheet is open (closing it releases them).
+  useEffect(() => {
+    const timer = setInterval(() => {
+      api<{ held: boolean }>(`/api/bookings/${bookingId}/hold`, { method: "POST" })
+        .then((r) => { if (!r.held) setHoldLost(true); }).catch(() => {});
+    }, HOLD_PING_MS);
+    return () => clearInterval(timer);
+  }, [bookingId]);
   const [err, setErr] = useState<string | null>(null);
   const user = useAuth((s) => s.user);
 
@@ -60,12 +72,11 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
     try {
       const init = await api<PaymentInitResponse>("/api/payments/init", {
         method: "POST",
-        body: { booking_id: bookingId, method },
+        body: { booking_id: bookingId },
       });
 
       let confirmBody: Record<string, unknown> = {
         payment_id: init.payment_id,
-        method_detail: method,
       };
 
       let cashfreeOutcome: string | null = null;
@@ -142,36 +153,34 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
     <GlassSheet onClose={onClose} title="Confirm & pay">
       <Text style={styles.total}>{inr(totalInr)}</Text>
       <Text style={styles.totalSub}>All-inclusive · charged in ₹</Text>
+      {stayLine ? <Text style={styles.stayLine}>{stayLine}</Text> : null}
 
-      <Text style={styles.fieldLabel}>Pay with</Text>
-      {METHODS.map((m) => {
-        const on = method === m.key;
-        return (
-          <TouchableOpacity
-            key={m.key}
-            style={[styles.method, on && styles.methodOn]}
-            onPress={() => setMethod(m.key)}
-            activeOpacity={0.8}
-          >
-            <Ionicons name={m.icon} size={20} color={on ? Colors.terra : Colors.charcoal2} />
-            <View style={styles.methodText}>
-              <Text style={styles.methodLabel}>{m.label}</Text>
-              <Text style={styles.methodSub}>{m.sub}</Text>
-            </View>
-            <View style={[styles.radio, on && styles.radioOn]}>
-              {on && <View style={styles.radioDot} />}
-            </View>
-          </TouchableOpacity>
-        );
-      })}
+      <Text style={styles.fieldLabel}>How you'll pay</Text>
+      <Text style={styles.methodSub}>
+        When you press Pay, Cashfree Payments' secure window opens. Choose how to pay there:
+      </Text>
+      <View style={styles.methodGrid}>
+        {METHODS.map((m) => (
+          <View key={m.label} style={styles.methodChip}>
+            <Ionicons name={m.icon} size={16} color={Colors.charcoal2} />
+            <Text style={styles.methodLabel}>{m.label}</Text>
+          </View>
+        ))}
+      </View>
+      <Text style={styles.methodSub}>Your payment details go only to Cashfree Payments, never to Aangan Stay.</Text>
 
+      {holdLost && (
+        <Text style={styles.errorText}>
+          These dates were released because checkout was open too long, and someone else has booked them. Please close this and choose other dates.
+        </Text>
+      )}
       {err && <Text style={styles.errorText}>{err}</Text>}
 
       <Button
         title={busy ? "Processing…" : `Pay ${inr(totalInr)}`}
         onPress={pay}
         loading={busy}
-        disabled={busy}
+        disabled={busy || holdLost}
         full
         size="lg"
         style={{ marginTop: 20 }}
@@ -207,6 +216,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.paper,
   },
   methodOn: { borderColor: Colors.terra, backgroundColor: Colors.warmBg },
+  stayLine: { fontSize: 13.5, color: Colors.charcoal2, marginTop: 6 },
+  methodGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginVertical: 10 },
+  methodChip: {
+    flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 8,
+    borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.edge, backgroundColor: Colors.paper,
+  },
   methodText: { flex: 1 },
   methodLabel: { fontSize: 14.5, fontWeight: "700", color: Colors.charcoal },
   methodSub: { fontSize: 12, color: Colors.charcoal3, marginTop: 1 },

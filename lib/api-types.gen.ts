@@ -2096,6 +2096,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/bookings/{booking_id}/hold": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Keep Hold
+         * @description Checkout is still open: keep the dates held a little longer. Returns
+         *     held=false when they've been taken in the meantime.
+         */
+        post: operations["keep_hold_api_bookings__booking_id__hold_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/bookings/{booking_id}/refund-quote": {
         parameters: {
             query?: never;
@@ -10605,6 +10626,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CancelResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    keep_hold_api_bookings__booking_id__hold_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */

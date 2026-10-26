@@ -14184,6 +14184,63 @@
         ]
       }
     },
+    "/api/bookings/{booking_id}/hold": {
+      "post": {
+        "description": "Checkout is still open: keep the dates held a little longer. Returns\nheld=false when they've been taken in the meantime.",
+        "operationId": "keep_hold_api_bookings__booking_id__hold_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Keep Hold",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
     "/api/bookings/{booking_id}/refund-quote": {
       "get": {
         "description": "Show the guest exactly what they'll get back BEFORE they confirm cancel.\nNo side-effects \u2014 pure preview of the cancellation policy.",
