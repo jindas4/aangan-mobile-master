@@ -76,6 +76,13 @@
         "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "417909183220-p7qgrmjagb4eaunh76tmmqcnbdoe2re9.apps.googleusercontent.com",
         "EXPO_PUBLIC_APP_ENV": "staging"
       }
+    },
+    "production-apk": {
+      "extends": "production",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {
