@@ -66,7 +66,7 @@ export function VerifyWizard() {
             />
             <View style={styles.stepInfo}>
               <Text style={styles.stepLabel}>{step.label}</Text>
-              <Text style={styles.stepHint}>{step.done ? "Completed" : step.hint}</Text>
+              <Text style={styles.stepHint}>{step.done ? (step.detail || "Completed") : step.hint}</Text>
             </View>
             {(step.required || step.key === "pan") && !step.done && (
               <View style={styles.requiredBadge}>
@@ -85,7 +85,7 @@ export function VerifyWizard() {
           {step.key === "payout" && step.status === "pending" && (
             <View style={styles.pendingBanner}>
               <Ionicons name="time-outline" size={14} color={Colors.terra} />
-              <Text style={styles.pendingText}>Saved — pending review. You can continue in the meantime.</Text>
+              <Text style={styles.pendingText}>Saved. Our team is confirming the name on this account — usually within a working day. Nothing more to do.</Text>
             </View>
           )}
 

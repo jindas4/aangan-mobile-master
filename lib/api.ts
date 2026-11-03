@@ -488,6 +488,8 @@ export interface VerificationStep {
   required: boolean;
   hint: string;
   status?: "unverified" | "pending" | "verified" | "rejected" | null;
+  /** payout only: the method on file, masked — e.g. "Bank account ••3540 · BARB0DESUMA" */
+  detail?: string | null;
 }
 
 export interface VerificationStatus {
