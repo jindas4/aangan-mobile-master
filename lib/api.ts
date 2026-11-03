@@ -324,6 +324,9 @@ export interface BookingOut {
 }
 
 export interface BookingWithListing extends BookingOut {
+  /** The guest's GST invoice number, once issued, and credit notes from refunds. */
+  invoice_number?: string | null;
+  credit_note_numbers?: string[];
   listing_title: string;
   listing_city: string;
   listing_area: string;

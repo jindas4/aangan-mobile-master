@@ -15,6 +15,7 @@ import { WriteReviewModal } from "@/components/WriteReviewModal";
 import { policyLine } from "@/components/CancellationChoice";
 import { CheckinHelp } from "@/components/CheckinHelp";
 import { DamageClaim } from "@/components/DamageClaim";
+import { InvoiceLinks } from "@/components/InvoiceLinks";
 
 const STATUS: Record<string, { label: string; color: string; note: string }> = {
   pending: { label: "Awaiting host", color: Colors.mustard, note: "The host hasn't accepted yet. You'll be told as soon as they do." },
@@ -154,6 +155,7 @@ export default function TripDetailScreen() {
           <PriceRow label="Total" value={inr(b.total_inr)} bold />
           {credits > 0 && <PriceRow label="Credits applied" value={`− ${inr(credits)}`} />}
           {credits > 0 && <PriceRow label="You paid" value={inr(b.total_inr - credits)} bold />}
+          <InvoiceLinks bookingId={b.id} invoiceNumber={b.invoice_number} creditNotes={b.credit_note_numbers} />
         </View>
 
         <View style={styles.card}>

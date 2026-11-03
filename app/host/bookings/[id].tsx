@@ -20,6 +20,7 @@ import { Colors, Radius } from "@/constants/Colors";
 import { inr, fullDate, imageUrl, canCancelBooking, fmtTime, fmtDeadline } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { InvoiceLinks } from "@/components/InvoiceLinks";
 
 export default function HostBookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -208,6 +209,7 @@ export default function HostBookingDetailScreen() {
           <PriceRow label={`Taxes (GST ${booking.tax_pct ?? 12}%)`} value={inr(booking.tax_inr)} />
           <View style={styles.divider} />
           <PriceRow label="Guest pays" value={inr(booking.total_inr)} bold />
+          <InvoiceLinks bookingId={booking.id} invoiceNumber={booking.invoice_number} creditNotes={booking.credit_note_numbers} />
         </View>
 
         {/* What the host is paid */}
