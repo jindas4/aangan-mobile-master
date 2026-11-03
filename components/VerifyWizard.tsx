@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
@@ -82,6 +82,22 @@ export function VerifyWizard() {
             )}
           </TouchableOpacity>
 
+          {step.key === "payout" && step.done && expanded !== "payout" && (
+            <TouchableOpacity
+              style={styles.changeRow}
+              onPress={() =>
+                Alert.alert(
+                  "Change payout account?",
+                  "Future earnings will go to the new account. We'll send a code to your verified phone or email to confirm it's you.",
+                  [{ text: "Cancel", style: "cancel" }, { text: "Continue", onPress: () => setExpanded("payout") }],
+                )
+              }
+            >
+              <Ionicons name="swap-horizontal" size={14} color={Colors.charcoal2} />
+              <Text style={styles.linkText}>Change payout account</Text>
+            </TouchableOpacity>
+          )}
+
           {step.key === "payout" && step.status === "pending" && (
             <View style={styles.pendingBanner}>
               <Ionicons name="time-outline" size={14} color={Colors.terra} />
@@ -89,13 +105,13 @@ export function VerifyWizard() {
             </View>
           )}
 
-          {expanded === step.key && !step.done && (
+          {expanded === step.key && (!step.done || step.key === "payout") && (
             <View style={styles.stepForm}>
               {step.key === "phone" && <PhoneStepForm onDone={handleStepDone} />}
               {step.key === "email" && <EmailStepForm onDone={handleStepDone} />}
               {step.key === "aadhaar" && <AadhaarStepForm onDone={handleStepDone} />}
               {step.key === "pan" && <PanStepForm onDone={handleStepDone} />}
-              {step.key === "payout" && <PayoutStepForm onDone={handleStepDone} />}
+              {step.key === "payout" && <PayoutStepForm onDone={handleStepDone} change={step.done} />}
             </View>
           )}
         </View>
@@ -505,7 +521,7 @@ function PanStepForm({ onDone }: { onDone: () => void }) {
   );
 }
 
-function PayoutStepForm({ onDone }: { onDone: () => void }) {
+function PayoutStepForm({ onDone, change = false }: { onDone: () => void; change?: boolean }) {
   const [tab, setTab] = useState<"upi" | "bank">("upi");
   const [vpa, setVpa] = useState("");
   const [account, setAccount] = useState("");
@@ -513,6 +529,24 @@ function PayoutStepForm({ onDone }: { onDone: () => void }) {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // Changing a method already on file needs a one-time code (verified phone, else email).
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [devCode, setDevCode] = useState<string | null>(null);
+
+  const sendCode = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      const r = await api<{ masked: string; dev_code?: string | null }>("/api/kyc/payout/change-code", { method: "POST" });
+      setSentTo(r.masked);
+      setDevCode(r.dev_code || null);
+    } catch (e: any) {
+      setErr(e.message || "Could not send the code");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const validVpa = /^[\w.\-]+@[\w.\-]+$/.test(vpa.trim());
   const validIfsc = /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc.trim());
@@ -522,13 +556,14 @@ function PayoutStepForm({ onDone }: { onDone: () => void }) {
     if (!valid) return;
     setBusy(true);
     setErr(null);
+    const otp = change ? { code: code.trim() } : {};
     try {
       if (tab === "upi") {
-        await api("/api/kyc/upi", { method: "POST", body: { vpa: vpa.trim() } });
+        await api("/api/kyc/upi", { method: "POST", body: { vpa: vpa.trim(), ...otp } });
       } else {
         await api("/api/kyc/bank", {
           method: "POST",
-          body: { account: account.trim(), ifsc: ifsc.trim(), name: name.trim() },
+          body: { account: account.trim(), ifsc: ifsc.trim(), name: name.trim(), ...otp },
         });
       }
       onDone();
@@ -586,8 +621,46 @@ function PayoutStepForm({ onDone }: { onDone: () => void }) {
           />
         </>
       )}
+      {change && sentTo && (
+        <>
+          <TextInput
+            value={code}
+            onChangeText={(t) => setCode(t.replace(/\D/g, "").slice(0, 6))}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            placeholder="6-digit code"
+            placeholderTextColor={Colors.charcoal3}
+            style={[styles.formInput, { marginTop: 10 }]}
+          />
+          <Text style={styles.devCode}>Code sent to {sentTo}.</Text>
+          {devCode && <Text style={styles.devCode}>Dev code: {devCode}</Text>}
+        </>
+      )}
       {err && <Text style={styles.formError}>{err}</Text>}
-      <Button title={busy ? "Saving…" : "Save payout method"} onPress={submit} disabled={!valid || busy} loading={busy} full style={{ marginTop: 12 }} />
+      {change && !sentTo ? (
+        <>
+          <Button title={busy ? "Sending…" : "Send code to confirm"} onPress={sendCode} disabled={!valid || busy} loading={busy} full style={{ marginTop: 12 }} />
+          <Text style={styles.devCode}>
+            For your security, changing where earnings are paid needs a one-time code sent to your verified phone or email.
+          </Text>
+        </>
+      ) : (
+        <Button
+          title={busy ? "Saving…" : change ? "Confirm change" : "Save payout method"}
+          onPress={submit}
+          disabled={!valid || busy || (change && code.length < 4)}
+          loading={busy}
+          full
+          style={{ marginTop: 12 }}
+        />
+      )}
+      {change && sentTo && (
+        <View style={styles.linksRow}>
+          <TouchableOpacity onPress={sendCode} disabled={busy}>
+            <Text style={styles.linkText}>Resend code</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -645,6 +718,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   pendingText: { fontSize: 12, color: Colors.terra, fontWeight: "600", flex: 1 },
+  changeRow: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 16, paddingBottom: 12 },
   stepForm: {
     paddingHorizontal: 16,
     paddingBottom: 16,
