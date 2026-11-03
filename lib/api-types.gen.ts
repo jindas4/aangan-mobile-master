@@ -684,6 +684,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/email/bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Lead Email Bulk
+         * @description Put matching NEW leads with an email on the automatic sequence (best
+         *     score first). The scheduler then sends within the daily cap. dry_run only counts.
+         */
+        post: operations["lead_email_bulk_api_admin_leads_email_bulk_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/email/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lead Email Stats */
+        get: operations["lead_email_stats_api_admin_leads_email_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/import": {
         parameters: {
             query?: never;
@@ -821,6 +859,45 @@ export interface paths {
          *     Needs the owner's phone — that is what the claim match runs on.
          */
         post: operations["convert_lead_api_admin_leads__lead_id__convert_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lead Email Panel
+         * @description Each email of the sequence filled in for this owner, which one is next,
+         *     when it's due, and whether it can go out now (and if not, why).
+         */
+        get: operations["lead_email_panel_api_admin_leads__lead_id__email_get"];
+        put?: never;
+        /** Lead Email Send */
+        post: operations["lead_email_send_api_admin_leads__lead_id__email_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/email/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lead Email Settings */
+        post: operations["lead_email_settings_api_admin_leads__lead_id__email_settings_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1431,6 +1508,54 @@ export interface paths {
         get: operations["user_overview_api_admin_users__user_id__overview_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{user_id}/payout-method/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Payout Method Decide
+         * @description Approve or reject the host's bank account / UPI ID after checking it by
+         *     hand — for one Cashfree couldn't confirm is theirs (name only partly
+         *     matched) or one added before the check existed. Approving releases the
+         *     payouts held for it; rejecting holds every payout not yet sent, and the
+         *     host must add another account.
+         */
+        post: operations["payout_method_decide_api_admin_users__user_id__payout_method__action__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/users/{user_id}/phone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change Phone
+         * @description Put a new mobile number on an account (e.g. the user lost or replaced
+         *     theirs). The new number starts unverified: the user confirms it by signing
+         *     in with it, or under Account → Verify. With reset_kyc the Aadhaar check is
+         *     cleared too, KYC goes back to pending, and payouts not yet sent are held
+         *     until it is verified again.
+         */
+        post: operations["change_phone_api_admin_users__user_id__phone_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4857,6 +4982,41 @@ export interface components {
             /** Veg Kitchen */
             veg_kitchen?: boolean | null;
         };
+        /** LeadEmailBulkIn */
+        LeadEmailBulkIn: {
+            /**
+             * Dry Run
+             * @default true
+             */
+            dry_run: boolean;
+            /**
+             * Limit
+             * @default 200
+             */
+            limit: number;
+            /** Min Score */
+            min_score?: number | null;
+            /** Q */
+            q?: string | null;
+            /** Region */
+            region?: string | null;
+            /** Segment */
+            segment?: string | null;
+            /** Source */
+            source?: string | null;
+        };
+        /** LeadEmailSendIn */
+        LeadEmailSendIn: {
+            /** Step */
+            step?: string | null;
+        };
+        /** LeadEmailSettingsIn */
+        LeadEmailSettingsIn: {
+            /** Auto */
+            auto?: boolean | null;
+            /** Opt Out */
+            opt_out?: boolean | null;
+        };
         /** LeadIn */
         LeadIn: {
             /**
@@ -5595,6 +5755,18 @@ export interface components {
             code: string;
             /** Phone */
             phone: string;
+        };
+        /** PhoneChange */
+        PhoneChange: {
+            /** Phone */
+            phone: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Reset Kyc
+             * @default false
+             */
+            reset_kyc: boolean;
         };
         /** PropertyCaptureCreate */
         PropertyCaptureCreate: {
@@ -7909,6 +8081,72 @@ export interface operations {
             };
         };
     };
+    lead_email_bulk_api_admin_leads_email_bulk_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadEmailBulkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_email_stats_api_admin_leads_email_stats_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     import_leads_api_admin_leads_import_post: {
         parameters: {
             query?: {
@@ -8166,6 +8404,113 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["LeadConvertIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_email_panel_api_admin_leads__lead_id__email_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_email_send_api_admin_leads__lead_id__email_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadEmailSendIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_email_settings_api_admin_leads__lead_id__email_settings_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadEmailSettingsIn"];
             };
         };
         responses: {
@@ -9419,6 +9764,81 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    payout_method_decide_api_admin_users__user_id__payout_method__action__post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+                action: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["KycDecision"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_phone_api_admin_users__user_id__phone_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhoneChange"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
