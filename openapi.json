@@ -4313,6 +4313,11 @@
             ],
             "title": "Flagged Reason"
           },
+          "override_unverified_host": {
+            "default": false,
+            "title": "Override Unverified Host",
+            "type": "boolean"
+          },
           "published": {
             "anyOf": [
               {

@@ -6420,6 +6420,11 @@ export interface components {
             flagged?: boolean | null;
             /** Flagged Reason */
             flagged_reason?: string | null;
+            /**
+             * Override Unverified Host
+             * @default false
+             */
+            override_unverified_host: boolean;
             /** Published */
             published?: boolean | null;
             /** Reason */
