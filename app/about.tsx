@@ -8,6 +8,7 @@ import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { WEB_BASE } from "@/lib/api";
 
 const SUPPORT_EMAIL = "support@aanganstay.com";
+const SUPPORT_PHONE = "+91 91151 50294";
 const COMPANY = "Meera Stay India Private Limited";
 const COMPANY_CIN = "U55101HR2026PTC151172";
 const COMPANY_OFFICE = "223/8 Krishna Colony, Bhiwani, Haryana 127021";
@@ -79,6 +80,11 @@ export default function AboutScreen() {
             label="Refund Policy"
             onPress={() => openWeb(`${WEB_BASE}/legal/refunds`)}
           />
+          <LinkRow
+            icon="cube-outline"
+            label="Shipping & Delivery Policy"
+            onPress={() => openWeb(`${WEB_BASE}/legal/shipping`)}
+          />
         </View>
 
         {/* Contact */}
@@ -88,6 +94,16 @@ export default function AboutScreen() {
             icon="mail-outline"
             label={SUPPORT_EMAIL}
             onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}`)}
+          />
+          <LinkRow
+            icon="call-outline"
+            label={SUPPORT_PHONE}
+            onPress={() => Linking.openURL(`tel:${SUPPORT_PHONE.replace(/\s+/g, "")}`)}
+          />
+          <LinkRow
+            icon="business-outline"
+            label="All contact details"
+            onPress={() => openWeb(`${WEB_BASE}/legal/contact`)}
           />
           <LinkRow
             icon="briefcase-outline"
