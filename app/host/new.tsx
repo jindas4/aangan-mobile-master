@@ -18,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api, Scene } from "@/lib/api";
 import { fmtTime, isHHMM } from "@/lib/format";
 import { PayoutPreview } from "@/components/PayoutPreview";
-import { HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
+import { EMPTY_HOUSE_RULES, HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
@@ -55,7 +55,7 @@ export default function NewListingScreen() {
   const [policy, setPolicy] = useState<CancellationPolicy>("flexible");
   const [instantBook, setInstantBook] = useState(true);
   const [regNo, setRegNo] = useState("");
-  const [rules, setRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
+  const [rules, setRules] = useState<HouseRulesValue>(EMPTY_HOUSE_RULES);
   const [guests, setGuests] = useState("2");
   const [bedrooms, setBedrooms] = useState("1");
   const [baths, setBaths] = useState("1");

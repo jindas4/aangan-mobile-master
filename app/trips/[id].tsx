@@ -16,6 +16,7 @@ import { policyLine } from "@/components/CancellationChoice";
 import { CheckinHelp } from "@/components/CheckinHelp";
 import { DamageClaim } from "@/components/DamageClaim";
 import { InvoiceLinks } from "@/components/InvoiceLinks";
+import { BookingHouseRules } from "@/components/HouseRules";
 
 const STATUS: Record<string, { label: string; color: string; note: string }> = {
   pending: { label: "Awaiting host", color: Colors.mustard, note: "The host hasn't accepted yet. You'll be told as soon as they do." },
@@ -157,6 +158,13 @@ export default function TripDetailScreen() {
           {credits > 0 && <PriceRow label="You paid" value={inr(b.total_inr - credits)} bold />}
           <InvoiceLinks bookingId={b.id} invoiceNumber={b.invoice_number} creditNotes={b.credit_note_numbers} />
         </View>
+
+        {b.house_rules && b.house_rules.some((l) => !/^Check-(in|out) /.test(l.text)) && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>House rules for this stay</Text>
+            <BookingHouseRules rules={b.house_rules} />
+          </View>
+        )}
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Cancellation</Text>

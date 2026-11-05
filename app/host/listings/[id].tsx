@@ -25,7 +25,7 @@ import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { inr, fullDate, imageUrl, fmtTime, isHHMM } from "@/lib/format";
 import { PayoutPreview } from "@/components/PayoutPreview";
-import { HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
+import { EMPTY_HOUSE_RULES, HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
 
@@ -52,7 +52,7 @@ export default function ManageListingScreen() {
   const [editPolicy, setEditPolicy] = useState<CancellationPolicy>("flexible");
   const [editInstant, setEditInstant] = useState(true);
   const [editRegNo, setEditRegNo] = useState("");
-  const [editRules, setEditRules] = useState<HouseRulesValue>({ couples_ok: null, local_id_ok: null, alcohol_ok: null, pet_friendly: false });
+  const [editRules, setEditRules] = useState<HouseRulesValue>(EMPTY_HOUSE_RULES);
   const [editDescription, setEditDescription] = useState("");
   const [editGuests, setEditGuests] = useState("");
   const [editBedrooms, setEditBedrooms] = useState("");
@@ -74,7 +74,7 @@ export default function ManageListingScreen() {
       setEditPrice(String(l.price_inr));
       setEditRegNo(l.registration_no ?? "");
       setEditRules({ couples_ok: l.couples_ok ?? null, local_id_ok: l.local_id_ok ?? null,
-                     alcohol_ok: l.alcohol_ok ?? null, pet_friendly: !!l.pet_friendly });
+                     alcohol_ok: l.alcohol_ok ?? null, pet_friendly: !!l.pet_friendly, house_rules: l.house_rules ?? {} });
       setEditCleaning(String(l.cleaning_fee_inr ?? 0));
       setEditCheckin(l.checkin_time || "14:00");
       setEditCheckout(l.checkout_time || "11:00");

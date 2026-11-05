@@ -248,6 +248,8 @@ export interface ListingCard {
   couples_ok?: boolean | null;
   local_id_ok?: boolean | null;
   alcohol_ok?: boolean | null;
+  /** The other house rules — children, foreign nationals, min age, smoking, … (components/HouseRules.tsx). */
+  house_rules?: import("@/components/HouseRules").HouseRulesExtra;
   /** Registered with the state tourism department, and checked by Aangan Stay. */
   state_registered?: boolean;
   rating: number;
@@ -327,6 +329,8 @@ export interface BookingWithListing extends BookingOut {
   /** The guest's GST invoice number, once issued, and credit notes from refunds. */
   invoice_number?: string | null;
   credit_note_numbers?: string[];
+  /** The house rules this booking was made under (a copy taken when it was booked). */
+  house_rules?: { text: string; ok: boolean; note?: boolean }[];
   listing_title: string;
   listing_city: string;
   listing_area: string;

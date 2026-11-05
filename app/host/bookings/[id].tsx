@@ -21,6 +21,7 @@ import { inr, fullDate, imageUrl, canCancelBooking, fmtTime, fmtDeadline } from 
 import { Button } from "@/components/Button";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { InvoiceLinks } from "@/components/InvoiceLinks";
+import { BookingHouseRules } from "@/components/HouseRules";
 
 export default function HostBookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -211,6 +212,13 @@ export default function HostBookingDetailScreen() {
           <PriceRow label="Guest pays" value={inr(booking.total_inr)} bold />
           <InvoiceLinks bookingId={booking.id} invoiceNumber={booking.invoice_number} creditNotes={booking.credit_note_numbers} />
         </View>
+
+        {booking.house_rules && booking.house_rules.some((l) => !/^Check-(in|out) /.test(l.text)) && (
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>House rules for this booking</Text>
+            <BookingHouseRules rules={booking.house_rules} />
+          </View>
+        )}
 
         {/* What the host is paid */}
         {booking.host_earnings ? (
