@@ -14234,6 +14234,54 @@
         ]
       }
     },
+    "/api/admin/listings/geocode-missing": {
+      "post": {
+        "description": "Look up map positions now for listings that have none (the scheduled\njob does the same every ten minutes). At most 25 per call.",
+        "operationId": "geocode_missing_listings_api_admin_listings_geocode_missing_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Geocode Missing Listings",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/listings/{listing_id}": {
       "get": {
         "description": "Any listing, whatever its status \u2014 the public page 404s on drafts and\nunpublished listings, so admins preview them here.",

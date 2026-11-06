@@ -1658,6 +1658,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/listings/geocode-missing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Geocode Missing Listings
+         * @description Look up map positions now for listings that have none (the scheduled
+         *     job does the same every ten minutes). At most 25 per call.
+         */
+        post: operations["geocode_missing_listings_api_admin_listings_geocode_missing_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/listings/{listing_id}": {
         parameters: {
             query?: never;
@@ -11359,6 +11380,37 @@ export interface operations {
                 limit?: number;
                 offset?: number;
             };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    geocode_missing_listings_api_admin_listings_geocode_missing_post: {
+        parameters: {
+            query?: never;
             header?: {
                 authorization?: string | null;
             };
