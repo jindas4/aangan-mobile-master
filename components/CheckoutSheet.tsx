@@ -16,7 +16,7 @@
 // react-native-razorpay is a native module — required lazily so Expo Go
 // (where it isn't linked) still runs the dev-mode path.
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
@@ -27,7 +27,7 @@ import { inr, imageUrl, parseDate } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { GlassSheet } from "@/components/GlassSheet";
 
-// The guest picks how to pay inside Cashfree's own secure window (real UPI
+// The guest picks how to pay inside the gateway's own secure window (real UPI
 // apps, banks, card networks), so we only list the options — no picker.
 const METHODS: { label: string; icon: keyof typeof Ionicons.glyphMap; tint: string; ink: string }[] = [
   { label: "UPI", icon: "phone-portrait-outline", tint: "#FFF7ED", ink: "#B45309" },
@@ -186,6 +186,9 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
 
   return (
     <GlassSheet onClose={onClose} title="Confirm & pay">
+      {/* The details scroll; the Pay button stays pinned below them, so it is
+          always reachable on small phones and with large text. */}
+      <ScrollView style={styles.body} showsVerticalScrollIndicator={false} bounces={false}>
       <Text style={styles.hello}>{firstName ? `Almost there, ${firstName}` : "Almost there"}</Text>
       {holdLost ? (
         <Text style={styles.errorText}>
@@ -238,7 +241,7 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
 
       <Text style={styles.fieldLabel}>WHAT HAPPENS NEXT</Text>
       <Step n={1} title={`Pay ${inr(totalInr)} securely`}>
-        <Text style={styles.stepSub}>Cashfree Payments' secure window opens. Pay there with any of these:</Text>
+        <Text style={styles.stepSub}>A secure payment window opens. Pay there with any of these:</Text>
         <View style={styles.methodGrid}>
           {METHODS.map((m) => (
             <View key={m.label} style={styles.methodChip}>
@@ -276,6 +279,8 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
         </View>
       )}
 
+      </ScrollView>
+
       {err && <Text style={styles.errorText}>{err}</Text>}
 
       <Button
@@ -285,11 +290,11 @@ export function CheckoutSheet({ bookingId, totalInr, cancellationPolicy, onClose
         disabled={busy || holdLost}
         full
         size="lg"
-        style={{ marginTop: 20 }}
+        style={{ marginTop: 14 }}
       />
       <View style={styles.lockRow}>
         <Ionicons name="lock-closed" size={12} color={Colors.terraDeep} />
-        <Text style={styles.lockText}>Your payment details go only to Cashfree Payments, never to Aangan Stay.</Text>
+        <Text style={styles.lockText}>Your payment details go only to our licensed payment partner, never to Aangan Stay.</Text>
       </View>
     </GlassSheet>
   );
@@ -311,6 +316,7 @@ function Step({ n, title, last, children }: { n: number; title: string; last?: b
 }
 
 const styles = StyleSheet.create({
+  body: { flexGrow: 0, flexShrink: 1 },
   hello: { fontFamily: Fonts.display, fontSize: 24, fontWeight: "700", color: Colors.charcoal },
   heldPill: {
     flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "flex-start",

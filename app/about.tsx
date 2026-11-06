@@ -50,7 +50,7 @@ export default function AboutScreen() {
           <Text style={[styles.body, { marginTop: 12 }]}>
             Every price is in rupees with GST included. Hosts verify their Aadhaar, PAN and
             bank account. House rules are shown before you book, and your booking is confirmed
-            the moment you pay by UPI or card through Cashfree Payments.
+            the moment you pay by UPI, card or net banking.
           </Text>
           <TouchableOpacity onPress={() => openWeb(`${WEB_BASE}/about`)} style={{ marginTop: 12 }}>
             <Text style={[styles.body, { color: Colors.terra, fontWeight: "700" }]}>Read more about us</Text>
