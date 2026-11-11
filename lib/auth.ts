@@ -11,7 +11,7 @@ interface AuthState {
   requestEmailOtp: (email: string) => Promise<string | undefined>;
   verifyEmailOtp: (email: string, code: string) => Promise<UserOut>;
   /** Returns verify-screen info when the email still needs confirming, or null when already signed in. */
-  registerWithPassword: (firstName: string, lastName: string, email: string, password: string) => Promise<{ devCode: string | null; codeSent: boolean; message: string | null } | null>;
+  registerWithPassword: (firstName: string, lastName: string, email: string, password: string, marketingOptIn?: boolean) => Promise<{ devCode: string | null; codeSent: boolean; message: string | null } | null>;
   verifySignup: (email: string, code: string) => Promise<UserOut>;
   loginWithPassword: (email: string, password: string) => Promise<UserOut>;
   requestPasswordReset: (email: string) => Promise<string | undefined>;
@@ -20,7 +20,7 @@ interface AuthState {
   logout: () => void;
   refresh: () => Promise<void>;
   becomeHost: () => Promise<UserOut>;
-  updateProfile: (patch: { name?: string; email?: string; lang?: string; avatar_url?: string; host_bio?: string; host_languages?: string; host_response_time?: string }) => Promise<UserOut>;
+  updateProfile: (patch: { name?: string; email?: string; lang?: string; marketing_opt_in?: boolean; avatar_url?: string; host_bio?: string; host_languages?: string; host_response_time?: string }) => Promise<UserOut>;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -74,10 +74,10 @@ export const useAuth = create<AuthState>((set) => ({
     registerPushToken().catch(() => {});
     return res.user;
   },
-  async registerWithPassword(firstName, lastName, email, password) {
+  async registerWithPassword(firstName, lastName, email, password, marketingOptIn = false) {
     const res = await api<{ token?: string; user?: UserOut; dev_code?: string | null; code_sent?: boolean; message?: string | null }>(
       "/api/auth/password/register",
-      { method: "POST", body: { first_name: firstName, last_name: lastName || null, email, password } },
+      { method: "POST", body: { first_name: firstName, last_name: lastName || null, email, password, marketing_opt_in: marketingOptIn } },
     );
     if (res.token && res.user) {   // backends from before email verification sign you in straight away
       await setToken(res.token);

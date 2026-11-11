@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Alert, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, StyleSheet, TextInput, Alert, KeyboardAvoidingView, Platform, Switch } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Radius } from "@/constants/Colors";
 import { GlassHeader } from "@/components/GlassHeader";
@@ -12,6 +12,22 @@ export default function AccountEditScreen() {
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [saving, setSaving] = useState(false);
+  const [marketing, setMarketing] = useState(!!user?.marketing_opt_in);
+  const [savingMarketing, setSavingMarketing] = useState(false);
+
+  // Saved straight away, like a settings switch.
+  const toggleMarketing = async (on: boolean) => {
+    setMarketing(on);
+    setSavingMarketing(true);
+    try {
+      await updateProfile({ marketing_opt_in: on });
+    } catch (e: any) {
+      setMarketing(!on);
+      Alert.alert("Couldn't save", e.message || "Please try again.");
+    } finally {
+      setSavingMarketing(false);
+    }
+  };
 
   if (!user) {
     router.replace("/login");
@@ -71,6 +87,24 @@ export default function AccountEditScreen() {
             </>
           )}
 
+          <View style={styles.prefRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.prefTitle}>Travel ideas & offers</Text>
+              <Text style={styles.helperText}>
+                {user.email
+                  ? "Occasional emails with new homes, places to go and offers. Booking confirmations and receipts are always sent."
+                  : "Add an email to get occasional travel ideas and offers."}
+              </Text>
+            </View>
+            <Switch
+              value={marketing}
+              onValueChange={toggleMarketing}
+              disabled={savingMarketing || !user.email}
+              trackColor={{ true: Colors.terra, false: Colors.edgeStrong }}
+              accessibilityLabel="Email me travel ideas and offers"
+            />
+          </View>
+
           <Button
             title={saving ? "Saving…" : "Save changes"}
             onPress={save}
@@ -98,4 +132,9 @@ const styles = StyleSheet.create({
   inputDisabled: { backgroundColor: Colors.warmBg },
   disabledText: { fontSize: 15, color: Colors.charcoal2, fontWeight: "600" },
   helperText: { fontSize: 11.5, color: Colors.charcoal3, marginTop: 6 },
+  prefRow: {
+    flexDirection: "row", alignItems: "center", gap: 12, marginTop: 24,
+    padding: 14, borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.edge, backgroundColor: Colors.paper,
+  },
+  prefTitle: { fontSize: 14, fontWeight: "700", color: Colors.charcoal },
 });

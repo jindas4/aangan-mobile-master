@@ -5174,6 +5174,11 @@
             ],
             "title": "Last Name"
           },
+          "marketing_opt_in": {
+            "default": false,
+            "title": "Marketing Opt In",
+            "type": "boolean"
+          },
           "password": {
             "maxLength": 200,
             "minLength": 8,
@@ -7150,6 +7155,11 @@
             "title": "Lang",
             "type": "string"
           },
+          "marketing_opt_in": {
+            "default": false,
+            "title": "Marketing Opt In",
+            "type": "boolean"
+          },
           "name": {
             "anyOf": [
               {
@@ -7300,6 +7310,17 @@
               }
             ],
             "title": "Lang"
+          },
+          "marketing_opt_in": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Marketing Opt In"
           },
           "name": {
             "anyOf": [
@@ -24149,6 +24170,25 @@
         "summary": "Upload Image",
         "tags": [
           "uploads"
+        ]
+      }
+    },
+    "/api/webhooks/resend": {
+      "post": {
+        "operationId": "resend_webhook_api_webhooks_resend_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Resend Webhook",
+        "tags": [
+          "webhooks"
         ]
       }
     },

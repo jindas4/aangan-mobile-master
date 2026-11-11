@@ -1,13 +1,31 @@
 /**
  * Parser for the support chat's server-sent events (`/api/chat/stream`).
  *
- * The backend sends `data: {json}\n\n` events: `session` (session id), `text`
- * (a whole answer), `delta` (a streamed piece) and `done`. React Native's
+ * The backend sends `data: {json}\n\n` events: `session` (session id),
+ * `listings` (stays to show as cards under the answer), `text` (a whole
+ * answer), `delta` (a streamed piece) and `done`. React Native's
  * fetch can't stream, so the app usually receives the whole body at once —
  * both cases go through `parseSse`, never straight to the screen.
  */
+/** A stay the assistant found, shown as a card under its reply. */
+export type ChatListing = {
+  id: string;
+  title: string;
+  city: string;
+  area?: string | null;
+  price_inr: number;
+  price_incl_tax_inr?: number;
+  guests?: number;
+  bedrooms?: number;
+  instant_book?: boolean;
+  image?: string | null;
+  rating?: number | null;
+  reviews_count?: number;
+};
+
 export type ChatEvent =
   | { type: "session"; session_id: string }
+  | { type: "listings"; items: ChatListing[] }
   | { type: "text"; content: string }
   | { type: "delta"; content: string }
   | { type: "done" }
@@ -43,4 +61,23 @@ export function replyFromEvents(events: ChatEvent[], current = ""): string {
     else if (e.type === "delta" && typeof e.content === "string") out += e.content;
   }
   return out;
+}
+
+/** The stays to show under the reply, if the events carried any. */
+export function listingsFromEvents(events: ChatEvent[], current: ChatListing[] = []): ChatListing[] {
+  let out = current;
+  for (const e of events) {
+    if (e.type === "listings" && Array.isArray((e as { items?: unknown }).items)) {
+      out = (e as { items: ChatListing[] }).items;
+    }
+  }
+  return out;
+}
+
+/** Split `**bold**` runs out of a reply so they can be styled (older replies used them). */
+export function boldRuns(text: string): { text: string; bold: boolean }[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? { text: part.slice(2, -2), bold: true }
+      : { text: part, bold: false });
 }

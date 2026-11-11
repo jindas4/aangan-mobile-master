@@ -4541,6 +4541,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/webhooks/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resend Webhook */
+        post: operations["resend_webhook_api_webhooks_resend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/wishlist": {
         parameters: {
             query?: never;
@@ -6743,6 +6760,11 @@ export interface components {
             first_name: string;
             /** Last Name */
             last_name?: string | null;
+            /**
+             * Marketing Opt In
+             * @default false
+             */
+            marketing_opt_in: boolean;
             /** Password */
             password: string;
         };
@@ -7625,6 +7647,11 @@ export interface components {
              * @default en
              */
             lang: string;
+            /**
+             * Marketing Opt In
+             * @default false
+             */
+            marketing_opt_in: boolean;
             /** Name */
             name?: string | null;
             /** Phone */
@@ -7668,6 +7695,8 @@ export interface components {
             host_response_time?: string | null;
             /** Lang */
             lang?: string | null;
+            /** Marketing Opt In */
+            marketing_opt_in?: boolean | null;
             /** Name */
             name?: string | null;
         };
@@ -16974,6 +17003,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resend_webhook_api_webhooks_resend_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
                 };
             };
         };

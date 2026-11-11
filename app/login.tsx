@@ -85,6 +85,8 @@ export default function LoginScreen() {
   const [signupCode, setSignupCode] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
+  // Marketing email consent: unticked unless they tick it.
+  const [marketing, setMarketing] = useState(false);
   // Mobile-number login, offered only when the server can deliver SMS codes.
   const [phoneReady, setPhoneReady] = useState(false);
   const [phone, setPhone] = useState("");
@@ -221,7 +223,7 @@ export default function LoginScreen() {
       if (mode === "login") {
         await loginWithPassword(normEmail, password);
       } else {
-        const pending = await registerWithPassword(firstName.trim(), lastName.trim(), normEmail, password);
+        const pending = await registerWithPassword(firstName.trim(), lastName.trim(), normEmail, password, marketing);
         if (pending) {
           startVerify(pending.devCode);
           // Account created but the code couldn't be sent — still land on the
@@ -600,6 +602,25 @@ export default function LoginScreen() {
                     </Text>
                     , and to Aangan Stay's zero-tolerance policy for objectionable content and abusive
                     behaviour.
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {mode === "register" && (
+                <TouchableOpacity
+                  style={styles.termsRow}
+                  onPress={() => setMarketing((v) => !v)}
+                  activeOpacity={0.7}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: marketing }}
+                >
+                  <Ionicons
+                    name={marketing ? "checkbox" : "square-outline"}
+                    size={22}
+                    color={marketing ? Colors.terra : Colors.charcoal3}
+                  />
+                  <Text style={styles.termsText}>
+                    Email me travel ideas and offers from Aangan Stay. Unsubscribe anytime.
                   </Text>
                 </TouchableOpacity>
               )}

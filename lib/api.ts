@@ -217,6 +217,8 @@ export interface UserOut {
   host_response_time?: string | null;
   host_joined_at?: string | null;
   superhost?: boolean;
+  /** Agreed to travel ideas and offers by email. */
+  marketing_opt_in?: boolean;
 }
 
 export interface ListingImage {

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  ScrollView,
   KeyboardAvoidingView,
   Platform,
   Modal,
@@ -14,16 +15,23 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { API_BASE, getToken } from "@/lib/api";
-import { parseSse, replyFromEvents, type ChatEvent } from "@/lib/chatStream";
+import { inr } from "@/lib/format";
+import { RemoteImage } from "@/components/RemoteImage";
+import {
+  boldRuns, listingsFromEvents, parseSse, replyFromEvents, type ChatEvent, type ChatListing,
+} from "@/lib/chatStream";
 
 interface Message {
   id: number;
   role: "user" | "assistant";
   content: string;
+  listings?: ChatListing[];
 }
 
 const FAB_SIZE = 52;
@@ -122,6 +130,7 @@ export function ChatFab() {
 
 function ChatModal({ onClose }: { onClose: () => void }) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [msgs, setMsgs] = useState<Message[]>([
     {
       id: 0,
@@ -178,7 +187,9 @@ function ChatModal({ onClose }: { onClose: () => void }) {
           if (e.type === "session" && typeof e.session_id === "string") setSessionId(e.session_id);
         }
         setMsgs((p) =>
-          p.map((m) => (m.id === assistantId ? { ...m, content: replyFromEvents(events, m.content) } : m))
+          p.map((m) => (m.id === assistantId
+            ? { ...m, content: replyFromEvents(events, m.content), listings: listingsFromEvents(events, m.listings) }
+            : m))
         );
       };
 
@@ -219,29 +230,73 @@ function ChatModal({ onClose }: { onClose: () => void }) {
     }
   };
 
+  const openListing = (id: string) => {
+    onClose();
+    router.push(`/listing/${id}`);
+  };
+
   const renderItem = ({ item }: { item: Message }) => (
-    <View style={[styles.msgRow, item.role === "user" && styles.msgRowUser]}>
-      <View
-        style={[
-          styles.bubble,
-          item.role === "user" ? styles.bubbleUser : styles.bubbleAssistant,
-        ]}
-      >
-        {item.content ? (
-          <Text
-            style={[styles.bubbleText, item.role === "user" && styles.bubbleTextUser]}
-          >
-            {item.content}
-          </Text>
-        ) : (
-          <Text style={styles.typing}>...</Text>
-        )}
+    <View>
+      <View style={[styles.msgRow, item.role === "user" && styles.msgRowUser]}>
+        <View
+          style={[
+            styles.bubble,
+            item.role === "user" ? styles.bubbleUser : styles.bubbleAssistant,
+          ]}
+        >
+          {item.content ? (
+            <Text style={[styles.bubbleText, item.role === "user" && styles.bubbleTextUser]}>
+              {boldRuns(item.content).map((r, i) => (
+                <Text key={i} style={r.bold ? styles.bold : undefined}>{r.text}</Text>
+              ))}
+            </Text>
+          ) : (
+            <Text style={styles.typing}>...</Text>
+          )}
+        </View>
       </View>
+      {item.listings && item.listings.length > 0 && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.cards}
+          style={styles.cardsWrap}
+        >
+          {item.listings.map((l) => (
+            <TouchableOpacity
+              key={l.id}
+              style={styles.card}
+              activeOpacity={0.85}
+              onPress={() => openListing(l.id)}
+              accessibilityRole="link"
+              accessibilityLabel={`${l.title}, ${l.city}, ${inr(l.price_incl_tax_inr ?? l.price_inr)} a night`}
+            >
+              {l.image ? (
+                <RemoteImage url={l.image} size="thumb" style={styles.cardImage} contentFit="cover" />
+              ) : (
+                <View style={[styles.cardImage, styles.cardImageEmpty]} />
+              )}
+              <View style={styles.cardBody}>
+                <Text style={styles.cardKicker} numberOfLines={1}>
+                  {[l.city, l.area].filter(Boolean).join(" · ")}
+                </Text>
+                <Text style={styles.cardTitle} numberOfLines={2}>{l.title}</Text>
+                <Text style={styles.cardPrice}>
+                  {inr(l.price_incl_tax_inr ?? l.price_inr)}
+                  <Text style={styles.cardPriceSub}> / night incl. taxes</Text>
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
+      {/* Light clock and battery on the dark header. */}
+      <StatusBar style="light" />
       <KeyboardAvoidingView
         style={styles.modal}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -395,6 +450,26 @@ const styles = StyleSheet.create({
   bubbleTextUser: {
     color: "#fff",
   },
+  bold: { fontWeight: "700" },
+  cardsWrap: { marginTop: 8, marginHorizontal: -16 },
+  cards: { paddingHorizontal: 16, gap: 10 },
+  card: {
+    width: 200,
+    borderRadius: 16,
+    backgroundColor: Colors.paper,
+    borderWidth: 1,
+    borderColor: Colors.edge,
+    overflow: "hidden",
+  },
+  cardImage: { width: "100%", height: 120, backgroundColor: Colors.cream },
+  cardImageEmpty: { backgroundColor: Colors.cream },
+  cardBody: { padding: 10, gap: 3 },
+  cardKicker: {
+    fontSize: 10.5, fontWeight: "800", letterSpacing: 0.6, textTransform: "uppercase", color: Colors.terra,
+  },
+  cardTitle: { fontSize: 13.5, fontWeight: "700", color: Colors.charcoal, lineHeight: 18 },
+  cardPrice: { fontSize: 13.5, fontWeight: "800", color: Colors.charcoal, marginTop: 2 },
+  cardPriceSub: { fontSize: 11, fontWeight: "500", color: Colors.charcoal3 },
   typing: {
     fontSize: 18,
     color: Colors.charcoal3,

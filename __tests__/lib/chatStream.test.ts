@@ -1,4 +1,4 @@
-import { parseSse, replyFromEvents } from "../../lib/chatStream";
+import { boldRuns, listingsFromEvents, parseSse, replyFromEvents } from "../../lib/chatStream";
 
 const BODY =
   'data: {"type": "session", "session_id": "cs_1"}\n\n' +
@@ -22,5 +22,21 @@ describe("parseSse", () => {
   it("appends deltas and ignores malformed events", () => {
     const { events } = parseSse('data: {"type": "delta", "content": "Hel"}\n\ndata: oops\n\ndata: {"type": "delta", "content": "lo"}\n\n');
     expect(replyFromEvents(events)).toBe("Hello");
+  });
+
+  it("picks up the stay cards sent with a reply", () => {
+    const { events } = parseSse(
+      'data: {"type": "listings", "items": [{"id": "lst_1", "title": "Stone cottage", "city": "Bir", "price_inr": 9999, "price_incl_tax_inr": 11799}]}\n\n' +
+      'data: {"type": "text", "content": "Here is 1 stay in Himachal Pradesh:", "tier": "data"}\n\n',
+    );
+    expect(listingsFromEvents(events).map((l) => l.id)).toEqual(["lst_1"]);
+    expect(replyFromEvents(events)).toBe("Here is 1 stay in Himachal Pradesh:");
+    expect(listingsFromEvents([], [])).toEqual([]);
+  });
+
+  it("splits bold runs out of older replies", () => {
+    expect(boldRuns("Try **Manali** now")).toEqual([
+      { text: "Try ", bold: false }, { text: "Manali", bold: true }, { text: " now", bold: false },
+    ]);
   });
 });
