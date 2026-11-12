@@ -3404,6 +3404,20 @@
         "title": "LeadEmailSettingsIn",
         "type": "object"
       },
+      "LeadEmailVariantIn": {
+        "properties": {
+          "mode": {
+            "pattern": "^(plain|emoji|ab)$",
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "LeadEmailVariantIn",
+        "type": "object"
+      },
       "LeadGoogleBulkIn": {
         "properties": {
           "dry_run": {
@@ -13033,6 +13047,64 @@
           }
         },
         "summary": "Lead Email Stats",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/email/variant": {
+      "put": {
+        "description": "Which version of the outreach email goes out: plain, emoji, or ab (alternate).",
+        "operationId": "lead_email_variant_api_admin_leads_email_variant_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadEmailVariantIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Email Variant",
         "tags": [
           "admin"
         ]

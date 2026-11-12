@@ -1323,6 +1323,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/email/variant": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Lead Email Variant
+         * @description Which version of the outreach email goes out: plain, emoji, or ab (alternate).
+         */
+        put: operations["lead_email_variant_api_admin_leads_email_variant_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/google/bulk": {
         parameters: {
             query?: never;
@@ -6063,6 +6083,11 @@ export interface components {
             /** Opt Out */
             opt_out?: boolean | null;
         };
+        /** LeadEmailVariantIn */
+        LeadEmailVariantIn: {
+            /** Mode */
+            mode: string;
+        };
         /** LeadGoogleBulkIn */
         LeadGoogleBulkIn: {
             /**
@@ -10750,6 +10775,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_email_variant_api_admin_leads_email_variant_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadEmailVariantIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
