@@ -8,7 +8,7 @@ import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { WEB_BASE } from "@/lib/api";
 
 const SUPPORT_EMAIL = "support@aanganstay.com";
-const SUPPORT_PHONE = "+91 91151 50294";
+const SUPPORT_PHONE = "+91 96467 89103";
 const COMPANY = "Meera Stay India Private Limited";
 const COMPANY_CIN = "U55101HR2026PTC151172";
 const COMPANY_OFFICE = "223/8 Krishna Colony, Bhiwani, Haryana 127021";
