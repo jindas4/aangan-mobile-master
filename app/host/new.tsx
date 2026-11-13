@@ -24,6 +24,7 @@ import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { Button } from "@/components/Button";
 import { PhotoPicker, Photo } from "@/components/PhotoPicker";
+import { StatePinFields } from "@/components/StatePinFields";
 
 const SCENES: { key: Scene; label: string }[] = [
   { key: "mountain", label: "Mountain" },
@@ -46,6 +47,7 @@ export default function NewListingScreen() {
   const [title, setTitle] = useState("");
   const [city, setCity] = useState("");
   const [area, setArea] = useState("");
+  const [loc, setLoc] = useState({ state_code: "", pincode: "" });
   const [scene, setScene] = useState<Scene>("mountain");
   const [type, setType] = useState("Apartment");
   const [price, setPrice] = useState("");
@@ -66,7 +68,7 @@ export default function NewListingScreen() {
 
   const uploadedImages = photos.filter((p) => p.remoteUrl).map((p) => p.remoteUrl!);
   const stillUploading = photos.some((p) => p.uploading);
-  const valid = title.trim() && city.trim() && price.trim() && description.trim() && uploadedImages.length > 0
+  const valid = title.trim() && city.trim() && loc.state_code && /^[1-9]\d{5}$/.test(loc.pincode) && price.trim() && description.trim() && uploadedImages.length > 0
     && isHHMM(checkin) && isHHMM(checkout);
 
   const saveDraftThenVerify = async () => {
@@ -84,6 +86,8 @@ export default function NewListingScreen() {
           title: title.trim(),
           city: city.trim(),
           area: area.trim(),
+          state_code: loc.state_code,
+          pincode: loc.pincode,
           scene,
           type,
           price_inr: parseInt(price),
@@ -164,6 +168,9 @@ export default function NewListingScreen() {
               <TextInput value={area} onChangeText={setArea} placeholder="Old Manali" placeholderTextColor={Colors.charcoal3} style={styles.input} />
             </Field>
           </View>
+
+          <StatePinFields stateCode={loc.state_code} pincode={loc.pincode} onChange={setLoc}
+                          inputStyle={styles.input} labelStyle={styles.fieldLabel} />
 
           <Field label="Scene">
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>

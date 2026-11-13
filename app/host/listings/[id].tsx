@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { CancellationChoice, type CancellationPolicy } from "@/components/CancellationChoice";
+import { StatePinFields, useStates } from "@/components/StatePinFields";
 import { BookingModeChoice } from "@/components/BookingModeChoice";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
@@ -52,6 +53,9 @@ export default function ManageListingScreen() {
   const [editPolicy, setEditPolicy] = useState<CancellationPolicy>("flexible");
   const [editInstant, setEditInstant] = useState(true);
   const [editRegNo, setEditRegNo] = useState("");
+  const [editLoc, setEditLoc] = useState({ state_code: "", pincode: "" });
+  const states = useStates();
+  const stateName = (c: string) => states.find((s) => s.code === c)?.name || c;
   const [editRules, setEditRules] = useState<HouseRulesValue>(EMPTY_HOUSE_RULES);
   const [editDescription, setEditDescription] = useState("");
   const [editGuests, setEditGuests] = useState("");
@@ -73,6 +77,7 @@ export default function ManageListingScreen() {
       setEditTitle(l.title);
       setEditPrice(String(l.price_inr));
       setEditRegNo(l.registration_no ?? "");
+      setEditLoc({ state_code: l.state_code ?? "", pincode: l.pincode ?? "" });
       setEditRules({ couples_ok: l.couples_ok ?? null, local_id_ok: l.local_id_ok ?? null,
                      alcohol_ok: l.alcohol_ok ?? null, pet_friendly: !!l.pet_friendly, house_rules: l.house_rules ?? {} });
       setEditCleaning(String(l.cleaning_fee_inr ?? 0));
@@ -155,6 +160,8 @@ export default function ManageListingScreen() {
           checkout_time: editCheckout.trim(),
           ...editRules,
           registration_no: editRegNo.trim(),
+          state_code: editLoc.state_code,
+          pincode: editLoc.pincode.trim(),
           house_rules_set: ["couples_ok", "local_id_ok", "alcohol_ok"],
         },
       });
@@ -362,6 +369,8 @@ export default function ManageListingScreen() {
               <Text style={styles.policyLabel}>If a guest cancels</Text>
               <CancellationChoice value={editPolicy} onChange={setEditPolicy} />
               <Text style={styles.policyNote}>Applies to new bookings. Bookings already made keep the policy they were booked under.</Text>
+              <StatePinFields stateCode={editLoc.state_code} pincode={editLoc.pincode} onChange={setEditLoc}
+                              inputStyle={styles.editInput} labelStyle={styles.editLabel} />
               <EditField label="State tourism registration number (optional)" value={editRegNo} onChangeText={setEditRegNo} />
               <Text style={styles.policyNote}>
                 {listing.state_registered
@@ -495,7 +504,13 @@ export default function ManageListingScreen() {
                 <DetailItem label="Baths" value={String(listing.baths)} />
                 <DetailItem label="Scene" value={listing.scene} />
                 <DetailItem label="Location" value={`${listing.city}, ${listing.area}`} />
+                <DetailItem label="State" value={listing.state_code ? `${stateName(listing.state_code)}${listing.pincode ? ` ${listing.pincode}` : ""}` : "Not set"} />
               </View>
+              {!listing.state_code && (
+                <Text style={styles.locationWarn}>
+                  Add your property's state and PIN code (Edit). We need them to issue your guests' GST invoices.
+                </Text>
+              )}
 
               {/* Amenities */}
               {listing.amenities?.length > 0 && (
@@ -578,6 +593,8 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
+  locationWarn: { fontSize: 13, fontWeight: "700", color: Colors.terra, backgroundColor: Colors.warmBg,
+                  borderRadius: Radius.md, padding: 12, marginTop: 8, overflow: "hidden" },
   policyLabel: { fontSize: 12, fontWeight: "700", color: Colors.charcoal2, marginTop: 14, marginBottom: 8 },
   policyNote: { fontSize: 11.5, color: Colors.charcoal3, marginBottom: 6 },
   policyView: { fontSize: 13, color: Colors.charcoal2, marginTop: 12 },

@@ -2364,6 +2364,45 @@
         "title": "GenerateOut",
         "type": "object"
       },
+      "GstDeclaration": {
+        "properties": {
+          "gst_registered": {
+            "title": "Gst Registered",
+            "type": "boolean"
+          },
+          "turnover_over_threshold": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Over Threshold"
+          }
+        },
+        "required": [
+          "gst_registered"
+        ],
+        "title": "GstDeclaration",
+        "type": "object"
+      },
+      "GstinSubmit": {
+        "properties": {
+          "gstin": {
+            "maxLength": 20,
+            "minLength": 15,
+            "title": "Gstin",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gstin"
+        ],
+        "title": "GstinSubmit",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -4197,6 +4236,18 @@
             "title": "Pet Friendly",
             "type": "boolean"
           },
+          "pincode": {
+            "anyOf": [
+              {
+                "maxLength": 6,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pincode"
+          },
           "price_inr": {
             "exclusiveMinimum": 0.0,
             "title": "Price Inr",
@@ -4222,6 +4273,18 @@
           "scene": {
             "title": "Scene",
             "type": "string"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
           },
           "tags": {
             "default": [],
@@ -4305,6 +4368,11 @@
       },
       "ListingModerate": {
         "properties": {
+          "confirm_location": {
+            "default": false,
+            "title": "Confirm Location",
+            "type": "boolean"
+          },
           "flagged": {
             "anyOf": [
               {
@@ -4331,6 +4399,18 @@
             "default": false,
             "title": "Override Unverified Host",
             "type": "boolean"
+          },
+          "pincode": {
+            "anyOf": [
+              {
+                "maxLength": 6,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pincode"
           },
           "published": {
             "anyOf": [
@@ -4364,6 +4444,18 @@
               }
             ],
             "title": "Registration Verified"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^(\\d{2})?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
           }
         },
         "title": "ListingModerate",
@@ -4497,6 +4589,17 @@
             ],
             "title": "Local Id Ok"
           },
+          "location_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location Status"
+          },
           "min_nights": {
             "default": 1,
             "title": "Min Nights",
@@ -4506,6 +4609,17 @@
             "default": false,
             "title": "Pet Friendly",
             "type": "boolean"
+          },
+          "pincode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pincode"
           },
           "price_incl_tax_inr": {
             "default": 0,
@@ -4547,6 +4661,17 @@
           "slug": {
             "title": "Slug",
             "type": "string"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
           },
           "state_registered": {
             "default": false,
@@ -4850,6 +4975,18 @@
             ],
             "title": "Pet Friendly"
           },
+          "pincode": {
+            "anyOf": [
+              {
+                "maxLength": 6,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pincode"
+          },
           "price_inr": {
             "anyOf": [
               {
@@ -4883,6 +5020,18 @@
               }
             ],
             "title": "Registration No"
+          },
+          "state_code": {
+            "anyOf": [
+              {
+                "pattern": "^(\\d{2})?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State Code"
           },
           "tags": {
             "anyOf": [
@@ -6427,6 +6576,60 @@
           "code"
         ],
         "title": "RegisterVerify",
+        "type": "object"
+      },
+      "RegistrationEnd": {
+        "properties": {
+          "valid_to": {
+            "format": "date",
+            "title": "Valid To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "valid_to"
+        ],
+        "title": "RegistrationEnd",
+        "type": "object"
+      },
+      "RegistrationIn": {
+        "properties": {
+          "address": {
+            "maxLength": 400,
+            "minLength": 10,
+            "title": "Address",
+            "type": "string"
+          },
+          "gstin": {
+            "maxLength": 15,
+            "minLength": 15,
+            "title": "Gstin",
+            "type": "string"
+          },
+          "kind": {
+            "default": "regular",
+            "pattern": "^(regular|tcs)$",
+            "title": "Kind",
+            "type": "string"
+          },
+          "legal_name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Legal Name",
+            "type": "string"
+          },
+          "valid_from": {
+            "format": "date",
+            "title": "Valid From",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gstin",
+          "address",
+          "valid_from"
+        ],
+        "title": "RegistrationIn",
         "type": "object"
       },
       "ReportCreate": {
@@ -11621,6 +11824,54 @@
         ]
       }
     },
+    "/api/admin/invoices/attention": {
+      "get": {
+        "description": "What stops invoices being right: listings with no state, paid bookings\nwith no invoice, and invoices issued from the head office for want of a\nGSTIN in the property's state.",
+        "operationId": "needs_attention_api_admin_invoices_attention_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Needs Attention",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/invoices/booking/{booking_id}/pdf": {
       "get": {
         "description": "The guest's tax invoice with its credit notes, as the guest sees it.",
@@ -11731,6 +11982,176 @@
           }
         },
         "summary": "Export Csv",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/invoices/registrations": {
+      "get": {
+        "description": "Aangan's GSTINs, and which listed states have no GSTIN yet.",
+        "operationId": "list_registrations_api_admin_invoices_registrations_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Registrations",
+        "tags": [
+          "admin"
+        ]
+      },
+      "post": {
+        "operationId": "add_registration_api_admin_invoices_registrations_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Registration",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/invoices/registrations/{reg_id}": {
+      "patch": {
+        "description": "Record that a registration was cancelled or surrendered. History stays.",
+        "operationId": "end_registration_api_admin_invoices_registrations__reg_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reg_id",
+            "required": true,
+            "schema": {
+              "title": "Reg Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationEnd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "End Registration",
         "tags": [
           "admin"
         ]
@@ -14241,7 +14662,7 @@
             "required": false,
             "schema": {
               "default": "all",
-              "pattern": "^(all|published|unpublished|flagged)$",
+              "pattern": "^(all|published|unpublished|flagged|location)$",
               "title": "Filter",
               "type": "string"
             }
@@ -15077,7 +15498,7 @@
     },
     "/api/admin/payouts/{payout_id}/sync": {
       "post": {
-        "description": "Asks Cashfree for the current status of a payout and applies it \u2014 for a\npayout stuck in `processing` (e.g. a missed webhook or a timeout when it was sent).",
+        "description": "Asks the payout service (RazorpayX or Cashfree) for the current status of\na payout and applies it \u2014 for a payout stuck in `processing` (e.g. a missed\nwebhook or a timeout when it was sent).",
         "operationId": "sync_payout_admin_api_admin_payouts__payout_id__sync_post",
         "parameters": [
           {
@@ -20256,6 +20677,83 @@
         ]
       }
     },
+    "/api/geo/pincode/{pin}": {
+      "get": {
+        "description": "Which state a PIN is in. `states` holds one code (occasionally two for\na PIN on a border). `checked` is False when India Post's directory\ncouldn't be reached; `states` is then what the PIN's first digits allow.",
+        "operationId": "pincode_api_geo_pincode__pin__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pin",
+            "required": true,
+            "schema": {
+              "title": "Pin",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pincode",
+        "tags": [
+          "geo"
+        ]
+      }
+    },
+    "/api/geo/states": {
+      "get": {
+        "description": "States and union territories a property can be in, by name.",
+        "operationId": "list_states_api_geo_states_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List States",
+        "tags": [
+          "geo"
+        ]
+      }
+    },
     "/api/host/analytics": {
       "get": {
         "operationId": "host_analytics_api_host_analytics_get",
@@ -20972,6 +21470,221 @@
           }
         },
         "summary": "Digilocker Start",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/api/kyc/gst": {
+      "get": {
+        "operationId": "my_gst_api_kyc_gst_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Gst",
+        "tags": [
+          "kyc"
+        ]
+      },
+      "put": {
+        "operationId": "declare_gst_api_kyc_gst_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GstDeclaration"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Declare Gst",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/api/kyc/gst/gstins": {
+      "post": {
+        "operationId": "add_gstin_api_kyc_gst_gstins_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GstinSubmit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Gstin",
+        "tags": [
+          "kyc"
+        ]
+      }
+    },
+    "/api/kyc/gst/gstins/{reg_id}": {
+      "delete": {
+        "operationId": "remove_gstin_api_kyc_gst_gstins__reg_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reg_id",
+            "required": true,
+            "schema": {
+              "title": "Reg Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Gstin",
         "tags": [
           "kyc"
         ]

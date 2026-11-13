@@ -4,6 +4,7 @@ import { Colors } from "@/constants/Colors";
 import { GlassHeader } from "@/components/GlassHeader";
 import { useAuth } from "@/lib/auth";
 import { VerifyWizard } from "@/components/VerifyWizard";
+import { HostGst } from "@/components/HostGst";
 
 export default function HostVerifyScreen() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function HostVerifyScreen() {
         </Text>
 
         <VerifyWizard />
+        {user?.is_host && <HostGst />}
 
         <View style={{ height: 48 }} />
       </ScrollView>

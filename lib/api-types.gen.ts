@@ -979,6 +979,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/invoices/attention": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Needs Attention
+         * @description What stops invoices being right: listings with no state, paid bookings
+         *     with no invoice, and invoices issued from the head office for want of a
+         *     GSTIN in the property's state.
+         */
+        get: operations["needs_attention_api_admin_invoices_attention_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/invoices/booking/{booking_id}/pdf": {
         parameters: {
             query?: never;
@@ -1014,6 +1036,47 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/admin/invoices/registrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Registrations
+         * @description Aangan's GSTINs, and which listed states have no GSTIN yet.
+         */
+        get: operations["list_registrations_api_admin_invoices_registrations_get"];
+        put?: never;
+        /** Add Registration */
+        post: operations["add_registration_api_admin_invoices_registrations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/invoices/registrations/{reg_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * End Registration
+         * @description Record that a registration was cancelled or surrendered. History stays.
+         */
+        patch: operations["end_registration_api_admin_invoices_registrations__reg_id__patch"];
         trace?: never;
     };
     "/api/admin/knowledge": {
@@ -1891,8 +1954,9 @@ export interface paths {
         put?: never;
         /**
          * Sync Payout Admin
-         * @description Asks Cashfree for the current status of a payout and applies it — for a
-         *     payout stuck in `processing` (e.g. a missed webhook or a timeout when it was sent).
+         * @description Asks the payout service (RazorpayX or Cashfree) for the current status of
+         *     a payout and applies it — for a payout stuck in `processing` (e.g. a missed
+         *     webhook or a timeout when it was sent).
          */
         post: operations["sync_payout_admin_api_admin_payouts__payout_id__sync_post"];
         delete?: never;
@@ -3427,6 +3491,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/geo/pincode/{pin}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Pincode
+         * @description Which state a PIN is in. `states` holds one code (occasionally two for
+         *     a PIN on a border). `checked` is False when India Post's directory
+         *     couldn't be reached; `states` is then what the PIN's first digits allow.
+         */
+        get: operations["pincode_api_geo_pincode__pin__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/geo/states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List States
+         * @description States and union territories a property can be in, by name.
+         */
+        get: operations["list_states_api_geo_states_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/host/analytics": {
         parameters: {
             query?: never;
@@ -3683,6 +3789,58 @@ export interface paths {
          */
         post: operations["digilocker_start_api_kyc_digilocker_start_post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/kyc/gst": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My Gst */
+        get: operations["my_gst_api_kyc_gst_get"];
+        /** Declare Gst */
+        put: operations["declare_gst_api_kyc_gst_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/kyc/gst/gstins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Gstin */
+        post: operations["add_gstin_api_kyc_gst_gstins_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/kyc/gst/gstins/{reg_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Gstin */
+        delete: operations["remove_gstin_api_kyc_gst_gstins__reg_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -5680,6 +5838,18 @@ export interface components {
             /** Listing */
             listing: number;
         };
+        /** GstDeclaration */
+        GstDeclaration: {
+            /** Gst Registered */
+            gst_registered: boolean;
+            /** Turnover Over Threshold */
+            turnover_over_threshold?: boolean | null;
+        };
+        /** GstinSubmit */
+        GstinSubmit: {
+            /** Gstin */
+            gstin: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -6438,6 +6608,8 @@ export interface components {
              * @default false
              */
             pet_friendly: boolean;
+            /** Pincode */
+            pincode?: string | null;
             /** Price Inr */
             price_inr: number;
             /**
@@ -6449,6 +6621,8 @@ export interface components {
             registration_no?: string | null;
             /** Scene */
             scene: string;
+            /** State Code */
+            state_code?: string | null;
             /**
              * Tags
              * @default []
@@ -6479,6 +6653,11 @@ export interface components {
         };
         /** ListingModerate */
         ListingModerate: {
+            /**
+             * Confirm Location
+             * @default false
+             */
+            confirm_location: boolean;
             /** Flagged */
             flagged?: boolean | null;
             /** Flagged Reason */
@@ -6488,12 +6667,16 @@ export interface components {
              * @default false
              */
             override_unverified_host: boolean;
+            /** Pincode */
+            pincode?: string | null;
             /** Published */
             published?: boolean | null;
             /** Reason */
             reason?: string | null;
             /** Registration Verified */
             registration_verified?: boolean | null;
+            /** State Code */
+            state_code?: string | null;
         };
         /** ListingOut */
         ListingOut: {
@@ -6566,6 +6749,8 @@ export interface components {
             lng: number;
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            /** Location Status */
+            location_status?: string | null;
             /**
              * Min Nights
              * @default 1
@@ -6576,6 +6761,8 @@ export interface components {
              * @default false
              */
             pet_friendly: boolean;
+            /** Pincode */
+            pincode?: string | null;
             /**
              * Price Incl Tax Inr
              * @default 0
@@ -6598,6 +6785,8 @@ export interface components {
             scene: string;
             /** Slug */
             slug: string;
+            /** State Code */
+            state_code?: string | null;
             /**
              * State Registered
              * @default false
@@ -6663,12 +6852,16 @@ export interface components {
             min_nights?: number | null;
             /** Pet Friendly */
             pet_friendly?: boolean | null;
+            /** Pincode */
+            pincode?: string | null;
             /** Price Inr */
             price_inr?: number | null;
             /** Published */
             published?: boolean | null;
             /** Registration No */
             registration_no?: string | null;
+            /** State Code */
+            state_code?: string | null;
             /** Tags */
             tags?: string[] | null;
             /** Title */
@@ -7407,6 +7600,36 @@ export interface components {
              * Format: email
              */
             email: string;
+        };
+        /** RegistrationEnd */
+        RegistrationEnd: {
+            /**
+             * Valid To
+             * Format: date
+             */
+            valid_to: string;
+        };
+        /** RegistrationIn */
+        RegistrationIn: {
+            /** Address */
+            address: string;
+            /** Gstin */
+            gstin: string;
+            /**
+             * Kind
+             * @default regular
+             */
+            kind: string;
+            /**
+             * Legal Name
+             * @default
+             */
+            legal_name: string;
+            /**
+             * Valid From
+             * Format: date
+             */
+            valid_from: string;
         };
         /** ReportCreate */
         ReportCreate: {
@@ -10037,6 +10260,37 @@ export interface operations {
             };
         };
     };
+    needs_attention_api_admin_invoices_attention_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     booking_invoice_pdf_api_admin_invoices_booking__booking_id__pdf_get: {
         parameters: {
             query?: never;
@@ -10080,6 +10334,109 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_registrations_api_admin_invoices_registrations_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_registration_api_admin_invoices_registrations_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistrationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    end_registration_api_admin_invoices_registrations__reg_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                reg_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegistrationEnd"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -14909,6 +15266,59 @@ export interface operations {
             };
         };
     };
+    pincode_api_geo_pincode__pin__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                pin: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_states_api_geo_states_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     host_analytics_api_host_analytics_get: {
         parameters: {
             query?: never;
@@ -15336,6 +15746,140 @@ export interface operations {
                 "application/json": components["schemas"]["DigilockerStart"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    my_gst_api_kyc_gst_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    declare_gst_api_kyc_gst_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GstDeclaration"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_gstin_api_kyc_gst_gstins_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GstinSubmit"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_gstin_api_kyc_gst_gstins__reg_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                reg_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

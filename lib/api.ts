@@ -279,6 +279,10 @@ export interface ListingCard {
 export interface ListingFull extends ListingCard {
   /** State tourism registration number: present for guests once checked, and always for the owner. */
   registration_no?: string | null;
+  /** GST state code of the property ("06"). PIN and how it was checked: owner only. */
+  state_code?: string | null;
+  pincode?: string | null;
+  location_status?: string | null;
   description: string;
   amenities: string[];
   cleaning_fee_inr: number;
