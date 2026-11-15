@@ -65,7 +65,7 @@ export function PayoutPreview({ price, cleaning }: { price: number; cleaning: nu
       </View>
       <Text style={styles.note}>
         The guest pays {inr(m.guestPays)} either way, including {gstPct(price, cleaning, nights)}% GST on the stay, and no service fee.
-        No TDS if you're an individual or HUF paid ₹5 lakh or less by us this tax year; above that it's income tax paid in your name, which you claim in your return.
+        No TDS if you're an individual or HUF whose earnings through us this tax year are ₹5 lakh or less; above that it's income tax paid in your name, which you claim in your return.
       </Text>
     </View>
   );

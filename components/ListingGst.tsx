@@ -115,7 +115,7 @@ export function ListingGst({ stateCode, stateName, inputStyle, onStatus }: {
           </View>}
       {status === "composition" && (
         <Text style={styles.warn} accessibilityRole="alert">
-          Under composition you can't take bookings through an online platform (Section 10(2A) of the CGST Act). Opt out with
+          Under composition you can't supply stays through a platform like ours (Section 10(2A) of the CGST Act). Opt out with
           form GST CMP-04 on the GST portal, then change this answer. You can still save this listing as a draft.
         </Text>
       )}
@@ -125,7 +125,7 @@ export function ListingGst({ stateCode, stateName, inputStyle, onStatus }: {
   return (
     <View style={styles.card} testID="listing-gst">
       {renewing && <Text style={styles.kicker}>NEW FINANCIAL YEAR: PLEASE CONFIRM</Text>}
-      <Text style={styles.q}>This financial year ({p.fy_label}), is your total turnover over ₹{lakh} lakh, or likely to be?</Text>
+      <Text style={styles.q}>This financial year ({p.fy_label}), has your total turnover gone over ₹{lakh} lakh?</Text>
       <Text style={styles.hint}>
         Count everything on your PAN across India: all your properties, other booking sites, direct bookings and any other business.
         {ten ? ` The limit is ₹10 lakh for properties in ${place}.` : ""} Most homestays are well under.

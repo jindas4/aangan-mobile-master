@@ -148,9 +148,16 @@ export default function NewListingScreen() {
 
   // ── Step rules ──────────────────────────────────────────────────────────────
   const [gstStatus, setGstStatus] = useState<GstStatus>("loading");
-  useEffect(() => { setStepErr(null); }, [gstStatus]);   // answering the GST question clears its nudge
+  // Answering the GST question clears its nudge — and only that: the question
+  // remounts (loading → loaded) whenever step 2 opens, which must not wipe an
+  // error the server just sent back there.
+  const prevGst = useRef<GstStatus>("loading");
+  useEffect(() => {
+    if (prevGst.current === "unanswered" && gstStatus !== "unanswered" && gstStatus !== "loading") setStepErr(null);
+    if (gstStatus !== "loading") prevGst.current = gstStatus;
+  }, [gstStatus]);
   const gstHold = gstStatus === "liable" ? "Your listing can't go live yet because your turnover is over the GST limit: invoices must go out in your name, and we're setting that up. Save it as a draft and we'll contact you."
-    : gstStatus === "composition" ? "Under the GST composition scheme you can't take bookings through an online platform. Opt out (form GST CMP-04), then change your answer on the location step. You can save a draft now."
+    : gstStatus === "composition" ? "Under the GST composition scheme you can't supply stays through a platform like ours. Opt out (form GST CMP-04), then change your answer on the location step. You can save a draft now."
     : null;
   // forDraft: a draft can be saved before the GST question is answered.
   const problem = (k: StepKey, forDraft = false): string | null => {

@@ -60,7 +60,7 @@ export function HostGst() {
         </Text>
       </View>
       <Text style={styles.body}>
-        This financial year ({p.fy_label}), is your total turnover over ₹20 lakh, or likely to be? Count everything on your
+        This financial year ({p.fy_label}), has your total turnover gone over ₹20 lakh? Count everything on your
         PAN across India: all your properties, other booking sites, direct bookings and any other business. Most homestays
         are well under; then Aangan Stay invoices your guests and pays the GST. We ask again every April.
       </Text>
@@ -96,7 +96,7 @@ export function HostGst() {
               </View>}
           {(p.composition || p.composition_on_gst_network) && (
             <Text style={styles.warn}>
-              Under composition you can't take bookings through an online platform (Section 10(2A) of the CGST Act). Opt out
+              Under composition you can't supply stays through a platform like ours (Section 10(2A) of the CGST Act). Opt out
               with form GST CMP-04 on the GST portal before your listings go live.
             </Text>
           )}

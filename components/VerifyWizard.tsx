@@ -513,7 +513,7 @@ function PanStepForm({ onDone }: { onDone: () => void }) {
       />
       <Text style={[styles.stepHint, { marginTop: 8 }]}>
         Enter your name exactly as it's printed on your PAN card. We check it with the Income Tax Department's
-        records and keep only the last 4 characters. Payouts start once your PAN is verified.
+        records and keep only the last 4 characters and the kind of holder (individual, company…), which decides TDS. Payouts start once your PAN is verified.
       </Text>
       {err && <Text style={styles.formError}>{err}</Text>}
       <Button title={busy ? "Verifying…" : "Verify PAN"} onPress={submit} disabled={!validPan || !name.trim() || busy} loading={busy} full style={{ marginTop: 12 }} />
