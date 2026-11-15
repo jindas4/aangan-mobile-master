@@ -81,7 +81,7 @@ export function hostPayoutEstimate(pricePerNight: number, cleaning: number, nigh
   const gstPaise = Math.floor((feePaise * 18 + 50) / 100);
   const tdsPaise = Math.floor((rupees * 100 * 10) / 10000);
   return {
-    guestPays: rupees + Math.round(rupees * gstPct(pricePerNight) / 100), earnings: rupees, feePct,
+    guestPays: rupees + Math.round(rupees * gstPct(pricePerNight, cleaning, nights) / 100), earnings: rupees, feePct,
     fee: feePaise / 100, feeGst: gstPaise / 100, tds: tdsPaise / 100,
     payout: (rupees * 100 - feePaise - gstPaise - tdsPaise) / 100,
   };
@@ -92,9 +92,26 @@ export function inr2(n: number): string {
   return "₹" + (n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-/** GST on a stay, by the price of a night. Keep in step with backend pricing.py. */
-export function gstPct(pricePerNight: number): number {
-  return pricePerNight <= 7500 ? 5 : 18;
+/** GST on a stay: 5% when (room + cleaning fee) ÷ nights is up to ₹7,500, 18%
+ *  above. Without cleaning and nights, the rate for one night at that price.
+ *  Keep in step with backend pricing.py. */
+export function gstPct(pricePerNight: number, cleaning: number = 0, nights: number = 1): number {
+  const n = Math.max(nights || 1, 1);
+  return (pricePerNight || 0) * n + Math.max(cleaning || 0, 0) <= 7500 * n ? 5 : 18;
+}
+
+/** What a host is told about GST at the price step: the cleaning fee counts
+ *  towards the ₹7,500-a-night limit, so a short stay can be 18% where a
+ *  longer one is 5%. */
+export function gstNote(pricePerNight: number, cleaning: number): string {
+  const p = pricePerNight || 0, c = Math.max(cleaning || 0, 0);
+  if (p > 7500 || (p === 7500 && c > 0))
+    return "Guests pay 18% GST on top, because the room and cleaning fee come to over ₹7,500 a night (it's 5% at or below).";
+  if (gstPct(p, c, 1) === 5)
+    return c > 0 ? "Guests pay 5% GST on top. The room and cleaning fee together stay within ₹7,500 a night; above that it's 18%."
+                 : "Guests pay 5% GST on top (it's 18% when the room and cleaning fee come to over ₹7,500 a night).";
+  const n = Math.ceil(c / (7500 - p));
+  return `Guests pay 18% GST on stays under ${n} nights and 5% from ${n} nights: the cleaning fee counts towards the ₹7,500-a-night limit, spread over the nights.`;
 }
 /** A night's price with GST added — what a guest actually pays per night.
  *  Uses the server's figure when it sent one. */

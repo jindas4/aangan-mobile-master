@@ -2365,10 +2365,40 @@
         "type": "object"
       },
       "GstDeclaration": {
+        "description": "Only the answers sent are saved. Turnover answers are for the current\ntax year (see host_gst).",
         "properties": {
+          "composition": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Composition"
+          },
           "gst_registered": {
-            "title": "Gst Registered",
-            "type": "boolean"
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gst Registered"
+          },
+          "turnover_over_10l": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover Over 10L"
           },
           "turnover_over_threshold": {
             "anyOf": [
@@ -2382,9 +2412,6 @@
             "title": "Turnover Over Threshold"
           }
         },
-        "required": [
-          "gst_registered"
-        ],
         "title": "GstDeclaration",
         "type": "object"
       },

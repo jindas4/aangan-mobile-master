@@ -25,7 +25,7 @@ function Column({ title, tag, e, highlight }: { title: string; tag: string; e: H
       {line("Your earnings", inr2(e.earnings))}
       {line(`Aangan Stay fee (${e.feePct}%)`, `− ${inr2(e.fee)}`)}
       {line("GST on the fee (18%)", `− ${inr2(e.feeGst)}`)}
-      {line("TDS (0.1%)", `− ${inr2(e.tds)}`)}
+      {line("TDS (0.1%, if it applies)", `− ${inr2(e.tds)}`)}
       <View style={styles.rule} />
       {line("You receive", inr2(e.payout), true)}
     </View>
@@ -64,8 +64,8 @@ export function PayoutPreview({ price, cleaning }: { price: number; cleaning: nu
         </Text>
       </View>
       <Text style={styles.note}>
-        The guest pays {inr(m.guestPays)} either way, including {gstPct(price)}% GST on the stay, and no service fee.
-        TDS is income tax paid in your name; you can claim it in your tax return.
+        The guest pays {inr(m.guestPays)} either way, including {gstPct(price, cleaning, nights)}% GST on the stay, and no service fee.
+        No TDS if you're an individual or HUF paid ₹5 lakh or less by us this tax year; above that it's income tax paid in your name, which you claim in your return.
       </Text>
     </View>
   );

@@ -5838,10 +5838,18 @@ export interface components {
             /** Listing */
             listing: number;
         };
-        /** GstDeclaration */
+        /**
+         * GstDeclaration
+         * @description Only the answers sent are saved. Turnover answers are for the current
+         *     tax year (see host_gst).
+         */
         GstDeclaration: {
+            /** Composition */
+            composition?: boolean | null;
             /** Gst Registered */
-            gst_registered: boolean;
+            gst_registered?: boolean | null;
+            /** Turnover Over 10L */
+            turnover_over_10l?: boolean | null;
             /** Turnover Over Threshold */
             turnover_over_threshold?: boolean | null;
         };

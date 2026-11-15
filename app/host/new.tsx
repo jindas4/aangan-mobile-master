@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api } from "@/lib/api";
-import { fmtTime, gstPct, inr, isHHMM } from "@/lib/format";
+import { fmtTime, gstNote, inr, isHHMM } from "@/lib/format";
 import { CancellationChoice, type CancellationPolicy } from "@/components/CancellationChoice";
 import { BookingModeChoice } from "@/components/BookingModeChoice";
 import { PayoutPreview } from "@/components/PayoutPreview";
@@ -25,7 +25,7 @@ import { AMENITIES } from "@/constants/Amenities";
 import { Button } from "@/components/Button";
 import { PhotoPicker, Photo } from "@/components/PhotoPicker";
 import { StatePinFields, useStates } from "@/components/StatePinFields";
-import { ListingGst } from "@/components/ListingGst";
+import { ListingGst, type GstStatus } from "@/components/ListingGst";
 
 // ── Choices (same as the website) ────────────────────────────────────────────
 const TYPE_CARDS: { value: string; title: string; line: string; room?: boolean; scene?: string; icon: string }[] = [
@@ -147,7 +147,13 @@ export default function NewListingScreen() {
   const clearDraft = () => SecureStore.deleteItemAsync(DRAFT_KEY).catch(() => {});
 
   // ── Step rules ──────────────────────────────────────────────────────────────
-  const problem = (k: StepKey): string | null => {
+  const [gstStatus, setGstStatus] = useState<GstStatus>("loading");
+  useEffect(() => { setStepErr(null); }, [gstStatus]);   // answering the GST question clears its nudge
+  const gstHold = gstStatus === "liable" ? "Your listing can't go live yet because your turnover is over the GST limit: invoices must go out in your name, and we're setting that up. Save it as a draft and we'll contact you."
+    : gstStatus === "composition" ? "Under the GST composition scheme you can't take bookings through an online platform. Opt out (form GST CMP-04), then change your answer on the location step. You can save a draft now."
+    : null;
+  // forDraft: a draft can be saved before the GST question is answered.
+  const problem = (k: StepKey, forDraft = false): string | null => {
     switch (k) {
       case "place":
         if (!form.type) return "Choose what kind of place it is.";
@@ -156,7 +162,8 @@ export default function NewListingScreen() {
         if (!form.city.trim()) return "Enter the town or city.";
         if (!form.area.trim()) return "Enter the area or neighbourhood.";
         if (!form.state_code) return "Choose the state.";
-        return /^[1-9]\d{5}$/.test(form.pincode.trim()) ? null : "Enter the 6-digit PIN code.";
+        if (!/^[1-9]\d{5}$/.test(form.pincode.trim())) return "Enter the 6-digit PIN code.";
+        return !forDraft && gstStatus === "unanswered" ? "Answer the GST question about your turnover." : null;
       case "photos":
         return uploading ? "Wait for the photos to finish uploading." : null;
       case "describe":
@@ -226,11 +233,11 @@ export default function NewListingScreen() {
   };
 
   // ── Submit ──────────────────────────────────────────────────────────────────
-  const blocked = !!(preflight && !preflight.eligible);
-  const draftable = !problem("place") && !problem("where") && !problem("describe") && !problem("price");
+  const blocked = !!(preflight && !preflight.eligible) || !!gstHold;
+  const draftable = !problem("place") && !problem("where", true) && !problem("describe") && !problem("price");
   const submit = async (published: boolean): Promise<boolean> => {
     for (let i = 0; i < STEPS.length - 1; i++) {
-      const p = problem(STEPS[i].key);
+      const p = problem(STEPS[i].key, !published);
       if (p) { go(i); setTimeout(() => setStepErr(p), 0); return false; }
     }
     if (published && images.length === 0) {
@@ -267,7 +274,7 @@ export default function NewListingScreen() {
         Alert.alert("Verify to publish",
           `Before your listing can go live, ${describeMissing(missing)}. Save it as a draft now and publish it once you're verified.`,
           [{ text: "Cancel", style: "cancel" }, { text: "Save draft & verify", onPress: async () => { if (await submit(false)) router.replace("/host/verify"); } }]);
-      } else if (e?.body?.detail?.reason === "location") {
+      } else if (e?.body?.detail?.reason === "location" || e?.body?.detail?.reason === "gst") {
         go(1); setTimeout(() => setStepErr(e.body.detail.message || e.message), 0);
       } else {
         Alert.alert("Couldn't save", e.message || "Please try again.");
@@ -358,7 +365,7 @@ export default function NewListingScreen() {
               </Field>
               <StatePinFields stateCode={form.state_code} pincode={form.pincode}
                               onChange={(v) => setForm((f) => ({ ...f, ...v }))} inputStyle={styles.input} labelStyle={styles.fieldLabel} />
-              <ListingGst stateCode={form.state_code} stateName={stateName(form.state_code)} inputStyle={styles.input} />
+              <ListingGst stateCode={form.state_code} stateName={stateName(form.state_code)} inputStyle={styles.input} onStatus={setGstStatus} />
               <Text style={styles.helper}>Guests see the area and town. Your exact address is shared only after a booking is confirmed.</Text>
             </View>
           )}
@@ -474,7 +481,7 @@ export default function NewListingScreen() {
               </View>
               {price > 0 && (
                 <Text style={[styles.helper, { marginBottom: 12 }]}>
-                  Guests pay {gstPct(price)}% GST on top{price > 7500 ? " because the room is over ₹7,500 a night (it's 5% at or below)." : " (it goes up to 18% above ₹7,500 a night)."}
+                  {gstNote(price, cleaning)}
                   {" "}We collect and pay it; it doesn't come out of your earnings.
                 </Text>
               )}
@@ -517,7 +524,16 @@ export default function NewListingScreen() {
           {/* 8. Review */}
           {S.key === "review" && (
             <View style={{ gap: 10 }}>
-              {blocked && (
+              {!!gstHold && (
+                <View style={styles.gate}>
+                  <Text style={styles.gateTitle}>Save it now; it goes live once GST is sorted</Text>
+                  <Text style={styles.body2}>{gstHold}</Text>
+                  <TouchableOpacity onPress={() => go(1)} style={{ marginTop: 8 }}>
+                    <Text style={styles.link}>Review the GST answer</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              {!!(preflight && !preflight.eligible) && (
                 <View style={styles.gate}>
                   <Text style={styles.gateTitle}>Save it now, publish after verifying</Text>
                   <Text style={styles.body2}>To keep guests safe, every host verifies a few details first. Still to do: {describeMissing(preflight!.missing)}.</Text>
