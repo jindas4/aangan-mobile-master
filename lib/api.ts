@@ -500,7 +500,7 @@ export interface VerificationStep {
   done: boolean;
   required: boolean;
   hint: string;
-  status?: "unverified" | "pending" | "verified" | "rejected" | null;
+  status?: "unverified" | "pending" | "verified" | "rejected" | "confirm" | null;   // "confirm": PAN verified before its holder type was kept
   /** payout only: the method on file, masked — e.g. "Bank account ••3540 · BARB0DESUMA" */
   detail?: string | null;
 }

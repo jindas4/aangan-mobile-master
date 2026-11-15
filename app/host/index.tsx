@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { HostTaxNudges } from "@/components/HostTaxNudges";
 import { EarningsCalculator } from "@/components/EarningsCalculator";
 import {
   View,
@@ -121,6 +122,7 @@ export default function HostDashboardScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.terra} />}
       >
         <Text style={styles.dashTitle}>Host Studio</Text>
+        <HostTaxNudges />
 
         {/* Analytics cards */}
         {analytics && (

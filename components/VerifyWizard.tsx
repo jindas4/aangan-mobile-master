@@ -51,12 +51,15 @@ export function VerifyWizard() {
         </Text>
       </View>
 
-      {status.steps.map((step) => (
+      {status.steps.map((step) => {
+        // PAN verified before we kept its holder type: one more entry switches on the ₹5 lakh TDS exemption.
+        const confirmPan = step.key === "pan" && step.done && step.status === "confirm";
+        return (
         <View key={step.key} style={styles.stepCard}>
           <TouchableOpacity
             style={styles.stepHeader}
             activeOpacity={0.75}
-            disabled={step.done}
+            disabled={step.done && !confirmPan}
             onPress={() => setExpanded(expanded === step.key ? null : step.key)}
           >
             <Ionicons
@@ -66,14 +69,23 @@ export function VerifyWizard() {
             />
             <View style={styles.stepInfo}>
               <Text style={styles.stepLabel}>{step.label}</Text>
-              <Text style={styles.stepHint}>{step.done ? (step.detail || "Completed") : step.hint}</Text>
+              <Text style={styles.stepHint}>
+                {confirmPan
+                  ? "Enter your PAN once more. Individuals and HUFs pay no TDS while their earnings through Aangan Stay this tax year are ₹5 lakh or less."
+                  : step.done ? (step.detail || "Completed") : step.hint}
+              </Text>
             </View>
+            {confirmPan && (
+              <View style={styles.requiredBadge}>
+                <Text style={styles.requiredText}>Confirm PAN</Text>
+              </View>
+            )}
             {(step.required || step.key === "pan") && !step.done && (
               <View style={styles.requiredBadge}>
                 <Text style={styles.requiredText}>{step.required ? "Required" : "For payouts"}</Text>
               </View>
             )}
-            {!step.done && (
+            {(!step.done || confirmPan) && (
               <Ionicons
                 name={expanded === step.key ? "chevron-up" : "chevron-down"}
                 size={18}
@@ -105,7 +117,7 @@ export function VerifyWizard() {
             </View>
           )}
 
-          {expanded === step.key && (!step.done || step.key === "payout") && (
+          {expanded === step.key && (!step.done || step.key === "payout" || confirmPan) && (
             <View style={styles.stepForm}>
               {step.key === "phone" && <PhoneStepForm onDone={handleStepDone} />}
               {step.key === "email" && <EmailStepForm onDone={handleStepDone} />}
@@ -115,7 +127,8 @@ export function VerifyWizard() {
             </View>
           )}
         </View>
-      ))}
+        );
+      })}
 
       {!status.eligible ? (
         <View style={styles.warningBox}>
