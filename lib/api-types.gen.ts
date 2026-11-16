@@ -875,6 +875,7 @@ export interface paths {
         /**
          * Export Leads Csv
          * @description CRM export — one row per lead, for spreadsheets or an external CRM.
+         *     Takes the same filters as the Leads board (none = every lead).
          */
         get: operations["export_leads_csv_api_admin_export_leads_csv_get"];
         put?: never;
@@ -1348,6 +1349,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Count Leads
+         * @description How many leads match the filters (the list itself is paged).
+         */
+        get: operations["count_leads_api_admin_leads_count_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/email/bulk": {
         parameters: {
             query?: never;
@@ -1399,6 +1420,26 @@ export interface paths {
          * @description Which version of the outreach email goes out: plain, emoji, or ab (alternate).
          */
         put: operations["lead_email_variant_api_admin_leads_email_variant_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/facets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lead Facets
+         * @description The values in use for each dropdown filter, with how many leads have each.
+         */
+        get: operations["lead_facets_api_admin_leads_facets_get"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -10039,7 +10080,33 @@ export interface operations {
     };
     export_leads_csv_api_admin_export_leads_csv_get: {
         parameters: {
-            query?: never;
+            query?: {
+                q?: string | null;
+                /** @description one status, or several separated by commas */
+                status?: string | null;
+                source?: string | null;
+                region?: string | null;
+                city?: string | null;
+                segment?: string | null;
+                score_min?: number | null;
+                score_max?: number | null;
+                has_email?: boolean | null;
+                has_phone?: boolean | null;
+                has_instagram?: boolean | null;
+                email_state?: string | null;
+                google?: string | null;
+                rating_min?: number | null;
+                reviews_min?: number | null;
+                /** @description me, none, or an admin's user id */
+                assigned?: string | null;
+                follow_up?: string | null;
+                overdue?: boolean;
+                created_from?: string | null;
+                created_to?: string | null;
+                contacted_from?: string | null;
+                contacted_to?: string | null;
+                sort?: string;
+            };
             header?: {
                 authorization?: string | null;
             };
@@ -10989,13 +11056,33 @@ export interface operations {
     list_leads_api_admin_leads_get: {
         parameters: {
             query?: {
-                q?: string | null;
-                status?: string | null;
-                region?: string | null;
-                assigned?: string | null;
-                overdue?: boolean;
                 limit?: number;
                 offset?: number;
+                q?: string | null;
+                /** @description one status, or several separated by commas */
+                status?: string | null;
+                source?: string | null;
+                region?: string | null;
+                city?: string | null;
+                segment?: string | null;
+                score_min?: number | null;
+                score_max?: number | null;
+                has_email?: boolean | null;
+                has_phone?: boolean | null;
+                has_instagram?: boolean | null;
+                email_state?: string | null;
+                google?: string | null;
+                rating_min?: number | null;
+                reviews_min?: number | null;
+                /** @description me, none, or an admin's user id */
+                assigned?: string | null;
+                follow_up?: string | null;
+                overdue?: boolean;
+                created_from?: string | null;
+                created_to?: string | null;
+                contacted_from?: string | null;
+                contacted_to?: string | null;
+                sort?: string;
             };
             header?: {
                 authorization?: string | null;
@@ -11074,6 +11161,63 @@ export interface operations {
                 "application/json": components["schemas"]["LeadAiDescriptionIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    count_leads_api_admin_leads_count_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                /** @description one status, or several separated by commas */
+                status?: string | null;
+                source?: string | null;
+                region?: string | null;
+                city?: string | null;
+                segment?: string | null;
+                score_min?: number | null;
+                score_max?: number | null;
+                has_email?: boolean | null;
+                has_phone?: boolean | null;
+                has_instagram?: boolean | null;
+                email_state?: string | null;
+                google?: string | null;
+                rating_min?: number | null;
+                reviews_min?: number | null;
+                /** @description me, none, or an admin's user id */
+                assigned?: string | null;
+                follow_up?: string | null;
+                overdue?: boolean;
+                created_from?: string | null;
+                created_to?: string | null;
+                contacted_from?: string | null;
+                contacted_to?: string | null;
+                sort?: string;
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -11175,6 +11319,37 @@ export interface operations {
                 "application/json": components["schemas"]["LeadEmailVariantIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_facets_api_admin_leads_facets_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
