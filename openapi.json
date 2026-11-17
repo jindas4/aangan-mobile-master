@@ -3473,14 +3473,31 @@
       "LeadEmailVariantIn": {
         "properties": {
           "mode": {
-            "pattern": "^(plain|emoji|ab)$",
-            "title": "Mode",
-            "type": "string"
+            "anyOf": [
+              {
+                "pattern": "^(plain|emoji|ab)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mode"
+          },
+          "rich_share": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rich Share"
           }
         },
-        "required": [
-          "mode"
-        ],
         "title": "LeadEmailVariantIn",
         "type": "object"
       },
@@ -14692,7 +14709,7 @@
     },
     "/api/admin/leads/email/variant": {
       "put": {
-        "description": "Which version of the outreach email goes out: plain, emoji, or ab (alternate).",
+        "description": "Which version of the outreach email goes out: plain, emoji, or ab (alternate),\nand the share of owners who get the formatted intro (version C).",
         "operationId": "lead_email_variant_api_admin_leads_email_variant_put",
         "parameters": [
           {

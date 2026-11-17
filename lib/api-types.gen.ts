@@ -1417,7 +1417,8 @@ export interface paths {
         get?: never;
         /**
          * Lead Email Variant
-         * @description Which version of the outreach email goes out: plain, emoji, or ab (alternate).
+         * @description Which version of the outreach email goes out: plain, emoji, or ab (alternate),
+         *     and the share of owners who get the formatted intro (version C).
          */
         put: operations["lead_email_variant_api_admin_leads_email_variant_put"];
         post?: never;
@@ -6339,7 +6340,9 @@ export interface components {
         /** LeadEmailVariantIn */
         LeadEmailVariantIn: {
             /** Mode */
-            mode: string;
+            mode?: string | null;
+            /** Rich Share */
+            rich_share?: number | null;
         };
         /** LeadGoogleBulkIn */
         LeadGoogleBulkIn: {
