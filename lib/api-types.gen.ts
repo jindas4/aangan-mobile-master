@@ -4358,6 +4358,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/outreach/claim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Outreach Claim */
+        post: operations["outreach_claim_api_outreach_claim_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/outreach/click": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Outreach Click */
+        post: operations["outreach_click_api_outreach_click_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/payments/cashfree/webhook": {
         parameters: {
             query?: never;
@@ -6440,6 +6474,11 @@ export interface components {
             /** Status Note */
             status_note?: string | null;
         };
+        /** LinkCodeIn */
+        LinkCodeIn: {
+            /** Code */
+            code: string;
+        };
         /** ListingCardOut */
         ListingCardOut: {
             /** Alcohol Ok */
@@ -7934,6 +7973,11 @@ export interface components {
              * @default false
              */
             is_host: boolean;
+            /**
+             * Is Super Admin
+             * @default false
+             */
+            is_super_admin: boolean;
             /**
              * Kyc Status
              * @default unstarted
@@ -10094,6 +10138,8 @@ export interface operations {
                 has_phone?: boolean | null;
                 has_instagram?: boolean | null;
                 email_state?: string | null;
+                /** @description clicked the link in an outreach email */
+                clicked?: boolean | null;
                 google?: string | null;
                 rating_min?: number | null;
                 reviews_min?: number | null;
@@ -11071,6 +11117,8 @@ export interface operations {
                 has_phone?: boolean | null;
                 has_instagram?: boolean | null;
                 email_state?: string | null;
+                /** @description clicked the link in an outreach email */
+                clicked?: boolean | null;
                 google?: string | null;
                 rating_min?: number | null;
                 reviews_min?: number | null;
@@ -11198,6 +11246,8 @@ export interface operations {
                 has_phone?: boolean | null;
                 has_instagram?: boolean | null;
                 email_state?: string | null;
+                /** @description clicked the link in an outreach email */
+                clicked?: boolean | null;
                 google?: string | null;
                 rating_min?: number | null;
                 reviews_min?: number | null;
@@ -17079,6 +17129,76 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    outreach_claim_api_outreach_claim_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkCodeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    outreach_click_api_outreach_click_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkCodeIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

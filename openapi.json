@@ -3879,6 +3879,21 @@
         "title": "LeadUpdate",
         "type": "object"
       },
+      "LinkCodeIn": {
+        "properties": {
+          "code": {
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "LinkCodeIn",
+        "type": "object"
+      },
       "ListingCardOut": {
         "properties": {
           "alcohol_ok": {
@@ -7387,6 +7402,11 @@
           "is_host": {
             "default": false,
             "title": "Is Host",
+            "type": "boolean"
+          },
+          "is_super_admin": {
+            "default": false,
+            "title": "Is Super Admin",
             "type": "boolean"
           },
           "kyc_status": {
@@ -11630,6 +11650,24 @@
             }
           },
           {
+            "description": "clicked the link in an outreach email",
+            "in": "query",
+            "name": "clicked",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "clicked the link in an outreach email",
+              "title": "Clicked"
+            }
+          },
+          {
             "in": "query",
             "name": "google",
             "required": false,
@@ -13749,6 +13787,24 @@
             }
           },
           {
+            "description": "clicked the link in an outreach email",
+            "in": "query",
+            "name": "clicked",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "clicked the link in an outreach email",
+              "title": "Clicked"
+            }
+          },
+          {
             "in": "query",
             "name": "google",
             "required": false,
@@ -14289,6 +14345,24 @@
                 }
               ],
               "title": "Email State"
+            }
+          },
+          {
+            "description": "clicked the link in an outreach email",
+            "in": "query",
+            "name": "clicked",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "clicked the link in an outreach email",
+              "title": "Clicked"
             }
           },
           {
@@ -25043,6 +25117,120 @@
         "summary": "Resized Image",
         "tags": [
           "media"
+        ]
+      }
+    },
+    "/api/outreach/claim": {
+      "post": {
+        "operationId": "outreach_claim_api_outreach_claim_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkCodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Outreach Claim",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
+    "/api/outreach/click": {
+      "post": {
+        "operationId": "outreach_click_api_outreach_click_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkCodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Outreach Click",
+        "tags": [
+          "outreach"
         ]
       }
     },
