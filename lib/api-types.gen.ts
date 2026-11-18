@@ -1381,7 +1381,8 @@ export interface paths {
         /**
          * Lead Email Bulk
          * @description Put matching NEW leads with an email on the automatic sequence (best
-         *     score first). The scheduler then sends within the daily cap. dry_run only counts.
+         *     score first, within the intro score range unless min/max are given). The
+         *     scheduler then sends within the daily cap. dry_run only counts.
          */
         post: operations["lead_email_bulk_api_admin_leads_email_bulk_post"];
         delete?: never;
@@ -1400,6 +1401,27 @@ export interface paths {
         /** Lead Email Stats */
         get: operations["lead_email_stats_api_admin_leads_email_stats_get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/email/targeting": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Lead Email Targeting
+         * @description Which fit scores get a first email. Leads outside the range stay on the
+         *     sequence but wait; follow-ups to owners already emailed carry on.
+         */
+        put: operations["lead_email_targeting_api_admin_leads_email_targeting_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -6314,6 +6336,8 @@ export interface components {
              * @default 200
              */
             limit: number;
+            /** Max Score */
+            max_score?: number | null;
             /** Min Score */
             min_score?: number | null;
             /** Q */
@@ -6336,6 +6360,13 @@ export interface components {
             auto?: boolean | null;
             /** Opt Out */
             opt_out?: boolean | null;
+        };
+        /** LeadEmailTargetingIn */
+        LeadEmailTargetingIn: {
+            /** Score Max */
+            score_max: number;
+            /** Score Min */
+            score_min: number;
         };
         /** LeadEmailVariantIn */
         LeadEmailVariantIn: {
@@ -11337,6 +11368,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_email_targeting_api_admin_leads_email_targeting_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadEmailTargetingIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

@@ -3359,6 +3359,19 @@
             "title": "Limit",
             "type": "integer"
           },
+          "max_score": {
+            "anyOf": [
+              {
+                "maximum": 10.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Score"
+          },
           "min_score": {
             "anyOf": [
               {
@@ -3468,6 +3481,28 @@
           }
         },
         "title": "LeadEmailSettingsIn",
+        "type": "object"
+      },
+      "LeadEmailTargetingIn": {
+        "properties": {
+          "score_max": {
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Score Max",
+            "type": "integer"
+          },
+          "score_min": {
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Score Min",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "score_min",
+          "score_max"
+        ],
+        "title": "LeadEmailTargetingIn",
         "type": "object"
       },
       "LeadEmailVariantIn": {
@@ -14604,7 +14639,7 @@
     },
     "/api/admin/leads/email/bulk": {
       "post": {
-        "description": "Put matching NEW leads with an email on the automatic sequence (best\nscore first). The scheduler then sends within the daily cap. dry_run only counts.",
+        "description": "Put matching NEW leads with an email on the automatic sequence (best\nscore first, within the intro score range unless min/max are given). The\nscheduler then sends within the daily cap. dry_run only counts.",
         "operationId": "lead_email_bulk_api_admin_leads_email_bulk_post",
         "parameters": [
           {
@@ -14702,6 +14737,64 @@
           }
         },
         "summary": "Lead Email Stats",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/email/targeting": {
+      "put": {
+        "description": "Which fit scores get a first email. Leads outside the range stay on the\nsequence but wait; follow-ups to owners already emailed carry on.",
+        "operationId": "lead_email_targeting_api_admin_leads_email_targeting_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadEmailTargetingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Email Targeting",
         "tags": [
           "admin"
         ]
