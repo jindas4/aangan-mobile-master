@@ -6780,6 +6780,8 @@ export interface components {
              * @default false
              */
             confirm_location: boolean;
+            /** Description */
+            description?: string | null;
             /** Flagged */
             flagged?: boolean | null;
             /** Flagged Reason */
@@ -6799,6 +6801,8 @@ export interface components {
             registration_verified?: boolean | null;
             /** State Code */
             state_code?: string | null;
+            /** Title */
+            title?: string | null;
         };
         /** ListingOut */
         ListingOut: {

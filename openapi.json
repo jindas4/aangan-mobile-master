@@ -4467,6 +4467,18 @@
             "title": "Confirm Location",
             "type": "boolean"
           },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
           "flagged": {
             "anyOf": [
               {
@@ -4550,6 +4562,19 @@
               }
             ],
             "title": "State Code"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 160,
+                "minLength": 4,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           }
         },
         "title": "ListingModerate",
