@@ -9686,6 +9686,25 @@
             }
           },
           {
+            "description": "only this host's row in `hosts`",
+            "in": "query",
+            "name": "host_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "only this host's row in `hosts`",
+              "title": "Host Id"
+            }
+          },
+          {
             "in": "header",
             "name": "authorization",
             "required": false,

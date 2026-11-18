@@ -9154,6 +9154,8 @@ export interface operations {
         parameters: {
             query?: {
                 days?: number;
+                /** @description only this host's row in `hosts` */
+                host_id?: string | null;
             };
             header?: {
                 authorization?: string | null;
