@@ -145,6 +145,76 @@ export function VerifyWizard() {
   );
 }
 
+// ── One step on its own screen (the host's step-by-step flow, app/host/verify.tsx) ─
+export type VerifyStep = VerificationStatus["steps"][number];
+
+export function StepBody({ step, onDone }: { step: VerifyStep; onDone: () => void }) {
+  const user = useAuth((s) => s.user);
+  const [changing, setChanging] = useState(false);
+  useEffect(() => { setChanging(false); }, [step.key, step.done, step.status]);
+
+  const pendingPayout = step.key === "payout" && step.status === "pending";
+  const rejectedPayout = step.key === "payout" && step.status === "rejected";
+  const confirmPan = step.key === "pan" && step.done && step.status === "confirm";
+  const showForm = !step.done || rejectedPayout || confirmPan || changing;
+
+  if (!showForm) {
+    const what = step.key === "phone" ? user?.phone : step.key === "email" ? user?.email : step.detail;
+    return (
+      <View style={[styles.doneCard, pendingPayout && styles.doneCardPending]}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+          <Ionicons name={pendingPayout ? "time" : "checkmark-circle"} size={30} color={pendingPayout ? Colors.terra : Colors.success} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.stepLabel}>{pendingPayout ? "Saved, pending review" : "Done"}</Text>
+            {!!what && <Text style={styles.stepHint}>{what}</Text>}
+          </View>
+        </View>
+        {pendingPayout && (
+          <Text style={[styles.stepHint, { marginTop: 10 }]}>
+            We couldn't automatically confirm the name on this account, so our team will check it, usually within a working
+            day. Nothing more to do; earnings are paid out once it's confirmed.
+          </Text>
+        )}
+        {step.key === "payout" && (
+          <TouchableOpacity
+            style={[styles.changeRow, { paddingHorizontal: 0, paddingTop: 12, paddingBottom: 0 }]}
+            onPress={() => Alert.alert(
+              "Change payout account?",
+              "Future earnings will go to the new account. We'll send a code to your verified phone or email to confirm it's you.",
+              [{ text: "Cancel", style: "cancel" }, { text: "Continue", onPress: () => setChanging(true) }],
+            )}
+          >
+            <Ionicons name="swap-horizontal" size={14} color={Colors.charcoal2} />
+            <Text style={styles.linkText}>Use a different account</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
+
+  return (
+    <View>
+      {rejectedPayout && (
+        <View style={styles.warningBox}>
+          <Ionicons name="warning-outline" size={18} color={Colors.terra} />
+          <Text style={styles.warningText}>We couldn't confirm this payout account. Please add it again or use another one.</Text>
+        </View>
+      )}
+      {confirmPan && (
+        <Text style={[styles.stepHint, { marginBottom: 10 }]}>
+          Enter your PAN once more. Individuals and HUFs pay no TDS while their earnings through Aangan Stay this tax year are ₹5 lakh or less.
+        </Text>
+      )}
+      <Text style={[styles.stepHint, { marginBottom: 14 }]}>{step.hint}</Text>
+      {step.key === "phone" && <PhoneStepForm onDone={onDone} />}
+      {step.key === "email" && <EmailStepForm onDone={onDone} />}
+      {step.key === "aadhaar" && <AadhaarStepForm onDone={onDone} />}
+      {step.key === "pan" && <PanStepForm onDone={onDone} />}
+      {step.key === "payout" && <PayoutStepForm change={step.done} onDone={() => { setChanging(false); onDone(); }} />}
+    </View>
+  );
+}
+
 function PhoneStepForm({ onDone }: { onDone: () => void }) {
   // Adds the number to THIS account. (The login endpoints would sign in to
   // whichever account owns the number, or create a new one for it.)
@@ -679,6 +749,8 @@ function PayoutStepForm({ onDone, change = false }: { onDone: () => void; change
 }
 
 const styles = StyleSheet.create({
+  doneCard: { borderWidth: 1, borderColor: "#BBF7D0", backgroundColor: "#F0FDF4", borderRadius: Radius.lg, padding: 16 },
+  doneCardPending: { borderColor: Colors.terraSoft, backgroundColor: Colors.terraTint },
   progressRow: {
     marginBottom: 16,
   },

@@ -17,16 +17,16 @@ export function HostTaxNudges() {
     api<{ turnover_current: boolean; fy_label: string; last_turnover_fy: string | null }>("/api/kyc/gst").then(setGst).catch(() => {});
   }, []));
 
-  const items: { title: string; body: string; cta: string }[] = [];
+  const items: { title: string; body: string; cta: string; step: string }[] = [];
   if (panConfirm) items.push({
     title: "Confirm your PAN",
     body: "Enter it once more. If you're an individual or HUF, no TDS is deducted while your earnings through Aangan Stay this tax year are ₹5 lakh or less, including on payouts not sent yet.",
-    cta: "Confirm PAN",
+    cta: "Confirm PAN", step: "pan",
   });
   if (gst && !gst.turnover_current) items.push({
     title: gst.last_turnover_fy ? `Confirm your GST turnover for ${gst.fy_label}` : "Answer the GST question",
     body: "Tell us whether your total turnover has gone over ₹20 lakh this financial year. It decides who invoices your guests, and new listings can't go live without it.",
-    cta: "Answer now",
+    cta: "Answer now", step: "gst",
   });
   if (!items.length) return null;
 
@@ -36,7 +36,7 @@ export function HostTaxNudges() {
         <View key={it.title} style={styles.card}>
           <Text style={styles.title}>{it.title}</Text>
           <Text style={styles.body}>{it.body}</Text>
-          <TouchableOpacity onPress={() => router.push("/host/verify")} style={styles.btn} accessibilityRole="button">
+          <TouchableOpacity onPress={() => router.push({ pathname: "/host/verify", params: { step: it.step } })} style={styles.btn} accessibilityRole="button">
             <Text style={styles.btnText}>{it.cta}</Text>
           </TouchableOpacity>
         </View>

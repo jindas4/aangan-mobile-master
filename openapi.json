@@ -3698,6 +3698,46 @@
         "title": "LeadIn",
         "type": "object"
       },
+      "LeadProposalEmailIn": {
+        "properties": {
+          "body": {
+            "maxLength": 5000,
+            "minLength": 10,
+            "title": "Body",
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Subject",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "body"
+        ],
+        "title": "LeadProposalEmailIn",
+        "type": "object"
+      },
+      "LeadProposalIn": {
+        "properties": {
+          "address": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Address",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "title": "LeadProposalIn",
+        "type": "object"
+      },
       "LeadSendIn": {
         "properties": {
           "channel": {
@@ -15988,6 +16028,249 @@
         ]
       }
     },
+    "/api/admin/leads/{lead_id}/proposal": {
+      "get": {
+        "description": "Everything the Proposal panel shows: the facts the PDF will use, the\nowner's link, and the email / WhatsApp / SMS messages with whether each\ncan go out now (and if not, why).",
+        "operationId": "lead_proposal_panel_api_admin_leads__lead_id__proposal_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Proposal Panel",
+        "tags": [
+          "admin"
+        ]
+      },
+      "put": {
+        "operationId": "lead_proposal_settings_api_admin_leads__lead_id__proposal_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadProposalIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Proposal Settings",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}/proposal.pdf": {
+      "get": {
+        "operationId": "lead_proposal_pdf_api_admin_leads__lead_id__proposal_pdf_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Proposal Pdf",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/leads/{lead_id}/proposal/email": {
+      "post": {
+        "operationId": "lead_proposal_email_api_admin_leads__lead_id__proposal_email_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadProposalEmailIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lead Proposal Email",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/leads/{lead_id}/send": {
       "post": {
         "description": "Send a playbook message to the owner through WhatsApp Business (Zoho)\nor SMS (MSG91). Only with the owner's consent, an approved template and\nwithin 9 am \u2013 9 pm IST; every attempt is logged on the lead.",
@@ -25383,6 +25666,63 @@
           }
         },
         "summary": "Outreach Click",
+        "tags": [
+          "outreach"
+        ]
+      }
+    },
+    "/api/outreach/proposal/{code}": {
+      "get": {
+        "description": "The owner's proposal PDF (the link in the proposal WhatsApp / SMS).\nOpens are counted, except by bots and by the team checking it.",
+        "operationId": "outreach_proposal_api_outreach_proposal__code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Outreach Proposal",
         "tags": [
           "outreach"
         ]

@@ -21,13 +21,17 @@ type Profile = {
   composition: boolean | null; composition_on_gst_network: boolean; gstins: Gstin[];
 };
 
-export function HostGst() {
+/** `embedded`: a step of the host verification flow, which shows its own title.
+ *  `onStatus`: told whether this year's GST answers are complete. */
+export function HostGst({ embedded = false, onStatus }: { embedded?: boolean; onStatus?: (done: boolean) => void } = {}) {
   const [p, setP] = useState<Profile | null>(null);
   const [gstin, setGstin] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => { api<Profile>("/api/kyc/gst").then(setP).catch(() => {}); }, []);
+  const answeredAll = !!p && p.answered && p.turnover_current;
+  useEffect(() => { if (p) onStatus?.(answeredAll); }, [p, answeredAll]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!p) return null;
 
   const run = async (fn: () => Promise<Profile>) => {
@@ -52,9 +56,9 @@ export function HostGst() {
   );
 
   return (
-    <View style={styles.card} testID="host-gst">
+    <View style={embedded ? undefined : styles.card} testID="host-gst">
       <View style={styles.headRow}>
-        <Text style={styles.title}>GST</Text>
+        {!embedded && <Text style={styles.title}>GST</Text>}
         <Text style={[styles.optional, { color: p.turnover_current ? Colors.success : Colors.terra }]}>
           {(p.turnover_current ? `CONFIRMED FOR ${p.fy_label}` : p.last_turnover_fy ? `CONFIRM FOR ${p.fy_label}` : "NEEDED TO PUBLISH")}
         </Text>

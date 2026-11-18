@@ -1766,6 +1766,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/{lead_id}/proposal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lead Proposal Panel
+         * @description Everything the Proposal panel shows: the facts the PDF will use, the
+         *     owner's link, and the email / WhatsApp / SMS messages with whether each
+         *     can go out now (and if not, why).
+         */
+        get: operations["lead_proposal_panel_api_admin_leads__lead_id__proposal_get"];
+        /** Lead Proposal Settings */
+        put: operations["lead_proposal_settings_api_admin_leads__lead_id__proposal_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/proposal.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lead Proposal Pdf */
+        get: operations["lead_proposal_pdf_api_admin_leads__lead_id__proposal_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/leads/{lead_id}/proposal/email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lead Proposal Email */
+        post: operations["lead_proposal_email_api_admin_leads__lead_id__proposal_email_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/{lead_id}/send": {
         parameters: {
             query?: never;
@@ -4415,6 +4472,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/outreach/proposal/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Outreach Proposal
+         * @description The owner's proposal PDF (the link in the proposal WhatsApp / SMS).
+         *     Opens are counted, except by bots and by the team checking it.
+         */
+        get: operations["outreach_proposal_api_outreach_proposal__code__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/payments/cashfree/webhook": {
         parameters: {
             query?: never;
@@ -6460,6 +6538,26 @@ export interface components {
              * @default
              */
             source: string;
+        };
+        /** LeadProposalEmailIn */
+        LeadProposalEmailIn: {
+            /** Body */
+            body: string;
+            /** Subject */
+            subject: string;
+        };
+        /** LeadProposalIn */
+        LeadProposalIn: {
+            /**
+             * Address
+             * @default
+             */
+            address: string;
+            /**
+             * Title
+             * @default
+             */
+            title: string;
         };
         /** LeadSendIn */
         LeadSendIn: {
@@ -12088,6 +12186,146 @@ export interface operations {
             };
         };
     };
+    lead_proposal_panel_api_admin_leads__lead_id__proposal_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_proposal_settings_api_admin_leads__lead_id__proposal_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadProposalIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_proposal_pdf_api_admin_leads__lead_id__proposal_pdf_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lead_proposal_email_api_admin_leads__lead_id__proposal_email_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadProposalEmailIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     lead_send_api_admin_leads__lead_id__send_post: {
         parameters: {
             query?: never;
@@ -17274,6 +17512,39 @@ export interface operations {
                 "application/json": components["schemas"]["LinkCodeIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    outreach_proposal_api_outreach_proposal__code__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
