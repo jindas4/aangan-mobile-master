@@ -226,6 +226,12 @@ export default function AccountScreen() {
         {/* Support */}
         <Text style={styles.sectionLabel}>SUPPORT</Text>
         <MenuItem
+          icon="book-outline"
+          label="Aangan blog"
+          subtitle="Travel guides, homestay stories and festivals"
+          onPress={() => router.push("/blog")}
+        />
+        <MenuItem
           icon="information-circle-outline"
           label="About Aangan Stay"
           onPress={() => router.push("/about")}

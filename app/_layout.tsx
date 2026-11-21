@@ -97,6 +97,8 @@ function RootLayout() {
         <Stack.Screen name="trips/[id]" />
         <Stack.Screen name="account/edit" />
         <Stack.Screen name="account/delete" />
+        <Stack.Screen name="blog/index" />
+        <Stack.Screen name="blog/[slug]" />
       </Stack>
       <ChatFab />
       <EnvBadge />

@@ -17,6 +17,8 @@ import * as WebBrowser from "expo-web-browser";
 import { api, ListingCard as LC, CmsBanner, CmsCollection, WEB_BASE } from "@/lib/api";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { ListingCardItem } from "@/components/ListingCard";
+import { PostTile } from "@/components/blog/PostCard";
+import { fetchPosts, type BlogCard } from "@/lib/blog";
 
 interface CollectionWithItems {
   collection: CmsCollection;
@@ -29,18 +31,22 @@ export default function HomeScreen() {
   const [listings, setListings] = useState<LC[]>([]);
   const [banners, setBanners] = useState<CmsBanner[]>([]);
   const [collections, setCollections] = useState<CollectionWithItems[]>([]);
+  const [stories, setStories] = useState<BlogCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchHome = useCallback(async () => {
-    const [listingsRes, bannersRes, collectionsRes] = await Promise.all([
+    const [listingsRes, bannersRes, collectionsRes, blogRes] = await Promise.all([
       // Newest first, matching the website: rating-first ordering hid new homes.
       api<LC[]>("/api/listings?limit=12&sort=newest").catch(() => []),
       api<CmsBanner[]>("/api/cms/banners").catch(() => []),
       api<CmsCollection[]>("/api/cms/collections").catch(() => []),
+      fetchPosts({ limit: 8 }).catch(() => null),
     ]);
     setListings(listingsRes);
     setBanners(bannersRes);
+    // Guests' stories only: host tips live in the blog's "For hosts" section.
+    setStories((blogRes?.posts ?? []).filter((p) => p.category !== "host-tips").slice(0, 6));
 
     const withItems = await Promise.all(
       collectionsRes.map(async (c) => {
@@ -160,6 +166,29 @@ export default function HomeScreen() {
             </View>
           </View>
         ))}
+
+        {/* From the blog */}
+        {stories.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.blogHead}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.sectionKicker}>FROM THE BLOG</Text>
+                <Text style={styles.sectionTitle}>Stories from India&apos;s homes</Text>
+              </View>
+              <TouchableOpacity onPress={() => router.push("/blog")} hitSlop={10} accessibilityRole="button">
+                <Text style={styles.seeAll}>See all</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.blogRail}
+              contentContainerStyle={styles.blogRailContent}
+            >
+              {stories.map((p) => <PostTile key={p.slug} post={p} />)}
+            </ScrollView>
+          </View>
+        )}
 
         {/* Host nudge */}
         <TouchableOpacity
@@ -313,6 +342,10 @@ const styles = StyleSheet.create({
     color: Colors.charcoal,
     letterSpacing: -0.3,
   },
+  blogHead: { flexDirection: "row", alignItems: "flex-end", gap: 12 },
+  seeAll: { fontFamily: Fonts.regular, fontSize: 13.5, fontWeight: "800", color: Colors.terraDeep, textDecorationLine: "underline" },
+  blogRail: { marginTop: 16, marginHorizontal: -20 },
+  blogRailContent: { paddingHorizontal: 20, gap: 16 },
   sectionSubtitle: {
     fontFamily: Fonts.regular,
     fontSize: 13,
