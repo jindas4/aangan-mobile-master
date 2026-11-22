@@ -22,12 +22,15 @@ export interface Photo {
 interface Props {
   value: Photo[];
   onChange: Dispatch<SetStateAction<Photo[]>>;
+  /** Most photos allowed. Listings default to MAX_PHOTOS; reviews and claims pass their own. */
+  max?: number;
 }
 
 const MAX_EDGE = 2000;          // longest side in px — listing photos are never shown larger
 const JPEG_QUALITY = 0.82;
 const PARALLEL_UPLOADS = 3;
 const AUTO_RETRIES = 2;
+export const MAX_PHOTOS = 50;   // same cap as the website's listing uploader
 
 interface Picked { uri: string; width?: number; height?: number }
 
@@ -48,7 +51,7 @@ async function shrink(p: Picked): Promise<string> {
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function PhotoPicker({ value, onChange }: Props) {
+export function PhotoPicker({ value, onChange, max = MAX_PHOTOS }: Props) {
   // Upload queue: at most PARALLEL_UPLOADS in flight. Photos are identified by
   // the uri the picker gave us, which is also what the thumbnail shows.
   const queue = useRef<Picked[]>([]);
@@ -120,7 +123,12 @@ export function PhotoPicker({ value, onChange }: Props) {
     });
   };
 
+  const room = max - value.length;
+  const full = room <= 0;
+  const tellFull = () => Alert.alert("That's the limit", `You can add up to ${max} photos here. Remove one to add another.`);
+
   const pickFromLibrary = async () => {
+    if (full) return tellFull();
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       Alert.alert("Permission needed", "Allow photo library access to add photos.");
@@ -129,13 +137,19 @@ export function PhotoPicker({ value, onChange }: Props) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
+      selectionLimit: room,    // the picker stops at the cap where the OS supports it
       quality: 1,              // resized and compressed once, in shrink()
     });
     if (result.canceled) return;
-    result.assets.forEach((a) => uploadOne({ uri: a.uri, width: a.width, height: a.height }));
+    const assets = result.assets.slice(0, room);
+    assets.forEach((a) => uploadOne({ uri: a.uri, width: a.width, height: a.height }));
+    if (result.assets.length > assets.length) {
+      Alert.alert("Some photos weren't added", `You can add up to ${max} photos here, so the first ${assets.length} you picked were added.`);
+    }
   };
 
   const takePhoto = async () => {
+    if (full) return tellFull();
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
       Alert.alert("Permission needed", "Allow camera access to take photos.");
@@ -180,15 +194,22 @@ export function PhotoPicker({ value, onChange }: Props) {
           </View>
         ))}
 
-        <TouchableOpacity style={[styles.tile, styles.actionTile]} onPress={pickFromLibrary}>
-          <Ionicons name="images-outline" size={22} color={Colors.terra} />
-          <Text style={styles.actionLabel}>Add photos</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tile, styles.actionTile]} onPress={takePhoto}>
-          <Ionicons name="camera-outline" size={22} color={Colors.terra} />
-          <Text style={styles.actionLabel}>Take photo</Text>
-        </TouchableOpacity>
+        {!full && (
+          <>
+            <TouchableOpacity style={[styles.tile, styles.actionTile]} onPress={pickFromLibrary}>
+              <Ionicons name="images-outline" size={22} color={Colors.terra} />
+              <Text style={styles.actionLabel}>Add photos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.tile, styles.actionTile]} onPress={takePhoto}>
+              <Ionicons name="camera-outline" size={22} color={Colors.terra} />
+              <Text style={styles.actionLabel}>Take photo</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
+      <Text style={styles.count}>
+        {full ? `${max} of ${max} photos added, the most allowed` : `${value.length} of ${max} photos added`}
+      </Text>
     </View>
   );
 }
@@ -196,6 +217,7 @@ export function PhotoPicker({ value, onChange }: Props) {
 const TILE = "31%";
 
 const styles = StyleSheet.create({
+  count: { fontFamily: Fonts.regular, fontSize: 12, color: Colors.charcoal3, marginTop: 8 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",

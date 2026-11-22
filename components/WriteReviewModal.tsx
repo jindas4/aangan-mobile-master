@@ -85,7 +85,7 @@ export function WriteReviewModal({ bookingId, listingTitle, onClose, onPosted }:
           <Text style={styles.charCount}>{body.length}/2000 characters</Text>
 
           <Text style={styles.fieldLabel}>Photos — optional</Text>
-          <PhotoPicker value={photos} onChange={setPhotos} />
+          <PhotoPicker value={photos} onChange={setPhotos} max={6} />
 
           {err && <Text style={styles.errorText}>{err}</Text>}
 

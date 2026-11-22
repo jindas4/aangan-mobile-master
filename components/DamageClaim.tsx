@@ -87,7 +87,7 @@ export function DamageClaim({ bookingId, role }: { bookingId: string; role: "hos
         ) : (
           <View style={{ marginTop: 14 }}>
             <Text style={styles.label}>Photos of the damage (at least one)</Text>
-            <PhotoPicker value={photos} onChange={setPhotos} />
+            <PhotoPicker value={photos} onChange={setPhotos} max={8} />
             <Text style={[styles.label, { marginTop: 12 }]}>What happened?</Text>
             <TextInput value={text} onChangeText={setText} multiline maxLength={1500} style={[styles.input, styles.area]}
                        placeholder="What was damaged or missing, and when you found it." placeholderTextColor={Colors.charcoal3} />
@@ -173,7 +173,7 @@ export function DamageClaim({ bookingId, role }: { bookingId: string; role: "hos
                          placeholder="For example: it was already damaged when we arrived, and we told the host that day."
                          placeholderTextColor={Colors.charcoal3} />
               <Text style={[styles.label, { marginTop: 12 }]}>Your photos (optional)</Text>
-              <PhotoPicker value={photos} onChange={setPhotos} />
+              <PhotoPicker value={photos} onChange={setPhotos} max={8} />
               {errLine}
               <Button title={busy ? "Sending…" : uploading ? "Uploading photos…" : "Send my reply"} full style={{ marginTop: 12 }}
                       disabled={busy || uploading || text.trim().length < 20}
