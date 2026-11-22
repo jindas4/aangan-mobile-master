@@ -5310,6 +5310,10 @@ export interface components {
              * Format: date
              */
             end_date: string;
+            /** Guests */
+            guests?: number | null;
+            /** Meal Plan */
+            meal_plan?: string | null;
             /**
              * Start Date
              * Format: date
@@ -5327,6 +5331,21 @@ export interface components {
             bookings_open: boolean;
             /** Cleaning Inr */
             cleaning_inr: number;
+            /**
+             * Meal Plan
+             * @default EP
+             */
+            meal_plan: string;
+            /**
+             * Meal Rate Inr
+             * @default 0
+             */
+            meal_rate_inr: number;
+            /**
+             * Meals Inr
+             * @default 0
+             */
+            meals_inr: number;
             /**
              * Min Nights
              * @default 1
@@ -5508,6 +5527,8 @@ export interface components {
             guests: number;
             /** Listing Id */
             listing_id: string;
+            /** Meal Plan */
+            meal_plan?: string | null;
             /** Note */
             note?: string | null;
             /**
@@ -5559,6 +5580,18 @@ export interface components {
             id: string;
             /** Listing Id */
             listing_id: string;
+            /** Meal Plan */
+            meal_plan?: string | null;
+            /**
+             * Meal Rate Inr
+             * @default 0
+             */
+            meal_rate_inr: number;
+            /**
+             * Meals Inr
+             * @default 0
+             */
+            meals_inr: number;
             /** Nightly Inr */
             nightly_inr: number;
             /** Nights */
@@ -5659,6 +5692,18 @@ export interface components {
             listing_scene: string;
             /** Listing Title */
             listing_title: string;
+            /** Meal Plan */
+            meal_plan?: string | null;
+            /**
+             * Meal Rate Inr
+             * @default 0
+             */
+            meal_rate_inr: number;
+            /**
+             * Meals Inr
+             * @default 0
+             */
+            meals_inr: number;
             /** Nightly Inr */
             nightly_inr: number;
             /** Nights */
@@ -6934,6 +6979,7 @@ export interface components {
             lng: number;
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            meal_plans?: components["schemas"]["MealPlansIn"] | null;
             /**
              * Min Nights
              * @default 1
@@ -7092,6 +7138,11 @@ export interface components {
             /** Location Status */
             location_status?: string | null;
             /**
+             * Meal Options
+             * @default []
+             */
+            meal_options: components["schemas"]["MealPlanOption"][];
+            /**
              * Min Nights
              * @default 1
              */
@@ -7188,6 +7239,7 @@ export interface components {
             jain_friendly?: boolean | null;
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            meal_plans?: components["schemas"]["MealPlansIn"] | null;
             /** Min Nights */
             min_nights?: number | null;
             /** Pet Friendly */
@@ -7208,6 +7260,33 @@ export interface components {
             title?: string | null;
             /** Veg Kitchen */
             veg_kitchen?: boolean | null;
+        };
+        /**
+         * MealPlanOption
+         * @description A meal plan a guest can choose (services/meal_plans.py).
+         */
+        MealPlanOption: {
+            /** Code */
+            code: string;
+            /** Label */
+            label: string;
+            /** Rate Inr */
+            rate_inr: number;
+            /** Short */
+            short: string;
+        };
+        /**
+         * MealPlansIn
+         * @description Prices per guest per night, in rupees. Omit (or null) a plan you don't
+         *     offer; 0 means included in the nightly price.
+         */
+        MealPlansIn: {
+            /** Ap */
+            AP?: number | null;
+            /** Cp */
+            CP?: number | null;
+            /** Map */
+            MAP?: number | null;
         };
         /** MessageOut */
         MessageOut: {

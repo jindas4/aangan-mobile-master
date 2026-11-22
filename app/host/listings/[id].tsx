@@ -27,6 +27,8 @@ import { AMENITIES } from "@/constants/Amenities";
 import { inr, fullDate, imageUrl, fmtTime, isHHMM } from "@/lib/format";
 import { PayoutPreview } from "@/components/PayoutPreview";
 import { EMPTY_HOUSE_RULES, HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
+import { EMPTY_MEAL_PLANS, MealPlansEditor, mealPlansError, mealPlansFromOptions, mealPlansPayload,
+         mealPlansSummary, type MealPlansValue } from "@/components/MealPlansEditor";
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
 
@@ -57,6 +59,7 @@ export default function ManageListingScreen() {
   const states = useStates();
   const stateName = (c: string) => states.find((s) => s.code === c)?.name || c;
   const [editRules, setEditRules] = useState<HouseRulesValue>(EMPTY_HOUSE_RULES);
+  const [editMeals, setEditMeals] = useState<MealPlansValue>(EMPTY_MEAL_PLANS);
   const [editDescription, setEditDescription] = useState("");
   const [editGuests, setEditGuests] = useState("");
   const [editBedrooms, setEditBedrooms] = useState("");
@@ -81,6 +84,7 @@ export default function ManageListingScreen() {
       setEditRules({ couples_ok: l.couples_ok ?? null, local_id_ok: l.local_id_ok ?? null,
                      alcohol_ok: l.alcohol_ok ?? null, pet_friendly: !!l.pet_friendly, house_rules: l.house_rules ?? {} });
       setEditCleaning(String(l.cleaning_fee_inr ?? 0));
+      setEditMeals(mealPlansFromOptions(l.meal_options));
       setEditCheckin(l.checkin_time || "14:00");
       setEditCheckout(l.checkout_time || "11:00");
       setEditPolicy(l.cancellation_policy === "non_refundable" ? "non_refundable" : "flexible");
@@ -141,6 +145,8 @@ export default function ManageListingScreen() {
 
   const saveEdits = async () => {
     if (!listing || saving) return;
+    const mealErr = mealPlansError(editMeals);
+    if (mealErr) { Alert.alert("Check your meal plans", mealErr); return; }
     setSaving(true);
     try {
       const updated = await api<ListingFull>(`/api/listings/${listing.id}`, {
@@ -163,6 +169,7 @@ export default function ManageListingScreen() {
           state_code: editLoc.state_code,
           pincode: editLoc.pincode.trim(),
           house_rules_set: ["couples_ok", "local_id_ok", "alcohol_ok"],
+          meal_plans: mealPlansPayload(editMeals),
         },
       });
       setListing(updated);
@@ -359,6 +366,8 @@ export default function ManageListingScreen() {
               <EditField label="Price per night (₹)" value={editPrice} onChangeText={setEditPrice} keyboardType="number-pad" />
               <EditField label="Cleaning fee (₹/stay)" value={editCleaning} onChangeText={setEditCleaning} keyboardType="number-pad" />
               <PayoutPreview price={parseInt(editPrice) || 0} cleaning={parseInt(editCleaning) || 0} />
+              <Text style={styles.policyLabel}>Meal plans</Text>
+              <MealPlansEditor value={editMeals} onChange={setEditMeals} />
               <View style={{ flexDirection: "row", gap: 12 }}>
                 <EditField label="Check-in from (24h) *" value={editCheckin} onChangeText={setEditCheckin} style={{ flex: 1 }} />
                 <EditField label="Check-out by (24h) *" value={editCheckout} onChangeText={setEditCheckout} style={{ flex: 1 }} />
@@ -471,6 +480,7 @@ export default function ManageListingScreen() {
               <Text style={styles.policyView}>
                 Check-in from {fmtTime(listing.checkin_time, "2:00 PM")} · Check-out by {fmtTime(listing.checkout_time, "11:00 AM")}
               </Text>
+              <Text style={styles.policyView}>Meals: {mealPlansSummary(mealPlansFromOptions(listing.meal_options))}</Text>
               {/* Quick stats */}
               <View style={styles.statsRow}>
                 <View style={styles.stat}>

@@ -30,6 +30,7 @@ import { GlassSurface } from "@/components/GlassSurface";
 import { ReportSheet } from "@/components/ReportSheet";
 import { reportContent, ReportTarget } from "@/lib/moderation";
 import { PhotoViewer } from "@/components/PhotoViewer";
+import { mealPlanName } from "@/lib/mealPlans";
 
 const W = Dimensions.get("window").width;
 
@@ -61,6 +62,10 @@ export default function ListingDetailScreen() {
     Alert.alert("Report received", "Thanks — our team will review this within 24 hours.");
   };
   const [guests, setGuests] = useState(1);
+  // Meal plans: [] means room only, nothing to choose. Starts on the cheapest.
+  const [mealPlan, setMealPlan] = useState<string | undefined>(undefined);
+  const mealOptions = listing?.meal_options ?? [];
+  useEffect(() => { setMealPlan(listing?.meal_options?.[0]?.code); }, [listing?.id]);
   const [quote, setQuote] = useState<AvailabilityResponse | null>(null);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [availabilityError, setAvailabilityError] = useState<string | null>(null);
@@ -105,7 +110,7 @@ export default function ListingDetailScreen() {
       try {
         const q = await api<AvailabilityResponse>(`/api/listings/${listing.id}/availability`, {
           method: "POST",
-          body: { start_date: checkIn, end_date: checkOut },
+          body: { start_date: checkIn, end_date: checkOut, guests, meal_plan: mealPlan },
         });
         if (!cancelled) setQuote(q);
       } catch (e: any) {
@@ -120,7 +125,8 @@ export default function ListingDetailScreen() {
     return () => {
       cancelled = true;
     };
-  }, [checkIn, checkOut, listing]);
+    // Guests only change the price when meals are charged per guest.
+  }, [checkIn, checkOut, listing, mealOptions.length ? guests : 0, mealPlan]);
 
   const bookNow = async () => {
     if (!user) {
@@ -140,6 +146,7 @@ export default function ListingDetailScreen() {
           start_date: checkIn,
           end_date: checkOut,
           guests,
+          meal_plan: mealPlan,
         },
       });
       setCheckoutBookingId(res.id);
@@ -545,6 +552,27 @@ export default function ListingDetailScreen() {
               </View>
             </View>
 
+            {mealOptions.length > 0 && (
+              <View style={styles.mealBox} accessibilityRole="radiogroup" accessibilityLabel="Meals">
+                <Text style={styles.guestLabel}>Meals</Text>
+                {mealOptions.map((o) => {
+                  const on = mealPlan === o.code;
+                  return (
+                    <TouchableOpacity key={o.code} onPress={() => setMealPlan(o.code)} style={styles.mealRow}
+                                      accessibilityRole="radio" accessibilityState={{ checked: on }}
+                                      testID={`meal-${o.code}`}>
+                      <Ionicons name={on ? "radio-button-on" : "radio-button-off"} size={20}
+                                color={on ? Colors.aanganDeep : Colors.charcoal3} />
+                      <Text style={styles.mealName}>{mealPlanName(o.code)}</Text>
+                      <Text style={styles.mealRate}>
+                        {o.rate_inr > 0 ? `+${inr(o.rate_inr)}/guest/night` : o.code !== "EP" ? "Included" : ""}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+
             {availabilityError && (
               <Text style={styles.availabilityError}>{availabilityError}</Text>
             )}
@@ -565,6 +593,12 @@ export default function ListingDetailScreen() {
                   value={inr(quote.nights_total_inr ?? quote.nightly_inr)}
                 />
                 <QuoteLine label="Cleaning fee" value={inr(quote.cleaning_inr)} />
+                {(quote.meals_inr ?? 0) > 0 ? (
+                  <QuoteLine
+                    label={`${mealPlanName(quote.meal_plan)} · ${inr(quote.meal_rate_inr ?? 0)} × ${guests} × ${quote.nights}`}
+                    value={inr(quote.meals_inr ?? 0)}
+                  />
+                ) : null}
                 {quote.service_inr > 0 ? <QuoteLine label="Service fee" value={inr(quote.service_inr)} /> : null}
                 <QuoteLine label={`Taxes (GST ${quote.tax_pct || gstPct(listing.price_inr)}%)`} value={inr(quote.tax_inr)} />
                 <View style={styles.quoteDivider} />
@@ -609,7 +643,7 @@ export default function ListingDetailScreen() {
           totalInr={quote.total_inr}
           cancellationPolicy={listing.cancellation_policy}
           instantBook={listing.instant_book !== false}
-          stayLine={`${shortDate(checkIn)} → ${shortDate(checkOut)} · ${quote.nights} night${quote.nights === 1 ? "" : "s"} · ${guests} guest${guests === 1 ? "" : "s"}`}
+          stayLine={`${shortDate(checkIn)} → ${shortDate(checkOut)} · ${quote.nights} night${quote.nights === 1 ? "" : "s"} · ${guests} guest${guests === 1 ? "" : "s"}${quote.meals_inr ? ` · ${mealPlanName(quote.meal_plan)}` : ""}`}
           onClose={() => {
             // Leaving checkout without paying frees the dates straight away
             // (a no-op on the server once money is in).
@@ -1072,6 +1106,32 @@ const styles = StyleSheet.create({
     color: Colors.charcoal,
     minWidth: 20,
     textAlign: "center",
+  },
+  mealBox: {
+    marginTop: 12,
+    padding: 12,
+    gap: 4,
+    borderRadius: Radius.md,
+    borderWidth: 1.5,
+    borderColor: Colors.edge,
+    backgroundColor: Colors.paper,
+  },
+  mealRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 8,
+    minHeight: 44,
+  },
+  mealName: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.charcoal,
+  },
+  mealRate: {
+    fontSize: 12,
+    color: Colors.charcoal3,
   },
   quoteCard: {
     marginTop: 16,

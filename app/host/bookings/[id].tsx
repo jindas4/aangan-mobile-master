@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { mealPlanName } from "@/lib/mealPlans";
 import { DamageClaim } from "@/components/DamageClaim";
 import {
   View,
@@ -206,6 +207,10 @@ export default function HostBookingDetailScreen() {
           {/* A booking's nightly_inr is the per-night rate (booking_svc sets it from the listing price). */}
           <PriceRow label={`${inr(booking.nightly_inr)} × ${booking.nights} night${booking.nights === 1 ? "" : "s"}`} value={inr(booking.nightly_inr * booking.nights)} />
           <PriceRow label="Cleaning fee" value={inr(booking.cleaning_inr)} />
+          {(booking.meals_inr ?? 0) > 0 ? (
+            <PriceRow label={`Meals · ${mealPlanName(booking.meal_plan)} (${inr(booking.meal_rate_inr ?? 0)} × ${booking.guests} × ${booking.nights})`}
+                      value={inr(booking.meals_inr ?? 0)} />
+          ) : null}
           {booking.service_inr > 0 ? <PriceRow label="Service fee" value={inr(booking.service_inr)} /> : null}
           <PriceRow label={`Taxes (GST ${booking.tax_pct ?? 12}%)`} value={inr(booking.tax_inr)} />
           <View style={styles.divider} />
@@ -224,7 +229,7 @@ export default function HostBookingDetailScreen() {
         {booking.host_earnings ? (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Your payout</Text>
-            <PriceRow label="Your earnings (nights + cleaning)" value={inr(booking.host_earnings.earnings_inr)} />
+            <PriceRow label={(booking.meals_inr ?? 0) > 0 ? "Your earnings (nights + cleaning + meals)" : "Your earnings (nights + cleaning)"} value={inr(booking.host_earnings.earnings_inr)} />
             {booking.host_earnings.fee_inr > 0 ? (
               <>
                 <PriceRow label={`Aangan Stay fee (${booking.host_earnings.fee_pct}%)`} value={`− ${inr(booking.host_earnings.fee_inr)}`} />

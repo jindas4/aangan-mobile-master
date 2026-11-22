@@ -484,6 +484,31 @@
             "title": "End Date",
             "type": "string"
           },
+          "guests": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guests"
+          },
+          "meal_plan": {
+            "anyOf": [
+              {
+                "pattern": "^(EP|CP|MAP|AP)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meal Plan"
+          },
           "start_date": {
             "format": "date",
             "title": "Start Date",
@@ -510,6 +535,21 @@
           },
           "cleaning_inr": {
             "title": "Cleaning Inr",
+            "type": "integer"
+          },
+          "meal_plan": {
+            "default": "EP",
+            "title": "Meal Plan",
+            "type": "string"
+          },
+          "meal_rate_inr": {
+            "default": 0,
+            "title": "Meal Rate Inr",
+            "type": "integer"
+          },
+          "meals_inr": {
+            "default": 0,
+            "title": "Meals Inr",
             "type": "integer"
           },
           "min_nights": {
@@ -886,6 +926,18 @@
             "title": "Listing Id",
             "type": "string"
           },
+          "meal_plan": {
+            "anyOf": [
+              {
+                "pattern": "^(EP|CP|MAP|AP)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meal Plan"
+          },
           "note": {
             "anyOf": [
               {
@@ -991,6 +1043,27 @@
           "listing_id": {
             "title": "Listing Id",
             "type": "string"
+          },
+          "meal_plan": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meal Plan"
+          },
+          "meal_rate_inr": {
+            "default": 0,
+            "title": "Meal Rate Inr",
+            "type": "integer"
+          },
+          "meals_inr": {
+            "default": 0,
+            "title": "Meals Inr",
+            "type": "integer"
           },
           "nightly_inr": {
             "title": "Nightly Inr",
@@ -1263,6 +1336,27 @@
           "listing_title": {
             "title": "Listing Title",
             "type": "string"
+          },
+          "meal_plan": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meal Plan"
+          },
+          "meal_rate_inr": {
+            "default": 0,
+            "title": "Meal Rate Inr",
+            "type": "integer"
+          },
+          "meals_inr": {
+            "default": 0,
+            "title": "Meals Inr",
+            "type": "integer"
           },
           "nightly_inr": {
             "title": "Nightly Inr",
@@ -3233,7 +3327,7 @@
             "items": {
               "type": "string"
             },
-            "maxItems": 20,
+            "maxItems": 50,
             "title": "Images",
             "type": "array"
           },
@@ -4358,6 +4452,16 @@
             ],
             "title": "Local Id Ok"
           },
+          "meal_plans": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MealPlansIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "min_nights": {
             "default": 1,
             "maximum": 90.0,
@@ -4759,6 +4863,14 @@
             ],
             "title": "Location Status"
           },
+          "meal_options": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/MealPlanOption"
+            },
+            "title": "Meal Options",
+            "type": "array"
+          },
           "min_nights": {
             "default": 1,
             "title": "Min Nights",
@@ -5110,6 +5222,16 @@
             ],
             "title": "Local Id Ok"
           },
+          "meal_plans": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MealPlansIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "min_nights": {
             "anyOf": [
               {
@@ -5230,6 +5352,81 @@
           }
         },
         "title": "ListingUpdate",
+        "type": "object"
+      },
+      "MealPlanOption": {
+        "description": "A meal plan a guest can choose (services/meal_plans.py).",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "rate_inr": {
+            "title": "Rate Inr",
+            "type": "integer"
+          },
+          "short": {
+            "title": "Short",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "label",
+          "short",
+          "rate_inr"
+        ],
+        "title": "MealPlanOption",
+        "type": "object"
+      },
+      "MealPlansIn": {
+        "description": "Prices per guest per night, in rupees. Omit (or null) a plan you don't\noffer; 0 means included in the nightly price.",
+        "properties": {
+          "AP": {
+            "anyOf": [
+              {
+                "maximum": 20000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ap"
+          },
+          "CP": {
+            "anyOf": [
+              {
+                "maximum": 20000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cp"
+          },
+          "MAP": {
+            "anyOf": [
+              {
+                "maximum": 20000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Map"
+          }
+        },
+        "title": "MealPlansIn",
         "type": "object"
       },
       "MessageOut": {

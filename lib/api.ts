@@ -276,7 +276,17 @@ export interface ListingCard {
   images: ListingImage[];
 }
 
+/** A meal plan a guest can choose; rate_inr is per guest per night (0 = room only or included). */
+export interface MealPlanOption {
+  code: string; // "EP" | "CP" | "MAP" | "AP"
+  label: string;
+  short: string;
+  rate_inr: number;
+}
+
 export interface ListingFull extends ListingCard {
+  /** Meal plans a guest can choose, cheapest first; [] = room only, no choice. */
+  meal_options?: MealPlanOption[];
   /** State tourism registration number: present for guests once checked, and always for the owner. */
   registration_no?: string | null;
   /** GST state code of the property ("06"). PIN and how it was checked: owner only. */
@@ -319,6 +329,10 @@ export interface BookingOut {
   /** Per-night rate on a booking (the stay costs nightly_inr × nights). */
   nightly_inr: number;
   cleaning_inr: number;
+  /** Meal plan code (null on older bookings = room only), rate per guest per night, and the meals total. */
+  meal_plan?: string | null;
+  meal_rate_inr?: number;
+  meals_inr?: number;
   service_inr: number;
   tax_inr: number;
   /** GST rate on the stay; null on older bookings (12%). */
@@ -377,6 +391,10 @@ export interface AvailabilityResponse {
   /** Deprecated — the total for all nights, not a per-night rate. */
   nightly_inr: number;
   cleaning_inr: number;
+  /** The meal plan this quote is for, its rate per guest per night, and rate × guests × nights. */
+  meal_plan?: string;
+  meal_rate_inr?: number;
+  meals_inr?: number;
   service_inr: number;
   tax_inr: number;
   /** GST rate on the stay; null on older bookings (12%). */

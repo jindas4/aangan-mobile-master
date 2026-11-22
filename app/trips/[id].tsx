@@ -1,5 +1,6 @@
 // A guest's view of one of their bookings: the stay, what they paid, the
 // cancellation terms, and what they can do next. Opened from the Journeys tab.
+import { mealPlanName } from "@/lib/mealPlans";
 import { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -150,6 +151,10 @@ export default function TripDetailScreen() {
           <Text style={styles.cardTitle}>What you paid</Text>
           <PriceRow label={`${inr(b.nightly_inr)} × ${b.nights} night${b.nights === 1 ? "" : "s"}`} value={inr(b.nightly_inr * b.nights)} />
           <PriceRow label="Cleaning fee" value={inr(b.cleaning_inr)} />
+          {(b.meals_inr ?? 0) > 0 ? (
+            <PriceRow label={`Meals · ${mealPlanName(b.meal_plan)} (${inr(b.meal_rate_inr ?? 0)} × ${b.guests} × ${b.nights})`}
+                      value={inr(b.meals_inr ?? 0)} />
+          ) : null}
           {b.service_inr > 0 ? <PriceRow label="Service fee" value={inr(b.service_inr)} /> : null}
           <PriceRow label={`Taxes (GST ${b.tax_pct ?? 12}%)`} value={inr(b.tax_inr)} />
           <View style={styles.divider} />

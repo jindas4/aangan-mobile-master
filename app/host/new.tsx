@@ -19,6 +19,8 @@ import { CancellationChoice, type CancellationPolicy } from "@/components/Cancel
 import { BookingModeChoice } from "@/components/BookingModeChoice";
 import { PayoutPreview } from "@/components/PayoutPreview";
 import { EMPTY_HOUSE_RULES, HouseRulesEditor, type HouseRulesValue } from "@/components/HouseRules";
+import { EMPTY_MEAL_PLANS, MealPlansEditor, mealPlansError, mealPlansPayload, mealPlansSummary,
+         type MealPlansValue } from "@/components/MealPlansEditor";
 import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
@@ -89,6 +91,7 @@ const EMPTY = {
   instant_book: true, policy: "flexible" as CancellationPolicy,
   veg_kitchen: false, jain_friendly: false,
   rules: EMPTY_HOUSE_RULES as HouseRulesValue,
+  meals: EMPTY_MEAL_PLANS as MealPlansValue,
   reg_no: "",
   amenities: [] as string[],
 };
@@ -176,7 +179,7 @@ export default function NewListingScreen() {
       case "describe":
         return form.title.trim().length < 4 ? "Give your place a title (at least 4 characters)." : null;
       case "price":
-        return price > 0 ? null : "Set a price per night.";
+        return price > 0 ? mealPlansError(form.meals ?? EMPTY_MEAL_PLANS) : "Set a price per night.";
       case "rules":
         return isHHMM(form.checkin) && isHHMM(form.checkout) ? null : "Enter check-in and check-out as HH:MM, e.g. 14:00.";
       default: return null;
@@ -264,6 +267,7 @@ export default function NewListingScreen() {
           cancellation_policy: form.policy, instant_book: form.instant_book,
           checkin_time: form.checkin.trim(), checkout_time: form.checkout.trim(),
           ...form.rules,
+          meal_plans: mealPlansPayload(form.meals ?? EMPTY_MEAL_PLANS),
           registration_no: form.reg_no.trim() || null,
           images, published,
         },
@@ -493,6 +497,9 @@ export default function NewListingScreen() {
                 </Text>
               )}
               <PayoutPreview price={price} cleaning={cleaning} />
+              <Field label="Meal plans (optional)">
+                <MealPlansEditor value={form.meals ?? EMPTY_MEAL_PLANS} onChange={(v) => set("meals", v)} />
+              </Field>
             </View>
           )}
 
@@ -556,7 +563,7 @@ export default function NewListingScreen() {
               <Summary label="PHOTOS" onEdit={() => go(3)} warn={images.length === 0}
                        value={images.length ? `${images.length} photo${images.length === 1 ? "" : "s"}` : "None yet (needed to publish)"} />
               <Summary label="TITLE" onEdit={() => go(4)} value={form.title} />
-              <Summary label="PRICE" onEdit={() => go(5)} value={`${inr(price)} a night + ${inr(cleaning)} cleaning`} />
+              <Summary label="PRICE" onEdit={() => go(5)} value={`${inr(price)} a night + ${inr(cleaning)} cleaning · ${mealPlansSummary(form.meals ?? EMPTY_MEAL_PLANS)}`} />
               <Summary label="BOOKINGS" onEdit={() => go(6)}
                        value={`${form.instant_book ? "Instant booking" : "You approve each request"} · ${form.policy === "non_refundable" ? "non-refundable" : "refundable"}`} />
               <Text style={[styles.helper, { textAlign: "center" }]}>Listing strength {strength}%</Text>
