@@ -7,11 +7,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { api, type ListingFull } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { PhotoPicker, photoCategoriesPayload, type Photo } from "@/components/PhotoPicker";
-import { photoCategoryLabel } from "@/lib/photoCategories";
+import { roomValue } from "@/lib/photoCategories";
 
 export function HostPhotosEditor({ listing, onSaved }: { listing: ListingFull; onSaved: (l: ListingFull) => void }) {
   const images = listing.images?.filter((i) => i.url?.startsWith("http")) || [];
-  const untagged = images.filter((i) => !photoCategoryLabel(i.category)).length;
+  const untagged = images.filter((i) => !roomValue(i)).length;
+  const [masterNo, setMasterNo] = useState<number | null>(listing.master_bedroom_no ?? null);
   const [editing, setEditing] = useState(false);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [saving, setSaving] = useState(false);
@@ -20,8 +21,9 @@ export function HostPhotosEditor({ listing, onSaved }: { listing: ListingFull; o
   const start = () => {
     setPhotos(images.map((i) => ({
       localUri: i.url, remoteUrl: i.url, uploading: false,
-      category: photoCategoryLabel(i.category) ? i.category : null,
+      category: roomValue(i),
     })));
+    setMasterNo(listing.master_bedroom_no ?? null);
     setEditing(true);
   };
 
@@ -35,7 +37,10 @@ export function HostPhotosEditor({ listing, onSaved }: { listing: ListingFull; o
     try {
       const updated = await api<ListingFull>(`/api/listings/${listing.id}`, {
         method: "PATCH",
-        body: { images: urls, image_categories: photoCategoriesPayload(photos) },
+        body: {
+          images: urls, image_categories: photoCategoriesPayload(photos),
+          master_bedroom_no: masterNo && masterNo <= listing.bedrooms ? masterNo : 0,   // 0 = none
+        },
       });
       onSaved(updated);
       setEditing(false);
@@ -68,7 +73,9 @@ export function HostPhotosEditor({ listing, onSaved }: { listing: ListingFull; o
     <View style={styles.card}>
       <Text style={styles.title}>Photos</Text>
       <Text style={styles.help}>Tap "Choose room" under each photo. Guests see your photos grouped room by room. The first photo is the cover.</Text>
-      <PhotoPicker value={photos} onChange={setPhotos} withCategories />
+      <PhotoPicker value={photos} onChange={setPhotos} withCategories
+                   bedrooms={listing.bedrooms} baths={listing.baths}
+                   masterBedroomNo={masterNo} onMasterChange={setMasterNo} />
       <View style={styles.row}>
         <TouchableOpacity style={[styles.btn, styles.cancel]} onPress={() => setEditing(false)} disabled={saving}>
           <Text style={styles.cancelText}>Cancel</Text>

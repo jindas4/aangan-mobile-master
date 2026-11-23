@@ -32,7 +32,7 @@ import { EMPTY_MEAL_PLANS, MealPlansEditor, mealPlansError, mealPlansFromOptions
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
 import { HostPhotosEditor } from "@/components/HostPhotosEditor";
-import { photoCategoryLabel } from "@/lib/photoCategories";
+import { roomLabel } from "@/lib/photoCategories";
 
 const W = Dimensions.get("window").width;
 
@@ -295,7 +295,7 @@ export default function ManageListingScreen() {
             )}
             <View style={styles.imgCount}>
               <Text style={styles.imgCountText}>
-                {[photoCategoryLabel(images[imgIndex]?.category), `${imgIndex + 1}/${images.length}`].filter(Boolean).join(" · ")}
+                {[images[imgIndex] ? roomLabel(images[imgIndex], listing.master_bedroom_no) : null, `${imgIndex + 1}/${images.length}`].filter(Boolean).join(" · ")}
               </Text>
             </View>
           </View>
@@ -576,6 +576,7 @@ export default function ManageListingScreen() {
         initialIndex={imgIndex}
         onClose={() => setViewerOpen(false)}
         onIndexChange={setImgIndex}
+        masterBedroomNo={listing.master_bedroom_no}
       />
     </SafeAreaView>
   );

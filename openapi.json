@@ -3363,6 +3363,19 @@
             ],
             "title": "Local Id Ok"
           },
+          "master_bedroom_no": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Bedroom No"
+          },
           "min_nights": {
             "anyOf": [
               {
@@ -4210,6 +4223,17 @@
             ],
             "title": "Local Id Ok"
           },
+          "master_bedroom_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Bedroom No"
+          },
           "min_nights": {
             "default": 1,
             "title": "Min Nights",
@@ -4494,6 +4518,19 @@
             ],
             "title": "Local Id Ok"
           },
+          "master_bedroom_no": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Bedroom No"
+          },
           "meal_plans": {
             "anyOf": [
               {
@@ -4643,6 +4680,17 @@
           "position": {
             "title": "Position",
             "type": "integer"
+          },
+          "room_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room No"
           },
           "url": {
             "title": "Url",
@@ -4915,6 +4963,17 @@
               }
             ],
             "title": "Location Status"
+          },
+          "master_bedroom_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Bedroom No"
           },
           "meal_options": {
             "default": [],
@@ -5295,6 +5354,19 @@
               }
             ],
             "title": "Local Id Ok"
+          },
+          "master_bedroom_no": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Bedroom No"
           },
           "meal_plans": {
             "anyOf": [

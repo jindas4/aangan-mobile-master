@@ -17,7 +17,7 @@ import { RemoteImage } from "@/components/RemoteImage";
 import { Ionicons } from "@expo/vector-icons";
 import { imageUrl } from "@/lib/format";
 import { ListingImage } from "@/lib/api";
-import { photoCategoryLabel } from "@/lib/photoCategories";
+import { roomLabel } from "@/lib/photoCategories";
 
 const { width: W, height: H } = Dimensions.get("window");
 const DISMISS_THRESHOLD = 120;
@@ -28,9 +28,11 @@ interface Props {
   initialIndex: number;
   onClose: () => void;
   onIndexChange?: (index: number) => void;
+  /** The listing's master bedroom number, to name it. */
+  masterBedroomNo?: number | null;
 }
 
-export function PhotoViewer({ images, visible, initialIndex, onClose, onIndexChange }: Props) {
+export function PhotoViewer({ images, visible, initialIndex, onClose, onIndexChange, masterBedroomNo }: Props) {
   const [index, setIndex] = useState(initialIndex);
   const translateY = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(1)).current;
@@ -118,10 +120,10 @@ export function PhotoViewer({ images, visible, initialIndex, onClose, onIndexCha
 
         {/* Counter — bottom center */}
         {/* Room (when the host tagged it) and counter */}
-        {(images.length > 1 || !!photoCategoryLabel(images[index]?.category)) && (
+        {(images.length > 1 || !!(images[index] && roomLabel(images[index], masterBedroomNo))) && (
           <View style={styles.counter}>
             <Text style={styles.counterText}>
-              {[photoCategoryLabel(images[index]?.category), images.length > 1 ? `${index + 1} / ${images.length}` : null]
+              {[images[index] ? roomLabel(images[index], masterBedroomNo) : null, images.length > 1 ? `${index + 1} / ${images.length}` : null]
                 .filter(Boolean).join(" · ")}
             </Text>
           </View>

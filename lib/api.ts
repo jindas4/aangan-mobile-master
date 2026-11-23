@@ -230,6 +230,8 @@ export interface ListingImage {
   blur?: string | null;
   /** The room it shows (lib/photoCategories.ts), or null if the host hasn't said. */
   category?: string | null;
+  /** Which bedroom / bathroom (1, 2, …) when the host numbered them. */
+  room_no?: number | null;
 }
 
 export interface ListingCard {
@@ -261,6 +263,8 @@ export interface ListingCard {
   guests: number;
   bedrooms: number;
   baths: number;
+  /** Which bedroom number is the master; null = none named. */
+  master_bedroom_no?: number | null;
   instant_book: boolean;
   /** What a guest gets back on cancelling: the standard tiers, or nothing. */
   cancellation_policy?: "flexible" | "non_refundable";

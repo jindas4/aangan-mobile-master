@@ -670,13 +670,14 @@ export default function ListingDetailScreen() {
         onSubmit={submitReport}
       />
 
-      <PhotoTour images={images} visible={tourOpen} onClose={() => setTourOpen(false)} />
+      <PhotoTour images={images} visible={tourOpen} onClose={() => setTourOpen(false)} masterBedroomNo={listing.master_bedroom_no} />
       <PhotoViewer
         images={images}
         visible={viewerOpen}
         initialIndex={imgIndex}
         onClose={() => setViewerOpen(false)}
         onIndexChange={setImgIndex}
+        masterBedroomNo={listing.master_bedroom_no}
       />
     </View>
   );

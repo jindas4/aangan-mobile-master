@@ -9,15 +9,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { RemoteImage } from "@/components/RemoteImage";
 import { PhotoViewer } from "@/components/PhotoViewer";
 import { Colors } from "@/constants/Colors";
-import { groupPhotos } from "@/lib/photoCategories";
+import { groupPhotos, roomLabel } from "@/lib/photoCategories";
 import type { ListingImage } from "@/lib/api";
 
 const W = Dimensions.get("window").width;
 const PAD = 16;
 const HALF = (W - PAD * 2 - 8) / 2;
 
-export function PhotoTour({ images, visible, onClose }: { images: ListingImage[]; visible: boolean; onClose: () => void }) {
-  const groups = useMemo(() => groupPhotos(images), [images]);
+export function PhotoTour({ images, visible, onClose, masterBedroomNo }: {
+  images: ListingImage[]; visible: boolean; onClose: () => void; masterBedroomNo?: number | null;
+}) {
+  const groups = useMemo(() => groupPhotos(images, masterBedroomNo), [images, masterBedroomNo]);
+  const label = (g: (typeof groups)[number]) => (g.code ? roomLabel(g.images[0], masterBedroomNo) : null) || "More photos";
   const order = useMemo(() => groups.flatMap((g) => g.images), [groups]);
   const [viewerAt, setViewerAt] = useState<number | null>(null);
   const scroller = useRef<ScrollView>(null);
@@ -36,20 +39,20 @@ export function PhotoTour({ images, visible, onClose }: { images: ListingImage[]
         {showHeads && (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
             {groups.map((g) => (
-              <TouchableOpacity key={g.code || "more"} style={styles.chip}
-                                onPress={() => scroller.current?.scrollTo({ y: offsets.current[g.code] ?? 0, animated: true })}>
+              <TouchableOpacity key={g.key || "more"} style={styles.chip}
+                                onPress={() => scroller.current?.scrollTo({ y: offsets.current[g.key] ?? 0, animated: true })}>
                 <RemoteImage url={g.images[0].url} size="thumb" style={styles.chipImg} contentFit="cover" />
-                <Text numberOfLines={1} style={styles.chipText}>{g.label}</Text>
+                <Text numberOfLines={1} style={styles.chipText}>{label(g)}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
         )}
         <ScrollView ref={scroller} contentContainerStyle={styles.body}>
           {groups.map((g) => (
-            <View key={g.code || "more"} style={styles.section}
-                  onLayout={(e) => { offsets.current[g.code] = e.nativeEvent.layout.y - 8; }}>
+            <View key={g.key || "more"} style={styles.section}
+                  onLayout={(e) => { offsets.current[g.key] = e.nativeEvent.layout.y - 8; }}>
               {showHeads && (
-                <Text style={styles.sectionTitle}>{g.label} <Text style={styles.sectionCount}>· {g.images.length}</Text></Text>
+                <Text style={styles.sectionTitle}>{label(g)} <Text style={styles.sectionCount}>· {g.images.length}</Text></Text>
               )}
               <View style={styles.grid}>
                 {g.images.map((img, i) => {
@@ -66,7 +69,7 @@ export function PhotoTour({ images, visible, onClose }: { images: ListingImage[]
           ))}
         </ScrollView>
         <PhotoViewer images={order} visible={viewerAt !== null} initialIndex={Math.max(0, viewerAt ?? 0)}
-                     onClose={() => setViewerAt(null)} />
+                     onClose={() => setViewerAt(null)} masterBedroomNo={masterBedroomNo} />
       </SafeAreaView>
     </Modal>
   );

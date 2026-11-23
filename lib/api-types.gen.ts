@@ -6566,6 +6566,8 @@ export interface components {
             images?: string[];
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
             /** Min Nights */
             min_nights?: number | null;
             /** Pet Friendly */
@@ -6861,6 +6863,8 @@ export interface components {
             lng: number;
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
             /**
              * Min Nights
              * @default 1
@@ -7011,6 +7015,8 @@ export interface components {
             lng: number;
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
             meal_plans?: components["schemas"]["MealPlansIn"] | null;
             /**
              * Min Nights
@@ -7064,6 +7070,8 @@ export interface components {
             label?: string | null;
             /** Position */
             position: number;
+            /** Room No */
+            room_no?: number | null;
             /** Url */
             url: string;
         };
@@ -7171,6 +7179,8 @@ export interface components {
             local_id_ok?: boolean | null;
             /** Location Status */
             location_status?: string | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
             /**
              * Meal Options
              * @default []
@@ -7277,6 +7287,8 @@ export interface components {
             jain_friendly?: boolean | null;
             /** Local Id Ok */
             local_id_ok?: boolean | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
             meal_plans?: components["schemas"]["MealPlansIn"] | null;
             /** Min Nights */
             min_nights?: number | null;

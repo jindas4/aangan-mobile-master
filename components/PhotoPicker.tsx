@@ -4,8 +4,10 @@
 // 12-megapixel photo of 3–5 MB goes up as a few hundred KB), at most three
 // upload at a time (twelve at once makes every one of them crawl), and a
 // failed upload is retried automatically before the host is asked to.
-// With `withCategories`, each photo gets a room tag (Bedroom, Kitchen, …) —
-// see lib/photoCategories.ts and photoCategoriesPayload().
+// With `withCategories`, each photo gets a room tag (Bedroom 2, Kitchen, …) —
+// see lib/photoCategories.ts and photoCategoriesPayload(). Bedrooms and
+// bathrooms are numbered when `bedrooms`/`baths` is 2 or more, and
+// onMasterChange adds a "which bedroom is the master" choice.
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Alert, Modal, Pressable, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -13,14 +15,14 @@ import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { uploadFile } from "@/lib/api";
-import { PHOTO_CATEGORIES, photoCategoryLabel } from "@/lib/photoCategories";
+import { roomLabel, roomOptions, splitRoom } from "@/lib/photoCategories";
 
 export interface Photo {
   localUri: string;
   remoteUrl?: string;
   uploading: boolean;
   error?: string;
-  /** The room it shows, e.g. "bedroom" (lib/photoCategories.ts). */
+  /** The room it shows, as the API takes it: "bedroom:2", "kitchen" (lib/photoCategories.ts). */
   category?: string | null;
 }
 
@@ -36,6 +38,12 @@ interface Props {
   max?: number;
   /** Let the host tag each photo with its room. */
   withCategories?: boolean;
+  /** The home's room counts: 2 or more numbers the bedroom / bathroom choices. */
+  bedrooms?: number;
+  baths?: number;
+  /** Which bedroom is the master (null = none); pass onMasterChange to let the host choose. */
+  masterBedroomNo?: number | null;
+  onMasterChange?: (n: number | null) => void;
 }
 
 const MAX_EDGE = 2000;          // longest side in px — listing photos are never shown larger
@@ -63,7 +71,11 @@ async function shrink(p: Picked): Promise<string> {
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function PhotoPicker({ value, onChange, max = MAX_PHOTOS, withCategories = false }: Props) {
+export function PhotoPicker({ value, onChange, max = MAX_PHOTOS, withCategories = false,
+                             bedrooms = 1, baths = 1, masterBedroomNo = null, onMasterChange }: Props) {
+  const options = roomOptions(bedrooms, baths, masterBedroomNo);
+  const nameOf = (v?: string | null) => roomLabel(splitRoom(v), masterBedroomNo);
+  const showMaster = withCategories && !!onMasterChange && bedrooms >= 2;
   const [roomFor, setRoomFor] = useState<string | null>(null);   // localUri whose room is being picked
   const setRoom = (uri: string, category: string | null) => {
     onChange((prev) => prev.map((p) => (p.localUri === uri ? { ...p, category } : p)));
@@ -180,6 +192,23 @@ export function PhotoPicker({ value, onChange, max = MAX_PHOTOS, withCategories 
 
   return (
     <View>
+      {showMaster && (
+        <View style={styles.masterRow}>
+          <Text style={styles.masterLabel}>Master bedroom</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }}>
+            {[null, ...Array.from({ length: Math.min(bedrooms, 30) }, (_, i) => i + 1)].map((n) => {
+              const on = (masterBedroomNo ?? null) === n;
+              return (
+                <TouchableOpacity key={n ?? 0} onPress={() => onMasterChange!(n)}
+                                  style={[styles.masterChip, on && styles.masterChipOn]}
+                                  accessibilityLabel={n ? `Bedroom ${n} is the master` : "No master bedroom"}>
+                  <Text style={[styles.masterChipText, on && styles.masterChipTextOn]}>{n ? `Bedroom ${n}` : "None"}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
       <View style={styles.grid}>
         {value.map((p, i) => (
           <View key={p.localUri} style={styles.cell}>
@@ -212,10 +241,10 @@ export function PhotoPicker({ value, onChange, max = MAX_PHOTOS, withCategories 
           </View>
           {withCategories && (
             <TouchableOpacity onPress={() => setRoomFor(p.localUri)} hitSlop={4}
-                              accessibilityLabel={`Room shown in photo ${i + 1}: ${photoCategoryLabel(p.category) || "not set"}`}
+                              accessibilityLabel={`Room shown in photo ${i + 1}: ${nameOf(p.category) || "not set"}`}
                               style={[styles.roomChip, !p.category && styles.roomChipEmpty]}>
               <Text numberOfLines={1} style={[styles.roomText, !p.category && styles.roomTextEmpty]}>
-                {photoCategoryLabel(p.category) || "Choose room"}
+                {nameOf(p.category) || "Choose room"}
               </Text>
               <Ionicons name="chevron-down" size={11} color={p.category ? Colors.charcoal : Colors.charcoal3} />
             </TouchableOpacity>
@@ -246,7 +275,7 @@ export function PhotoPicker({ value, onChange, max = MAX_PHOTOS, withCategories 
         <View style={styles.sheet}>
           <Text style={styles.sheetTitle}>Which room is this?</Text>
           <ScrollView style={{ maxHeight: 420 }}>
-            {PHOTO_CATEGORIES.map(([code, label]) => {
+            {options.map(({ value: code, label }) => {
               const on = value.find((p) => p.localUri === roomFor)?.category === code;
               return (
                 <TouchableOpacity key={code} style={styles.sheetRow} onPress={() => roomFor && setRoom(roomFor, code)}>
@@ -279,6 +308,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cell: { width: TILE, gap: 5 },
+  masterRow: { gap: 6, marginBottom: 12 },
+  masterLabel: { fontSize: 13, fontWeight: "700", color: Colors.charcoal2 },
+  masterChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, borderWidth: 1, borderColor: Colors.edgeStrong },
+  masterChipOn: { borderColor: Colors.terra, backgroundColor: Colors.terraTint },
+  masterChipText: { fontSize: 12.5, fontWeight: "700", color: Colors.charcoal2 },
+  masterChipTextOn: { color: Colors.terra },
   tileFull: { width: "100%" },
   roomChip: {
     flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 2,

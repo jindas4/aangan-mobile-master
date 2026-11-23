@@ -105,6 +105,7 @@ export default function NewListingScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const [form, setForm] = useState<Form>(EMPTY);
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [masterNo, setMasterNo] = useState<number | null>(null);   // which bedroom is the master
   const [step, setStep] = useState(0);
   const [reached, setReached] = useState(0);
   const [restored, setRestored] = useState(false);
@@ -136,6 +137,7 @@ export default function NewListingScreen() {
           setForm({ ...EMPTY, ...d.form });
           setPhotos((d.images || []).map((u: string, i: number) =>
             ({ localUri: u, remoteUrl: u, uploading: false, category: d.cats?.[i] ?? null })));
+          setMasterNo(typeof d.master === "number" ? d.master : null);
           setStep(s); setReached(s); setRestored(true);
         }
       } catch { /* start fresh */ }
@@ -145,9 +147,9 @@ export default function NewListingScreen() {
   }, []);
   useEffect(() => {
     if (!loaded.current) return;
-    SecureStore.setItemAsync(DRAFT_KEY, JSON.stringify({ form, images, cats, step })).catch(() => {});
+    SecureStore.setItemAsync(DRAFT_KEY, JSON.stringify({ form, images, cats, master: masterNo, step })).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, step, images.join("|"), cats.join("|")]);
+  }, [form, step, images.join("|"), cats.join("|"), masterNo]);
   useEffect(() => { setStepErr(null); }, [form, photos]);
   const clearDraft = () => SecureStore.deleteItemAsync(DRAFT_KEY).catch(() => {});
 
@@ -272,6 +274,7 @@ export default function NewListingScreen() {
           meal_plans: mealPlansPayload(form.meals ?? EMPTY_MEAL_PLANS),
           registration_no: form.reg_no.trim() || null,
           images, image_categories: photoCategoriesPayload(photos), published,
+          master_bedroom_no: !isRoom && masterNo && masterNo <= form.bedrooms ? masterNo : null,
         },
       });
       clearDraft();
@@ -427,7 +430,9 @@ export default function NewListingScreen() {
           {/* 4. Photos */}
           {S.key === "photos" && (
             <View>
-              <PhotoPicker value={photos} onChange={setPhotos} withCategories />
+              <PhotoPicker value={photos} onChange={setPhotos} withCategories
+                           bedrooms={isRoom ? 1 : form.bedrooms} baths={form.baths}
+                           masterBedroomNo={masterNo} onMasterChange={setMasterNo} />
               <View style={{ marginTop: 14, gap: 4 }}>
                 {["The first photo is your cover. Pick your best one.", "Shoot in daylight, lights on, curtains open.",
                   "Include every bedroom, the bathroom and the view."].map((t) => (
