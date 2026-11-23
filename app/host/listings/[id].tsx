@@ -31,6 +31,8 @@ import { EMPTY_MEAL_PLANS, MealPlansEditor, mealPlansError, mealPlansFromOptions
          mealPlansSummary, type MealPlansValue } from "@/components/MealPlansEditor";
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
+import { HostPhotosEditor } from "@/components/HostPhotosEditor";
+import { photoCategoryLabel } from "@/lib/photoCategories";
 
 const W = Dimensions.get("window").width;
 
@@ -292,7 +294,9 @@ export default function ManageListingScreen() {
               </View>
             )}
             <View style={styles.imgCount}>
-              <Text style={styles.imgCountText}>{imgIndex + 1}/{images.length}</Text>
+              <Text style={styles.imgCountText}>
+                {[photoCategoryLabel(images[imgIndex]?.category), `${imgIndex + 1}/${images.length}`].filter(Boolean).join(" · ")}
+              </Text>
             </View>
           </View>
         )}
@@ -345,6 +349,9 @@ export default function ManageListingScreen() {
               <Ionicons name="trash-outline" size={16} color={Colors.error} />
             </TouchableOpacity>
           </View>
+
+          {/* Photos: add, remove, reorder, tag by room */}
+          <HostPhotosEditor listing={listing} onSaved={(l) => { setListing(l); setImgIndex(0); }} />
 
           {/* URL card — only once the listing is live */}
           {!isDraft && (

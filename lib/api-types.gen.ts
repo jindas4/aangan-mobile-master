@@ -2433,6 +2433,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{user_id}/listings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Draft Listing For User
+         * @description Create a DRAFT listing on an existing account — for an owner who
+         *     already signed up, or a second property for a host. Same form and rules as
+         *     converting a lead (LeadConvertIn; `phone` is ignored — the account has
+         *     one). Never published from here: the owner, or the team after the owner's
+         *     verification, publishes it through the usual gate.
+         */
+        post: operations["add_draft_listing_for_user_api_admin_users__user_id__listings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/users/{user_id}/notify": {
         parameters: {
             query?: never;
@@ -6534,6 +6558,10 @@ export interface components {
             guests?: number | null;
             /** House Rules */
             house_rules?: Record<string, never> | null;
+            /** Image Categories */
+            image_categories?: {
+                [key: string]: string | null;
+            } | null;
             /** Images */
             images?: string[];
             /** Local Id Ok */
@@ -6952,6 +6980,10 @@ export interface components {
              */
             guests: number;
             house_rules?: components["schemas"]["HouseRulesIn"] | null;
+            /** Image Categories */
+            image_categories?: {
+                [key: string]: string | null;
+            } | null;
             /**
              * Images
              * @default []
@@ -7024,6 +7056,8 @@ export interface components {
         ListingImageOut: {
             /** Blur */
             blur?: string | null;
+            /** Category */
+            category?: string | null;
             /** Id */
             id: number;
             /** Label */
@@ -7231,6 +7265,10 @@ export interface components {
             house_rules?: components["schemas"]["HouseRulesIn"] | null;
             /** House Rules Set */
             house_rules_set?: string[] | null;
+            /** Image Categories */
+            image_categories?: {
+                [key: string]: string | null;
+            } | null;
             /** Images */
             images?: string[] | null;
             /** Instant Book */
@@ -13929,6 +13967,43 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_draft_listing_for_user_api_admin_users__user_id__listings_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LeadConvertIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

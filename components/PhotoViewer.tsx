@@ -17,6 +17,7 @@ import { RemoteImage } from "@/components/RemoteImage";
 import { Ionicons } from "@expo/vector-icons";
 import { imageUrl } from "@/lib/format";
 import { ListingImage } from "@/lib/api";
+import { photoCategoryLabel } from "@/lib/photoCategories";
 
 const { width: W, height: H } = Dimensions.get("window");
 const DISMISS_THRESHOLD = 120;
@@ -116,9 +117,13 @@ export function PhotoViewer({ images, visible, initialIndex, onClose, onIndexCha
         </TouchableOpacity>
 
         {/* Counter — bottom center */}
-        {images.length > 1 && (
+        {/* Room (when the host tagged it) and counter */}
+        {(images.length > 1 || !!photoCategoryLabel(images[index]?.category)) && (
           <View style={styles.counter}>
-            <Text style={styles.counterText}>{index + 1} / {images.length}</Text>
+            <Text style={styles.counterText}>
+              {[photoCategoryLabel(images[index]?.category), images.length > 1 ? `${index + 1} / ${images.length}` : null]
+                .filter(Boolean).join(" · ")}
+            </Text>
           </View>
         )}
 

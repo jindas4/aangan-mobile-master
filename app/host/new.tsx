@@ -25,7 +25,7 @@ import { verificationMissing, describeMissing } from "@/lib/hostVerification";
 import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { Button } from "@/components/Button";
-import { PhotoPicker, Photo } from "@/components/PhotoPicker";
+import { PhotoPicker, Photo, photoCategoriesPayload } from "@/components/PhotoPicker";
 import { StatePinFields, useStates } from "@/components/StatePinFields";
 import { ListingGst, type GstStatus } from "@/components/ListingGst";
 
@@ -120,6 +120,7 @@ export default function NewListingScreen() {
   const typeCard = TYPE_CARDS.find((t) => t.value === form.type);
   const isRoom = !!typeCard?.room;
   const images = photos.filter((p) => p.remoteUrl).map((p) => p.remoteUrl!);
+  const cats = photos.filter((p) => p.remoteUrl).map((p) => p.category ?? null);   // rooms, saved with the draft
   const uploading = photos.some((p) => p.uploading);
   const price = parseInt(form.price) || 0;
   const cleaning = Math.max(parseInt(form.cleaning) || 0, 0);
@@ -133,7 +134,8 @@ export default function NewListingScreen() {
         if (d?.form && (d.form.type || d.form.city || d.form.title)) {
           const s = Math.min(Math.max(0, d.step | 0), STEPS.length - 1);
           setForm({ ...EMPTY, ...d.form });
-          setPhotos((d.images || []).map((u: string) => ({ localUri: u, remoteUrl: u, uploading: false })));
+          setPhotos((d.images || []).map((u: string, i: number) =>
+            ({ localUri: u, remoteUrl: u, uploading: false, category: d.cats?.[i] ?? null })));
           setStep(s); setReached(s); setRestored(true);
         }
       } catch { /* start fresh */ }
@@ -143,9 +145,9 @@ export default function NewListingScreen() {
   }, []);
   useEffect(() => {
     if (!loaded.current) return;
-    SecureStore.setItemAsync(DRAFT_KEY, JSON.stringify({ form, images, step })).catch(() => {});
+    SecureStore.setItemAsync(DRAFT_KEY, JSON.stringify({ form, images, cats, step })).catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, step, images.join("|")]);
+  }, [form, step, images.join("|"), cats.join("|")]);
   useEffect(() => { setStepErr(null); }, [form, photos]);
   const clearDraft = () => SecureStore.deleteItemAsync(DRAFT_KEY).catch(() => {});
 
@@ -269,7 +271,7 @@ export default function NewListingScreen() {
           ...form.rules,
           meal_plans: mealPlansPayload(form.meals ?? EMPTY_MEAL_PLANS),
           registration_no: form.reg_no.trim() || null,
-          images, published,
+          images, image_categories: photoCategoriesPayload(photos), published,
         },
       });
       clearDraft();
@@ -425,7 +427,7 @@ export default function NewListingScreen() {
           {/* 4. Photos */}
           {S.key === "photos" && (
             <View>
-              <PhotoPicker value={photos} onChange={setPhotos} />
+              <PhotoPicker value={photos} onChange={setPhotos} withCategories />
               <View style={{ marginTop: 14, gap: 4 }}>
                 {["The first photo is your cover. Pick your best one.", "Shoot in daylight, lights on, curtains open.",
                   "Include every bedroom, the bathroom and the view."].map((t) => (

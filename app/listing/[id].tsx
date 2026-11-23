@@ -30,6 +30,7 @@ import { GlassSurface } from "@/components/GlassSurface";
 import { ReportSheet } from "@/components/ReportSheet";
 import { reportContent, ReportTarget } from "@/lib/moderation";
 import { PhotoViewer } from "@/components/PhotoViewer";
+import { PhotoTour } from "@/components/PhotoTour";
 import { mealPlanName } from "@/lib/mealPlans";
 
 const W = Dimensions.get("window").width;
@@ -47,6 +48,7 @@ export default function ListingDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [imgIndex, setImgIndex] = useState(0);
   const [viewerOpen, setViewerOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
 
   // Booking state
   const [calendar, setCalendar] = useState<CalendarResponse | null>(null);
@@ -242,6 +244,13 @@ export default function ListingDetailScreen() {
                 <View key={i} style={[styles.dot, i === imgIndex && styles.dotActive]} />
               ))}
             </View>
+          )}
+          {images.length > 1 && (
+            <TouchableOpacity style={styles.tourBtn} onPress={() => setTourOpen(true)} activeOpacity={0.85}
+                              accessibilityLabel={`Show all ${images.length} photos`}>
+              <Ionicons name="grid-outline" size={13} color={Colors.charcoal} />
+              <Text style={styles.tourBtnText}>{images.length} photos</Text>
+            </TouchableOpacity>
           )}
           {/* Back button overlay */}
           <SafeAreaView style={styles.topBar} edges={["top"]}>
@@ -661,6 +670,7 @@ export default function ListingDetailScreen() {
         onSubmit={submitReport}
       />
 
+      <PhotoTour images={images} visible={tourOpen} onClose={() => setTourOpen(false)} />
       <PhotoViewer
         images={images}
         visible={viewerOpen}
@@ -701,6 +711,11 @@ const styles = StyleSheet.create({
     width: W,
     height: W * 0.75,
   },
+  tourBtn: {
+    position: "absolute", right: 12, bottom: 10, flexDirection: "row", alignItems: "center", gap: 5,
+    paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, backgroundColor: "rgba(255,255,255,0.94)",
+  },
+  tourBtnText: { fontSize: 12, fontWeight: "800", color: Colors.charcoal },
   dots: {
     position: "absolute",
     bottom: 12,

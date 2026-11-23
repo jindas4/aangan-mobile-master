@@ -3323,6 +3323,27 @@
             ],
             "title": "House Rules"
           },
+          "image_categories": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Categories"
+          },
           "images": {
             "items": {
               "type": "string"
@@ -4413,6 +4434,27 @@
               }
             ]
           },
+          "image_categories": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Categories"
+          },
           "images": {
             "default": [],
             "items": {
@@ -4571,6 +4613,17 @@
               }
             ],
             "title": "Blur"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
           },
           "id": {
             "title": "Id",
@@ -5174,6 +5227,27 @@
               }
             ],
             "title": "House Rules Set"
+          },
+          "image_categories": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Categories"
           },
           "images": {
             "anyOf": [
@@ -19203,6 +19277,73 @@
           }
         },
         "summary": "Revoke Admin",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/admin/users/{user_id}/listings": {
+      "post": {
+        "description": "Create a DRAFT listing on an existing account \u2014 for an owner who\nalready signed up, or a second property for a host. Same form and rules as\nconverting a lead (LeadConvertIn; `phone` is ignored \u2014 the account has\none). Never published from here: the owner, or the team after the owner's\nverification, publishes it through the usual gate.",
+        "operationId": "add_draft_listing_for_user_api_admin_users__user_id__listings_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadConvertIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Draft Listing For User",
         "tags": [
           "admin"
         ]

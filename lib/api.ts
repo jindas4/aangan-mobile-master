@@ -228,6 +228,8 @@ export interface ListingImage {
   label?: string;
   /** Tiny data: URI preview to show while the photo loads. In lists only the cover has one. */
   blur?: string | null;
+  /** The room it shows (lib/photoCategories.ts), or null if the host hasn't said. */
+  category?: string | null;
 }
 
 export interface ListingCard {

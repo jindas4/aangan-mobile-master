@@ -4,19 +4,29 @@
 // 12-megapixel photo of 3–5 MB goes up as a few hundred KB), at most three
 // upload at a time (twelve at once makes every one of them crawl), and a
 // failed upload is retried automatically before the host is asked to.
-import { Dispatch, SetStateAction, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Alert } from "react-native";
+// With `withCategories`, each photo gets a room tag (Bedroom, Kitchen, …) —
+// see lib/photoCategories.ts and photoCategoriesPayload().
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Alert, Modal, Pressable, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius } from "@/constants/Colors";
 import { uploadFile } from "@/lib/api";
+import { PHOTO_CATEGORIES, photoCategoryLabel } from "@/lib/photoCategories";
 
 export interface Photo {
   localUri: string;
   remoteUrl?: string;
   uploading: boolean;
   error?: string;
+  /** The room it shows, e.g. "bedroom" (lib/photoCategories.ts). */
+  category?: string | null;
+}
+
+/** What the API takes as image_categories: {url: category} for uploaded photos. */
+export function photoCategoriesPayload(photos: Photo[]): Record<string, string | null> {
+  return Object.fromEntries(photos.filter((p) => p.remoteUrl).map((p) => [p.remoteUrl!, p.category ?? null]));
 }
 
 interface Props {
@@ -24,6 +34,8 @@ interface Props {
   onChange: Dispatch<SetStateAction<Photo[]>>;
   /** Most photos allowed. Listings default to MAX_PHOTOS; reviews and claims pass their own. */
   max?: number;
+  /** Let the host tag each photo with its room. */
+  withCategories?: boolean;
 }
 
 const MAX_EDGE = 2000;          // longest side in px — listing photos are never shown larger
@@ -51,7 +63,12 @@ async function shrink(p: Picked): Promise<string> {
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function PhotoPicker({ value, onChange, max = MAX_PHOTOS }: Props) {
+export function PhotoPicker({ value, onChange, max = MAX_PHOTOS, withCategories = false }: Props) {
+  const [roomFor, setRoomFor] = useState<string | null>(null);   // localUri whose room is being picked
+  const setRoom = (uri: string, category: string | null) => {
+    onChange((prev) => prev.map((p) => (p.localUri === uri ? { ...p, category } : p)));
+    setRoomFor(null);
+  };
   // Upload queue: at most PARALLEL_UPLOADS in flight. Photos are identified by
   // the uri the picker gave us, which is also what the thumbnail shows.
   const queue = useRef<Picked[]>([]);
@@ -165,7 +182,8 @@ export function PhotoPicker({ value, onChange, max = MAX_PHOTOS }: Props) {
     <View>
       <View style={styles.grid}>
         {value.map((p, i) => (
-          <View key={p.localUri} style={styles.tile}>
+          <View key={p.localUri} style={styles.cell}>
+          <View style={[styles.tile, styles.tileFull]}>
             <Image source={{ uri: p.localUri }} style={styles.thumb} />
             {i === 0 && (
               <View style={styles.coverBadge}>
@@ -192,6 +210,17 @@ export function PhotoPicker({ value, onChange, max = MAX_PHOTOS }: Props) {
               </TouchableOpacity>
             )}
           </View>
+          {withCategories && (
+            <TouchableOpacity onPress={() => setRoomFor(p.localUri)} hitSlop={4}
+                              accessibilityLabel={`Room shown in photo ${i + 1}: ${photoCategoryLabel(p.category) || "not set"}`}
+                              style={[styles.roomChip, !p.category && styles.roomChipEmpty]}>
+              <Text numberOfLines={1} style={[styles.roomText, !p.category && styles.roomTextEmpty]}>
+                {photoCategoryLabel(p.category) || "Choose room"}
+              </Text>
+              <Ionicons name="chevron-down" size={11} color={p.category ? Colors.charcoal : Colors.charcoal3} />
+            </TouchableOpacity>
+          )}
+          </View>
         ))}
 
         {!full && (
@@ -209,7 +238,29 @@ export function PhotoPicker({ value, onChange, max = MAX_PHOTOS }: Props) {
       </View>
       <Text style={styles.count}>
         {full ? `${max} of ${max} photos added, the most allowed` : `${value.length} of ${max} photos added`}
+        {withCategories && value.length > 0 ? " · tag each photo's room so guests can tour your stay room by room" : ""}
       </Text>
+
+      <Modal visible={roomFor !== null} transparent animationType="slide" onRequestClose={() => setRoomFor(null)}>
+        <Pressable style={styles.sheetBackdrop} onPress={() => setRoomFor(null)} />
+        <View style={styles.sheet}>
+          <Text style={styles.sheetTitle}>Which room is this?</Text>
+          <ScrollView style={{ maxHeight: 420 }}>
+            {PHOTO_CATEGORIES.map(([code, label]) => {
+              const on = value.find((p) => p.localUri === roomFor)?.category === code;
+              return (
+                <TouchableOpacity key={code} style={styles.sheetRow} onPress={() => roomFor && setRoom(roomFor, code)}>
+                  <Text style={[styles.sheetText, on && styles.sheetTextOn]}>{label}</Text>
+                  {on && <Ionicons name="checkmark" size={18} color={Colors.terra} />}
+                </TouchableOpacity>
+              );
+            })}
+            <TouchableOpacity style={styles.sheetRow} onPress={() => roomFor && setRoom(roomFor, null)}>
+              <Text style={[styles.sheetText, { color: Colors.charcoal3 }]}>No room</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -227,6 +278,28 @@ const styles = StyleSheet.create({
     // several photos were added.
     gap: 10,
   },
+  cell: { width: TILE, gap: 5 },
+  tileFull: { width: "100%" },
+  roomChip: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 2,
+    borderWidth: 1, borderColor: Colors.edgeStrong, borderRadius: 8, paddingHorizontal: 7, paddingVertical: 5,
+    backgroundColor: Colors.paper,
+  },
+  roomChipEmpty: { borderStyle: "dashed" },
+  roomText: { flexShrink: 1, fontSize: 11, fontWeight: "700", color: Colors.charcoal },
+  roomTextEmpty: { color: Colors.charcoal3 },
+  sheetBackdrop: { flex: 1, backgroundColor: "rgba(31,41,55,0.4)" },
+  sheet: {
+    backgroundColor: Colors.paper, borderTopLeftRadius: 18, borderTopRightRadius: 18,
+    paddingHorizontal: 18, paddingTop: 16, paddingBottom: 34,
+  },
+  sheetTitle: { fontSize: 16, fontWeight: "800", color: Colors.charcoal, marginBottom: 6 },
+  sheetRow: {
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    paddingVertical: 13, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.edge,
+  },
+  sheetText: { fontSize: 15, color: Colors.charcoal },
+  sheetTextOn: { fontWeight: "700", color: Colors.terra },
   tile: {
     width: TILE,
     aspectRatio: 1,
