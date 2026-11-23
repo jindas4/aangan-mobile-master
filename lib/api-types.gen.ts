@@ -2457,6 +2457,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/users/{user_id}/merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Merge User
+         * @description Merge account `user_id` into `target_id` (services/account_merge.py):
+         *     its listings and host records move to the kept account, which gets the
+         *     phone/email it lacks (unverified); `user_id` is suspended. dry_run (the
+         *     default) only reports what would move.
+         */
+        post: operations["merge_user_api_admin_users__user_id__merge_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/users/{user_id}/notify": {
         parameters: {
             query?: never;
@@ -5035,6 +5058,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/uploads/video": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Video
+         * @description Store a listing video. Returns {url, key, preview_url}; save `url` on the
+         *     listing (videos[].url) with a cover image uploaded through /uploads/image.
+         */
+        post: operations["upload_video_api_uploads_video_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/webhooks/resend": {
         parameters: {
             query?: never;
@@ -5353,6 +5397,11 @@ export interface components {
              * @default true
              */
             bookings_open: boolean;
+            /**
+             * Breakdown
+             * @default []
+             */
+            breakdown: components["schemas"]["NightGroup"][];
             /** Cleaning Inr */
             cleaning_inr: number;
             /**
@@ -5540,6 +5589,14 @@ export interface components {
              */
             file: string;
         };
+        /** Body_upload_video_api_uploads_video_post */
+        Body_upload_video_api_uploads_video_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
         /** BookingCreate */
         BookingCreate: {
             /**
@@ -5622,8 +5679,12 @@ export interface components {
             nights: number;
             /** Payment Id */
             payment_id?: string | null;
+            /** Price Breakdown */
+            price_breakdown?: components["schemas"]["NightGroup"][] | null;
             /** Respond By */
             respond_by?: string | null;
+            /** Room Inr */
+            room_inr?: number | null;
             /** Service Inr */
             service_inr: number;
             /**
@@ -5734,6 +5795,8 @@ export interface components {
             nights: number;
             /** Payment Id */
             payment_id?: string | null;
+            /** Price Breakdown */
+            price_breakdown?: components["schemas"]["NightGroup"][] | null;
             /** Respond By */
             respond_by?: string | null;
             /**
@@ -5741,6 +5804,8 @@ export interface components {
              * @default false
              */
             reviewed: boolean;
+            /** Room Inr */
+            room_inr?: number | null;
             /** Service Inr */
             service_inr: number;
             /**
@@ -6883,6 +6948,11 @@ export interface components {
             /** Price Inr */
             price_inr: number;
             /**
+             * Price Periods
+             * @default []
+             */
+            price_periods: components["schemas"]["PricePeriodOut"][];
+            /**
              * Published
              * @default true
              */
@@ -6920,6 +6990,21 @@ export interface components {
             type: string;
             /** Veg Kitchen */
             veg_kitchen: boolean;
+            /**
+             * Videos
+             * @default []
+             */
+            videos: components["schemas"]["ListingVideoOut"][];
+            /**
+             * Weekend Days
+             * @default [
+             *       4,
+             *       5
+             *     ]
+             */
+            weekend_days: number[];
+            /** Weekend Price Inr */
+            weekend_price_inr?: number | null;
         };
         /** ListingCreate */
         ListingCreate: {
@@ -7032,6 +7117,8 @@ export interface components {
             pincode?: string | null;
             /** Price Inr */
             price_inr: number;
+            /** Price Periods */
+            price_periods?: components["schemas"]["PricePeriodIn"][] | null;
             /**
              * Published
              * @default true
@@ -7057,6 +7144,12 @@ export interface components {
              * @default true
              */
             veg_kitchen: boolean;
+            /** Videos */
+            videos?: components["schemas"]["ListingVideoIn"][] | null;
+            /** Weekend Days */
+            weekend_days?: number[] | null;
+            /** Weekend Price Inr */
+            weekend_price_inr?: number | null;
         };
         /** ListingImageOut */
         ListingImageOut: {
@@ -7088,6 +7181,14 @@ export interface components {
             flagged?: boolean | null;
             /** Flagged Reason */
             flagged_reason?: string | null;
+            /** Image Categories */
+            image_categories?: {
+                [key: string]: string | null;
+            } | null;
+            /** Images */
+            images?: string[] | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
             /**
              * Override Unverified Host
              * @default false
@@ -7105,6 +7206,8 @@ export interface components {
             state_code?: string | null;
             /** Title */
             title?: string | null;
+            /** Videos */
+            videos?: components["schemas"]["ListingVideoIn"][] | null;
         };
         /** ListingOut */
         ListingOut: {
@@ -7206,6 +7309,11 @@ export interface components {
             /** Price Inr */
             price_inr: number;
             /**
+             * Price Periods
+             * @default []
+             */
+            price_periods: components["schemas"]["PricePeriodOut"][];
+            /**
              * Published
              * @default true
              */
@@ -7247,6 +7355,21 @@ export interface components {
             type: string;
             /** Veg Kitchen */
             veg_kitchen: boolean;
+            /**
+             * Videos
+             * @default []
+             */
+            videos: components["schemas"]["ListingVideoOut"][];
+            /**
+             * Weekend Days
+             * @default [
+             *       4,
+             *       5
+             *     ]
+             */
+            weekend_days: number[];
+            /** Weekend Price Inr */
+            weekend_price_inr?: number | null;
         };
         /** ListingUpdate */
         ListingUpdate: {
@@ -7298,6 +7421,8 @@ export interface components {
             pincode?: string | null;
             /** Price Inr */
             price_inr?: number | null;
+            /** Price Periods */
+            price_periods?: components["schemas"]["PricePeriodIn"][] | null;
             /** Published */
             published?: boolean | null;
             /** Registration No */
@@ -7310,6 +7435,41 @@ export interface components {
             title?: string | null;
             /** Veg Kitchen */
             veg_kitchen?: boolean | null;
+            /** Videos */
+            videos?: components["schemas"]["ListingVideoIn"][] | null;
+            /** Weekend Days */
+            weekend_days?: number[] | null;
+            /** Weekend Price Inr */
+            weekend_price_inr?: number | null;
+        };
+        /** ListingVideoIn */
+        ListingVideoIn: {
+            /** Caption */
+            caption?: string | null;
+            /** Duration S */
+            duration_s?: number | null;
+            /** Poster Url */
+            poster_url?: string | null;
+            /** Url */
+            url: string;
+        };
+        /** ListingVideoOut */
+        ListingVideoOut: {
+            /** Caption */
+            caption?: string | null;
+            /** Duration S */
+            duration_s?: number | null;
+            /** Id */
+            id: number;
+            /**
+             * Position
+             * @default 0
+             */
+            position: number;
+            /** Poster Url */
+            poster_url?: string | null;
+            /** Url */
+            url: string;
         };
         /**
          * MealPlanOption
@@ -7373,6 +7533,24 @@ export interface components {
             provider: string;
             /** Token */
             token: string;
+        };
+        /**
+         * NightGroup
+         * @description Nights of a stay at one price: "3 weeknights × ₹4,000".
+         */
+        NightGroup: {
+            /** Amount Inr */
+            amount_inr: number;
+            /** First */
+            first?: string | null;
+            /** Kind */
+            kind: string;
+            /** Label */
+            label?: string | null;
+            /** Nights */
+            nights: number;
+            /** Rate Inr */
+            rate_inr: number;
         };
         /** NotifyRequest */
         NotifyRequest: {
@@ -7689,6 +7867,42 @@ export interface components {
             tags?: string[];
             /** Title */
             title: string;
+        };
+        /** PricePeriodIn */
+        PricePeriodIn: {
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** Label */
+            label: string;
+            /** Price Inr */
+            price_inr: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+        };
+        /** PricePeriodOut */
+        PricePeriodOut: {
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+            /** Id */
+            id?: number | null;
+            /** Label */
+            label: string;
+            /** Price Inr */
+            price_inr: number;
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
         };
         /** PropertyCaptureCreate */
         PropertyCaptureCreate: {
@@ -8388,6 +8602,21 @@ export interface components {
             code?: string | null;
             /** Vpa */
             vpa: string;
+        };
+        /** UserMergeIn */
+        UserMergeIn: {
+            /**
+             * Dry Run
+             * @default true
+             */
+            dry_run: boolean;
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+            /** Target Id */
+            target_id: string;
         };
         /** UserOut */
         UserOut: {
@@ -14034,6 +14263,43 @@ export interface operations {
             };
         };
     };
+    merge_user_api_admin_users__user_id__merge_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserMergeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     notify_user_admin_api_admin_users__user_id__notify_post: {
         parameters: {
             query?: never;
@@ -18882,6 +19148,41 @@ export interface operations {
         requestBody: {
             content: {
                 "multipart/form-data": components["schemas"]["Body_upload_image_api_uploads_image_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_video_api_uploads_video_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_video_api_uploads_video_post"];
             };
         };
         responses: {

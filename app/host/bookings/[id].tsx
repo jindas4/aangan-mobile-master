@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { nightGroupLabel, roomTotal } from "@/lib/nightPrices";
 import { mealPlanName } from "@/lib/mealPlans";
 import { DamageClaim } from "@/components/DamageClaim";
 import {
@@ -204,8 +205,9 @@ export default function HostBookingDetailScreen() {
         {/* Pricing */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Pricing</Text>
-          {/* A booking's nightly_inr is the per-night rate (booking_svc sets it from the listing price). */}
-          <PriceRow label={`${inr(booking.nightly_inr)} × ${booking.nights} night${booking.nights === 1 ? "" : "s"}`} value={inr(booking.nightly_inr * booking.nights)} />
+          {booking.price_breakdown?.length
+            ? booking.price_breakdown.map((g, i) => <PriceRow key={i} label={nightGroupLabel(g)} value={inr(g.amount_inr)} />)
+            : <PriceRow label={`${inr(booking.nightly_inr)} × ${booking.nights} night${booking.nights === 1 ? "" : "s"}`} value={inr(roomTotal(booking))} />}
           <PriceRow label="Cleaning fee" value={inr(booking.cleaning_inr)} />
           {(booking.meals_inr ?? 0) > 0 ? (
             <PriceRow label={`Meals · ${mealPlanName(booking.meal_plan)} (${inr(booking.meal_rate_inr ?? 0)} × ${booking.guests} × ${booking.nights})`}

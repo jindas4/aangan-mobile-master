@@ -533,6 +533,14 @@
             "title": "Bookings Open",
             "type": "boolean"
           },
+          "breakdown": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/NightGroup"
+            },
+            "title": "Breakdown",
+            "type": "array"
+          },
           "cleaning_inr": {
             "title": "Cleaning Inr",
             "type": "integer"
@@ -909,6 +917,20 @@
         "title": "Body_upload_receipt_api_admin_expenses__claim_id__items__item_id__receipts_post",
         "type": "object"
       },
+      "Body_upload_video_api_uploads_video_post": {
+        "properties": {
+          "file": {
+            "format": "binary",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_video_api_uploads_video_post",
+        "type": "object"
+      },
       "BookingCreate": {
         "properties": {
           "end_date": {
@@ -1084,6 +1106,20 @@
             ],
             "title": "Payment Id"
           },
+          "price_breakdown": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/NightGroup"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Breakdown"
+          },
           "respond_by": {
             "anyOf": [
               {
@@ -1095,6 +1131,17 @@
               }
             ],
             "title": "Respond By"
+          },
+          "room_inr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room Inr"
           },
           "service_inr": {
             "title": "Service Inr",
@@ -1377,6 +1424,20 @@
             ],
             "title": "Payment Id"
           },
+          "price_breakdown": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/NightGroup"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Breakdown"
+          },
           "respond_by": {
             "anyOf": [
               {
@@ -1393,6 +1454,17 @@
             "default": false,
             "title": "Reviewed",
             "type": "boolean"
+          },
+          "room_inr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Room Inr"
           },
           "service_inr": {
             "title": "Service Inr",
@@ -4253,6 +4325,14 @@
             "title": "Price Inr",
             "type": "integer"
           },
+          "price_periods": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PricePeriodOut"
+            },
+            "title": "Price Periods",
+            "type": "array"
+          },
           "published": {
             "default": true,
             "title": "Published",
@@ -4325,6 +4405,36 @@
           "veg_kitchen": {
             "title": "Veg Kitchen",
             "type": "boolean"
+          },
+          "videos": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ListingVideoOut"
+            },
+            "title": "Videos",
+            "type": "array"
+          },
+          "weekend_days": {
+            "default": [
+              4,
+              5
+            ],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Weekend Days",
+            "type": "array"
+          },
+          "weekend_price_inr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Price Inr"
           }
         },
         "required": [
@@ -4570,6 +4680,20 @@
             "title": "Price Inr",
             "type": "integer"
           },
+          "price_periods": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PricePeriodIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Periods"
+          },
           "published": {
             "default": true,
             "title": "Published",
@@ -4625,6 +4749,49 @@
             "default": true,
             "title": "Veg Kitchen",
             "type": "boolean"
+          },
+          "videos": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ListingVideoIn"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Videos"
+          },
+          "weekend_days": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 7,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Days"
+          },
+          "weekend_price_inr": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1000000.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Price Inr"
           }
         },
         "required": [
@@ -4746,6 +4913,55 @@
             ],
             "title": "Flagged Reason"
           },
+          "image_categories": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Categories"
+          },
+          "images": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Images"
+          },
+          "master_bedroom_no": {
+            "anyOf": [
+              {
+                "maximum": 30.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Master Bedroom No"
+          },
           "override_unverified_host": {
             "default": false,
             "title": "Override Unverified Host",
@@ -4820,6 +5036,21 @@
               }
             ],
             "title": "Title"
+          },
+          "videos": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ListingVideoIn"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Videos"
           }
         },
         "title": "ListingModerate",
@@ -5013,6 +5244,14 @@
             "title": "Price Inr",
             "type": "integer"
           },
+          "price_periods": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PricePeriodOut"
+            },
+            "title": "Price Periods",
+            "type": "array"
+          },
           "published": {
             "default": true,
             "title": "Published",
@@ -5107,6 +5346,36 @@
           "veg_kitchen": {
             "title": "Veg Kitchen",
             "type": "boolean"
+          },
+          "videos": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ListingVideoOut"
+            },
+            "title": "Videos",
+            "type": "array"
+          },
+          "weekend_days": {
+            "default": [
+              4,
+              5
+            ],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Weekend Days",
+            "type": "array"
+          },
+          "weekend_price_inr": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Price Inr"
           }
         },
         "required": [
@@ -5425,6 +5694,20 @@
             ],
             "title": "Price Inr"
           },
+          "price_periods": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PricePeriodIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Periods"
+          },
           "published": {
             "anyOf": [
               {
@@ -5495,9 +5778,159 @@
               }
             ],
             "title": "Veg Kitchen"
+          },
+          "videos": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ListingVideoIn"
+                },
+                "maxItems": 5,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Videos"
+          },
+          "weekend_days": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 7,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Days"
+          },
+          "weekend_price_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Price Inr"
           }
         },
         "title": "ListingUpdate",
+        "type": "object"
+      },
+      "ListingVideoIn": {
+        "properties": {
+          "caption": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "maximum": 600.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "poster_url": {
+            "anyOf": [
+              {
+                "maxLength": 600,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Poster Url"
+          },
+          "url": {
+            "maxLength": 600,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "ListingVideoIn",
+        "type": "object"
+      },
+      "ListingVideoOut": {
+        "properties": {
+          "caption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Caption"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "position": {
+            "default": 0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "poster_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Poster Url"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url"
+        ],
+        "title": "ListingVideoOut",
         "type": "object"
       },
       "MealPlanOption": {
@@ -5662,6 +6095,57 @@
           "token"
         ],
         "title": "MobileTokenLogin",
+        "type": "object"
+      },
+      "NightGroup": {
+        "description": "Nights of a stay at one price: \"3 weeknights \u00d7 \u20b94,000\".",
+        "properties": {
+          "amount_inr": {
+            "title": "Amount Inr",
+            "type": "integer"
+          },
+          "first": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "nights": {
+            "title": "Nights",
+            "type": "integer"
+          },
+          "rate_inr": {
+            "title": "Rate Inr",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "rate_inr",
+          "nights",
+          "amount_inr"
+        ],
+        "title": "NightGroup",
         "type": "object"
       },
       "NotifyRequest": {
@@ -6380,6 +6864,81 @@
           "title"
         ],
         "title": "PostWrite",
+        "type": "object"
+      },
+      "PricePeriodIn": {
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 60,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "price_inr": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Price Inr",
+            "type": "integer"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "start_date",
+          "end_date",
+          "price_inr"
+        ],
+        "title": "PricePeriodIn",
+        "type": "object"
+      },
+      "PricePeriodOut": {
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "price_inr": {
+            "title": "Price Inr",
+            "type": "integer"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "start_date",
+          "end_date",
+          "price_inr"
+        ],
+        "title": "PricePeriodOut",
         "type": "object"
       },
       "PropertyCaptureCreate": {
@@ -7881,6 +8440,32 @@
           "vpa"
         ],
         "title": "UpiSubmit",
+        "type": "object"
+      },
+      "UserMergeIn": {
+        "properties": {
+          "dry_run": {
+            "default": true,
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Reason",
+            "type": "string"
+          },
+          "target_id": {
+            "maxLength": 32,
+            "minLength": 4,
+            "title": "Target Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_id"
+        ],
+        "title": "UserMergeIn",
         "type": "object"
       },
       "UserOut": {
@@ -19421,6 +20006,73 @@
         ]
       }
     },
+    "/api/admin/users/{user_id}/merge": {
+      "post": {
+        "description": "Merge account `user_id` into `target_id` (services/account_merge.py):\nits listings and host records move to the kept account, which gets the\nphone/email it lacks (unverified); `user_id` is suspended. dry_run (the\ndefault) only reports what would move.",
+        "operationId": "merge_user_api_admin_users__user_id__merge_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserMergeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Merge User",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/users/{user_id}/notify": {
       "post": {
         "description": "Direct WhatsApp/SMS to a user \u2014 'your payout is released', 'your KYC\nwas rejected because\u2026'. Available to support agents too (this IS customer\ncare), audited with the full message so there's a record of what was said.\nBest-effort delivery: WhatsApp if possible, SMS fallback (services/\nnotifications.notify_user).",
@@ -27869,6 +28521,64 @@
           }
         },
         "summary": "Upload Image",
+        "tags": [
+          "uploads"
+        ]
+      }
+    },
+    "/api/uploads/video": {
+      "post": {
+        "description": "Store a listing video. Returns {url, key, preview_url}; save `url` on the\nlisting (videos[].url) with a cover image uploaded through /uploads/image.",
+        "operationId": "upload_video_api_uploads_video_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_video_api_uploads_video_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Video",
         "tags": [
           "uploads"
         ]

@@ -26,6 +26,9 @@ import { Colors, Radius } from "@/constants/Colors";
 import { AMENITIES } from "@/constants/Amenities";
 import { Button } from "@/components/Button";
 import { PhotoPicker, Photo, photoCategoriesPayload } from "@/components/PhotoPicker";
+import { VideoPicker, videosPayload, type VideoItem } from "@/components/VideoPicker";
+import { EMPTY_NIGHT_PRICES, NightPricesEditor, nightPricesError, nightPricesPayload,
+         type NightPricesValue } from "@/components/NightPricesEditor";
 import { StatePinFields, useStates } from "@/components/StatePinFields";
 import { ListingGst, type GstStatus } from "@/components/ListingGst";
 
@@ -92,6 +95,8 @@ const EMPTY = {
   veg_kitchen: false, jain_friendly: false,
   rules: EMPTY_HOUSE_RULES as HouseRulesValue,
   meals: EMPTY_MEAL_PLANS as MealPlansValue,
+  nightPrices: EMPTY_NIGHT_PRICES as NightPricesValue,   // sent as weekend_price_inr, weekend_days, price_periods
+  videos: [] as VideoItem[],
   reg_no: "",
   amenities: [] as string[],
 };
@@ -122,7 +127,8 @@ export default function NewListingScreen() {
   const isRoom = !!typeCard?.room;
   const images = photos.filter((p) => p.remoteUrl).map((p) => p.remoteUrl!);
   const cats = photos.filter((p) => p.remoteUrl).map((p) => p.category ?? null);   // rooms, saved with the draft
-  const uploading = photos.some((p) => p.uploading);
+  const [videosBusy, setVideosBusy] = useState(false);
+  const uploading = photos.some((p) => p.uploading) || videosBusy;
   const price = parseInt(form.price) || 0;
   const cleaning = Math.max(parseInt(form.cleaning) || 0, 0);
 
@@ -183,7 +189,9 @@ export default function NewListingScreen() {
       case "describe":
         return form.title.trim().length < 4 ? "Give your place a title (at least 4 characters)." : null;
       case "price":
-        return price > 0 ? mealPlansError(form.meals ?? EMPTY_MEAL_PLANS) : "Set a price per night.";
+        return price > 0
+          ? mealPlansError(form.meals ?? EMPTY_MEAL_PLANS) || nightPricesError(form.nightPrices ?? EMPTY_NIGHT_PRICES)
+          : "Set a price per night.";
       case "rules":
         return isHHMM(form.checkin) && isHHMM(form.checkout) ? null : "Enter check-in and check-out as HH:MM, e.g. 14:00.";
       default: return null;
@@ -272,6 +280,9 @@ export default function NewListingScreen() {
           checkin_time: form.checkin.trim(), checkout_time: form.checkout.trim(),
           ...form.rules,
           meal_plans: mealPlansPayload(form.meals ?? EMPTY_MEAL_PLANS),
+          ...nightPricesPayload(form.nightPrices ?? EMPTY_NIGHT_PRICES),
+          weekend_price_inr: nightPricesPayload(form.nightPrices ?? EMPTY_NIGHT_PRICES).weekend_price_inr || null,
+          videos: videosPayload(form.videos ?? []),
           registration_no: form.reg_no.trim() || null,
           images, image_categories: photoCategoriesPayload(photos), published,
           master_bedroom_no: !isRoom && masterNo && masterNo <= form.bedrooms ? masterNo : null,
@@ -433,6 +444,11 @@ export default function NewListingScreen() {
               <PhotoPicker value={photos} onChange={setPhotos} withCategories
                            bedrooms={isRoom ? 1 : form.bedrooms} baths={form.baths}
                            masterBedroomNo={masterNo} onMasterChange={setMasterNo} />
+              <View style={{ marginTop: 16 }}>
+                <Field label="Videos (optional)">
+                  <VideoPicker value={form.videos ?? []} onChange={(v) => set("videos", v)} onBusyChange={setVideosBusy} />
+                </Field>
+              </View>
               <View style={{ marginTop: 14, gap: 4 }}>
                 {["The first photo is your cover. Pick your best one.", "Shoot in daylight, lights on, curtains open.",
                   "Include every bedroom, the bathroom and the view."].map((t) => (
@@ -504,6 +520,10 @@ export default function NewListingScreen() {
                 </Text>
               )}
               <PayoutPreview price={price} cleaning={cleaning} />
+              <Field label="Weekend and holiday prices (optional)">
+                <NightPricesEditor value={form.nightPrices ?? EMPTY_NIGHT_PRICES} onChange={(v) => set("nightPrices", v)}
+                                   basePrice={price || undefined} />
+              </Field>
               <Field label="Meal plans (optional)">
                 <MealPlansEditor value={form.meals ?? EMPTY_MEAL_PLANS} onChange={(v) => set("meals", v)} />
               </Field>
@@ -589,7 +609,7 @@ export default function NewListingScreen() {
             </TouchableOpacity>
           ) : <View style={{ flex: 1 }} />}
           {last ? (
-            <Button title={blocked ? (pending === "draft" ? "Saving…" : "Save draft") : pending === "publish" ? "Publishing…" : uploading ? "Uploading photos…" : "Publish listing"}
+            <Button title={blocked ? (pending === "draft" ? "Saving…" : "Save draft") : pending === "publish" ? "Publishing…" : uploading ? "Uploading…" : "Publish listing"}
                     onPress={() => submit(!blocked)} disabled={!!pending || uploading} loading={!!pending} size="lg" style={{ flex: 1.4 }} />
           ) : (
             <Button title={step === STEPS.length - 2 ? "Review" : "Next"} onPress={next} size="lg" style={{ flex: 1.4 }} />

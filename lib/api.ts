@@ -153,17 +153,18 @@ function safeParse(t: string) {
   }
 }
 
-export async function uploadFile<T = any>(path: string, uri: string, filename: string): Promise<T> {
+export async function uploadFile<T = any>(path: string, uri: string, filename: string,
+                                        type = "image/jpeg", timeoutMs = 60_000): Promise<T> {
   const headers: Record<string, string> = {};
   const token = getToken();
   if (token) headers["authorization"] = `Bearer ${token}`;
   const fd = new FormData();
-  fd.append("file", { uri, name: filename, type: "image/jpeg" } as any);
+  fd.append("file", { uri, name: filename, type } as any);
   let res: Response;
   try {
     // Uploads get a longer deadline (large photos on slow uplinks), no retry —
     // the PhotoPicker UI already has per-image retry.
-    res = await fetchWithTimeout(`${API_BASE}${path}`, { method: "POST", body: fd, headers }, 60_000);
+    res = await fetchWithTimeout(`${API_BASE}${path}`, { method: "POST", body: fd, headers }, timeoutMs);
   } catch (e: any) {
     throw new ApiError(
       e?.name === "AbortError"
@@ -265,6 +266,13 @@ export interface ListingCard {
   baths: number;
   /** Which bedroom number is the master; null = none named. */
   master_bedroom_no?: number | null;
+  /** Short videos of the home, in order. */
+  videos?: import("./nightPrices").ListingVideo[];
+  /** Weekend price per night (null = price_inr every night) and which nights count (0 Mon … 6 Sun). */
+  weekend_price_inr?: number | null;
+  weekend_days?: number[];
+  /** Special prices for dates (festivals, holidays, seasons), from today on; they win over both. */
+  price_periods?: import("./nightPrices").PricePeriod[];
   instant_book: boolean;
   /** What a guest gets back on cancelling: the standard tiers, or nothing. */
   cancellation_policy?: "flexible" | "non_refundable";
@@ -332,8 +340,11 @@ export interface BookingOut {
   checkout_time?: string | null;
   /** Request to book: the host must accept or decline by then (ISO time); null otherwise. */
   respond_by?: string | null;
-  /** Per-night rate on a booking (the stay costs nightly_inr × nights). */
+  /** Per-night rate on a booking; the average when nights are priced differently. */
   nightly_inr: number;
+  /** All nights' room charges (null on older bookings: nightly_inr × nights) and how they add up. Use roomTotal(). */
+  room_inr?: number | null;
+  price_breakdown?: import("./nightPrices").NightGroup[] | null;
   cleaning_inr: number;
   /** Meal plan code (null on older bookings = room only), rate per guest per night, and the meals total. */
   meal_plan?: string | null;
@@ -396,6 +407,8 @@ export interface AvailabilityResponse {
   nights_total_inr?: number;
   /** Deprecated — the total for all nights, not a per-night rate. */
   nightly_inr: number;
+  /** How the nights add up when priced differently; [] = all at price_per_night_inr (then the average). */
+  breakdown?: import("./nightPrices").NightGroup[];
   cleaning_inr: number;
   /** The meal plan this quote is for, its rate per guest per night, and rate × guests × nights. */
   meal_plan?: string;

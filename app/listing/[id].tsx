@@ -31,6 +31,8 @@ import { ReportSheet } from "@/components/ReportSheet";
 import { reportContent, ReportTarget } from "@/lib/moderation";
 import { PhotoViewer } from "@/components/PhotoViewer";
 import { PhotoTour } from "@/components/PhotoTour";
+import { ListingVideos } from "@/components/ListingVideos";
+import { hasNightPrices, nightGroupLabel, periodDates, weekendDaysLabel } from "@/lib/nightPrices";
 import { mealPlanName } from "@/lib/mealPlans";
 
 const W = Dimensions.get("window").width;
@@ -366,11 +368,28 @@ export default function ListingDetailScreen() {
             </TouchableOpacity>
           </View>
 
+          <ListingVideos videos={listing.videos} />
+
           {/* Description */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>About this place</Text>
             <Text style={styles.description}>{listing.description}</Text>
           </View>
+
+          {/* Weekend and special-date prices */}
+          {hasNightPrices(listing) ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Prices by night</Text>
+              <QuoteLine label="Weeknights" value={inr(listing.price_inr)} />
+              {listing.weekend_price_inr ? (
+                <QuoteLine label={`Weekends (${weekendDaysLabel(listing.weekend_days)})`} value={inr(listing.weekend_price_inr)} />
+              ) : null}
+              {(listing.price_periods || []).slice(0, 8).map((p) => (
+                <QuoteLine key={`${p.start_date}-${p.label}`} label={`${p.label} · ${periodDates(p)}`} value={inr(p.price_inr)} />
+              ))}
+              <Text style={{ fontSize: 12.5, color: Colors.charcoal3, marginTop: 6 }}>Your total adds up each night's price for your dates.</Text>
+            </View>
+          ) : null}
 
           {listing.state_registered ? (
             <View style={styles.section}>
@@ -597,10 +616,14 @@ export default function ListingDetailScreen() {
               <View style={styles.quoteCard}>
                 {/* Rate × nights = total for the nights. (quote.nightly_inr is the old
                     name for that total — a fallback until every server has the new fields.) */}
-                <QuoteLine
-                  label={`${inr(quote.price_per_night_inr ?? listing.price_inr)} × ${quote.nights} night${quote.nights === 1 ? "" : "s"}`}
-                  value={inr(quote.nights_total_inr ?? quote.nightly_inr)}
-                />
+                {quote.breakdown?.length ? quote.breakdown.map((g, i) => (
+                  <QuoteLine key={i} label={nightGroupLabel(g)} value={inr(g.amount_inr)} />
+                )) : (
+                  <QuoteLine
+                    label={`${inr(quote.price_per_night_inr ?? listing.price_inr)} × ${quote.nights} night${quote.nights === 1 ? "" : "s"}`}
+                    value={inr(quote.nights_total_inr ?? quote.nightly_inr)}
+                  />
+                )}
                 <QuoteLine label="Cleaning fee" value={inr(quote.cleaning_inr)} />
                 {(quote.meals_inr ?? 0) > 0 ? (
                   <QuoteLine

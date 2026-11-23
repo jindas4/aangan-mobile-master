@@ -32,6 +32,8 @@ import { EMPTY_MEAL_PLANS, MealPlansEditor, mealPlansError, mealPlansFromOptions
 import { Button } from "@/components/Button";
 import { PhotoViewer } from "@/components/PhotoViewer";
 import { HostPhotosEditor } from "@/components/HostPhotosEditor";
+import { HostVideosEditor } from "@/components/VideoPicker";
+import { HostNightPrices } from "@/components/NightPricesEditor";
 import { roomLabel } from "@/lib/photoCategories";
 
 const W = Dimensions.get("window").width;
@@ -352,6 +354,8 @@ export default function ManageListingScreen() {
 
           {/* Photos: add, remove, reorder, tag by room */}
           <HostPhotosEditor listing={listing} onSaved={(l) => { setListing(l); setImgIndex(0); }} />
+          <HostVideosEditor listing={listing} onSaved={setListing} />
+          <HostNightPrices listing={listing} onSaved={setListing} />
 
           {/* URL card — only once the listing is live */}
           {!isDraft && (
