@@ -22,7 +22,6 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export type RuleKey = "couples" | "local_id" | "pet_friendly" | "alcohol";
 export interface SearchQuery {
   where: string;
   scene: Scene | null;
@@ -31,16 +30,43 @@ export interface SearchQuery {
   checkOut: string;
   priceMin: string;
   priceMax: string;
-  instant: boolean;
-  veg: boolean;
-  rules: Partial<Record<RuleKey, boolean>>;
+  /** Ids from MUST_HAVES that are switched on. */
+  musts: string[];
 }
 export type SearchStep = "where" | "when" | "who" | "filters";
 
 export const EMPTY_QUERY: SearchQuery = {
   where: "", scene: null, guests: 1, checkIn: "", checkOut: "",
-  priceMin: "", priceMax: "", instant: false, veg: false, rules: {},
+  priceMin: "", priceMax: "", musts: [],
 };
+
+/** What travellers in India actually filter on. Each one is a real search
+ *  filter: a yes/no field hosts set (`param`) or an amenity hosts tick when
+ *  listing (`amenity`). Never add one no listing can match. Mirrors the
+ *  website (frontend/components/v2/SearchBar.tsx). */
+type MustHave = { id: string; label: string; icon: keyof typeof Ionicons.glyphMap; param?: string; amenity?: string };
+export const MUST_HAVE_GROUPS: { title: string; items: MustHave[] }[] = [
+  { title: "Comfort", items: [
+    { id: "ac",      label: "Air conditioning", icon: "snow-outline",        amenity: "Air conditioning" },
+    { id: "power",   label: "Power backup",     icon: "flash-outline",       param: "power_backup" },
+    { id: "wifi",    label: "Wifi",             icon: "wifi-outline",        amenity: "Wifi" },
+    { id: "parking", label: "Free parking",     icon: "car-outline",         amenity: "Free parking" },
+    { id: "lift",    label: "Lift",             icon: "swap-vertical-outline", amenity: "Elevator" },
+  ] },
+  { title: "Food", items: [
+    { id: "veg",       label: "Veg kitchen",        icon: "leaf-outline",       param: "veg" },
+    { id: "jain",      label: "Jain food",          icon: "nutrition-outline",  param: "jain" },
+    { id: "breakfast", label: "Breakfast included", icon: "cafe-outline",       amenity: "Breakfast" },
+    { id: "alcohol",   label: "Alcohol allowed",    icon: "wine-outline",       param: "alcohol" },
+  ] },
+  { title: "Booking & house rules", items: [
+    { id: "instant",  label: "Instant book",      icon: "calendar-outline", param: "instant" },
+    { id: "couples",  label: "Couples welcome",   icon: "heart-outline",    param: "couples" },
+    { id: "local_id", label: "Local ID accepted", icon: "card-outline",     param: "local_id" },
+    { id: "pets",     label: "Pets welcome",      icon: "paw-outline",      param: "pet_friendly" },
+  ] },
+];
+const MUST_HAVES = MUST_HAVE_GROUPS.flatMap((g) => g.items);
 
 /** /api/listings query string for a search. */
 export function queryString(q: SearchQuery, extra: Record<string, string> = {}): string {
@@ -48,9 +74,10 @@ export function queryString(q: SearchQuery, extra: Record<string, string> = {}):
   if (q.where.trim()) qs.set("where", q.where.trim());
   if (q.scene) qs.set("scene", q.scene);
   if (q.guests > 1) qs.set("guests", String(q.guests));
-  if (q.instant) qs.set("instant", "true");
-  if (q.veg) qs.set("veg", "true");
-  for (const [k, on] of Object.entries(q.rules)) if (on) qs.set(k, "true");
+  const on = MUST_HAVES.filter((m) => q.musts.includes(m.id));
+  on.forEach((m) => { if (m.param) qs.set(m.param, "true"); });
+  const amenities = on.flatMap((m) => (m.amenity ? [m.amenity] : []));
+  if (amenities.length) qs.set("amenities", amenities.join(","));
   if (q.checkIn && q.checkOut) { qs.set("start_date", q.checkIn); qs.set("end_date", q.checkOut); }
   if (q.priceMin.trim()) qs.set("price_min", q.priceMin.trim());
   if (q.priceMax.trim()) qs.set("price_max", q.priceMax.trim());
@@ -59,8 +86,7 @@ export function queryString(q: SearchQuery, extra: Record<string, string> = {}):
 }
 
 export function filterCount(q: SearchQuery): number {
-  return (q.priceMin || q.priceMax ? 1 : 0) + (q.scene ? 1 : 0) + (q.instant ? 1 : 0) + (q.veg ? 1 : 0)
-    + Object.values(q.rules).filter(Boolean).length;
+  return (q.priceMin || q.priceMax ? 1 : 0) + (q.scene ? 1 : 0) + q.musts.length;
 }
 
 export function datesSummary(q: SearchQuery): string {
@@ -81,14 +107,6 @@ const PRICE_PRESETS = [
   { label: "₹3,000–6,000", min: "3000", max: "6000" },
   { label: "₹6,000–10,000", min: "6000", max: "10000" },
   { label: "₹10,000+", min: "10000", max: "" },
-];
-const MUSTS: { key: "instant" | "veg" | RuleKey; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: "instant", label: "Instant book", icon: "flash-outline" },
-  { key: "veg", label: "Veg kitchen", icon: "leaf-outline" },
-  { key: "couples", label: "Couples welcome", icon: "heart-outline" },
-  { key: "local_id", label: "Local ID accepted", icon: "card-outline" },
-  { key: "pet_friendly", label: "Pets welcome", icon: "paw-outline" },
-  { key: "alcohol", label: "Alcohol allowed", icon: "wine-outline" },
 ];
 const HUBS = Object.keys(WEEKEND_GETAWAYS);
 
@@ -358,12 +376,8 @@ function Chip({ on, label, icon, onPress }: { on: boolean; label: string; icon?:
 
 function FiltersPanel({ q, set }: { q: SearchQuery; set: (p: Partial<SearchQuery>) => void }) {
   const preset = (p: { min: string; max: string }) => q.priceMin === p.min && q.priceMax === p.max;
-  const isOn = (k: (typeof MUSTS)[number]["key"]) => (k === "instant" ? q.instant : k === "veg" ? q.veg : !!q.rules[k]);
-  const toggle = (k: (typeof MUSTS)[number]["key"]) => {
-    if (k === "instant") set({ instant: !q.instant });
-    else if (k === "veg") set({ veg: !q.veg });
-    else set({ rules: { ...q.rules, [k]: !q.rules[k] } });
-  };
+  const toggle = (id: string) =>
+    set({ musts: q.musts.includes(id) ? q.musts.filter((x) => x !== id) : [...q.musts, id] });
   return (
     <View style={{ gap: 22 }}>
       <View>
@@ -392,8 +406,15 @@ function FiltersPanel({ q, set }: { q: SearchQuery; set: (p: Partial<SearchQuery
       </View>
       <View>
         <Text style={s.kicker}>MUST-HAVES</Text>
-        <View style={s.wrap}>
-          {MUSTS.map((m) => <Chip key={m.key} label={m.label} icon={m.icon} on={isOn(m.key)} onPress={() => toggle(m.key)} />)}
+        <View style={{ gap: 14 }}>
+          {MUST_HAVE_GROUPS.map((g) => (
+            <View key={g.title}>
+              <Text style={s.groupTitle}>{g.title}</Text>
+              <View style={s.wrap}>
+                {g.items.map((m) => <Chip key={m.id} label={m.label} icon={m.icon} on={q.musts.includes(m.id)} onPress={() => toggle(m.id)} />)}
+              </View>
+            </View>
+          ))}
         </View>
       </View>
     </View>
@@ -430,6 +451,7 @@ const s = StyleSheet.create({
   rowTitle: { fontSize: 15, fontWeight: "700", color: Colors.charcoal },
   rowSub: { fontSize: 13, color: Colors.charcoal3, marginTop: 1 },
   kicker: { fontSize: 11.5, fontWeight: "800", letterSpacing: 1.2, color: Colors.charcoal3, marginBottom: 8 },
+  groupTitle: { fontSize: 12.5, fontWeight: "700", color: Colors.charcoal2, marginBottom: 8 },
   hubHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 4 },
   hubs: { flexDirection: "row", padding: 2, borderRadius: 999, backgroundColor: TILE, marginBottom: 8 },
   hub: { paddingHorizontal: 9, height: 28, borderRadius: 999, justifyContent: "center" },
