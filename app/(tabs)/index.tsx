@@ -108,7 +108,7 @@ export default function HomeScreen() {
         {/* Search bar */}
         <TouchableOpacity
           style={styles.searchBar}
-          onPress={() => router.push("/search")}
+          onPress={() => router.push("/search?open=1")}
           activeOpacity={0.9}
           testID="search-bar"
           accessibilityLabel="Where to?"

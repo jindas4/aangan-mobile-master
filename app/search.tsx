@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   FlatList,
+  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -12,12 +12,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { api, ListingCard as LC, Scene } from "@/lib/api";
-import { Colors, Fonts, Radius } from "@/constants/Colors";
+import { Colors, Radius, Shadows } from "@/constants/Colors";
 import { ListingCardItem } from "@/components/ListingCard";
 import { EmptyState } from "@/components/EmptyState";
-import { DateRangeCalendar } from "@/components/DateRangeCalendar";
-import { GlassSheet } from "@/components/GlassSheet";
-import { shortDate } from "@/lib/format";
+import {
+  SearchSheet, EMPTY_QUERY, queryString, filterCount, datesSummary, guestsSummary,
+  type SearchQuery, type SearchStep,
+} from "@/components/SearchSheet";
 
 const PAGE = 40;
 
@@ -30,34 +31,17 @@ const SORTS: { label: string; value: Sort }[] = [
   { label: "Newest", value: "newest" },
 ];
 
-const SCENES: { label: string; value: Scene }[] = [
-  { label: "Mountains", value: "mountain" },
-  { label: "Beaches", value: "beach" },
-  { label: "Heritage", value: "heritage" },
-  { label: "Forests", value: "forest" },
-  { label: "Backwaters", value: "backwater" },
-  { label: "Desert", value: "desert" },
-  { label: "Lakes", value: "lake" },
-  { label: "City", value: "city" },
-];
-
 export default function SearchScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ scene?: string; where?: string }>();
+  const params = useLocalSearchParams<{ scene?: string; where?: string; open?: string }>();
 
-  const [where, setWhere] = useState(params.where ?? "");
-  const [scene, setScene] = useState<Scene | null>((params.scene as Scene) ?? null);
-  const [guests, setGuests] = useState(1);
-  const [instant, setInstant] = useState(false);
-  const [veg, setVeg] = useState(false);
-  // House rules: only stays whose host has said yes.
-  const [rules, setRules] = useState<Record<string, boolean>>({});
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [datesOpen, setDatesOpen] = useState(false);
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
+  // The search that the results below are for. Changed only through the sheet.
+  const [query, setQuery] = useState<SearchQuery>(() => ({
+    ...EMPTY_QUERY, where: params.where ?? "", scene: (params.scene as Scene) ?? null,
+  }));
   const [sort, setSort] = useState<Sort>("recommended");
+  // Arriving from the home search bar opens the sheet on "Where".
+  const [sheet, setSheet] = useState<SearchStep | null>(params.open === "1" ? "where" : null);
 
   const [results, setResults] = useState<LC[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -65,44 +49,28 @@ export default function SearchScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
 
   const buildQuery = useCallback((offset: number) => {
-    const qs = new URLSearchParams();
-    if (where) qs.set("where", where);
-    if (scene) qs.set("scene", scene);
-    if (guests > 1) qs.set("guests", String(guests));
-    if (instant) qs.set("instant", "true");
-    if (veg) qs.set("veg", "true");
-    for (const [k, on] of Object.entries(rules)) if (on) qs.set(k, "true");
-    if (checkIn && checkOut) {
-      qs.set("start_date", checkIn);
-      qs.set("end_date", checkOut);
-    }
-    if (priceMin.trim()) qs.set("price_min", priceMin.trim());
-    if (priceMax.trim()) qs.set("price_max", priceMax.trim());
-    if (sort !== "recommended") qs.set("sort", sort);
-    qs.set("limit", String(PAGE));
-    if (offset > 0) qs.set("offset", String(offset));
-    return qs;
-  }, [where, scene, guests, instant, veg, rules, checkIn, checkOut, priceMin, priceMax, sort]);
+    const extra: Record<string, string> = { limit: String(PAGE) };
+    if (sort !== "recommended") extra.sort = sort;
+    if (offset > 0) extra.offset = String(offset);
+    return queryString(query, extra);
+  }, [query, sort]);
 
-  const runSearch = useCallback(async () => {
+  // Runs whenever the search or the sort changes.
+  useEffect(() => {
+    let live = true;
     setLoading(true);
-    try {
-      const data = await api<LC[]>(`/api/listings?${buildQuery(0).toString()}`);
-      setResults(data);
-      setMayHaveMore(data.length === PAGE);
-    } catch {
-      setResults([]);
-      setMayHaveMore(false);
-    } finally {
-      setLoading(false);
-    }
+    api<LC[]>(`/api/listings?${buildQuery(0)}`)
+      .then((data) => { if (live) { setResults(data); setMayHaveMore(data.length === PAGE); } })
+      .catch(() => { if (live) { setResults([]); setMayHaveMore(false); } })
+      .finally(() => { if (live) setLoading(false); });
+    return () => { live = false; };
   }, [buildQuery]);
 
   const loadMore = useCallback(async () => {
-    if (loadingMore || !mayHaveMore || !results) return;
+    if (loading || loadingMore || !mayHaveMore || !results) return;
     setLoadingMore(true);
     try {
-      const more = await api<LC[]>(`/api/listings?${buildQuery(results.length).toString()}`);
+      const more = await api<LC[]>(`/api/listings?${buildQuery(results.length)}`);
       const seen = new Set(results.map((r) => r.id));
       setResults([...results, ...more.filter((m) => !seen.has(m.id))]);
       setMayHaveMore(more.length === PAGE);
@@ -111,154 +79,55 @@ export default function SearchScreen() {
     } finally {
       setLoadingMore(false);
     }
-  }, [buildQuery, loadingMore, mayHaveMore, results]);
+  }, [buildQuery, loading, loadingMore, mayHaveMore, results]);
 
-  // Auto-run once on mount (covers arriving from the mood picker / map with
-  // params already set), then only on explicit "Search" press after that.
-  useEffect(() => {
-    runSearch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const nFilters = filterCount(query);
+  const hasDates = !!(query.checkIn && query.checkOut);
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={12} accessibilityLabel="Back">
           <Ionicons name="chevron-back" size={24} color={Colors.charcoal} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Search</Text>
-        <View style={{ width: 24 }} />
-      </View>
 
-      <View style={styles.searchBox}>
-        <Ionicons name="search" size={16} color={Colors.charcoal3} />
-        <TextInput
-          value={where}
-          onChangeText={setWhere}
-          placeholder="City, area, or country"
-          placeholderTextColor={Colors.charcoal3}
-          style={styles.searchInput}
-          onSubmitEditing={runSearch}
-          returnKeyType="search"
-        />
-      </View>
-
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={SCENES}
-        keyExtractor={(s) => s.value}
-        // A horizontal list in a column otherwise grows to fill the leftover
-        // height and stretches the chips (blank or giant capsules).
-        style={styles.chipList}
-        contentContainerStyle={styles.chipRow}
-        renderItem={({ item }) => {
-          const active = scene === item.value;
-          return (
-            <TouchableOpacity
-              style={[styles.chip, active && styles.chipActive]}
-              onPress={() => setScene(active ? null : item.value)}
-            >
-              <Text style={[styles.chipLabel, active && styles.chipLabelActive]}>{item.label}</Text>
+        {/* The current search in one line; each part opens its own step. */}
+        <View style={styles.pill}>
+          <TouchableOpacity style={styles.pillMain} onPress={() => setSheet("where")} testID="search-summary"
+                            accessibilityRole="button" accessibilityLabel="Change where">
+            <Text style={styles.pillWhere} numberOfLines={1}>{query.where || "Anywhere"}</Text>
+          </TouchableOpacity>
+          <View style={styles.pillSubRow}>
+            <TouchableOpacity onPress={() => setSheet("when")} hitSlop={6} accessibilityLabel="Change dates">
+              <Text style={[styles.pillSub, hasDates && styles.pillSubOn]} numberOfLines={1}>{datesSummary(query)}</Text>
             </TouchableOpacity>
-          );
-        }}
-      />
-
-      <View style={styles.filterRow}>
-        <View style={styles.stepper}>
-          <TouchableOpacity onPress={() => setGuests((g) => Math.max(1, g - 1))} style={styles.stepBtn}>
-            <Ionicons name="remove" size={16} color={Colors.charcoal} />
-          </TouchableOpacity>
-          <Text style={styles.stepValue}>{guests} guest{guests > 1 ? "s" : ""}</Text>
-          <TouchableOpacity onPress={() => setGuests((g) => g + 1)} style={styles.stepBtn}>
-            <Ionicons name="add" size={16} color={Colors.charcoal} />
-          </TouchableOpacity>
+            <Text style={styles.pillDot}>·</Text>
+            <TouchableOpacity onPress={() => setSheet("who")} hitSlop={6} accessibilityLabel="Change guests">
+              <Text style={[styles.pillSub, query.guests > 1 && styles.pillSubOn]} numberOfLines={1}>{guestsSummary(query.guests)}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <TouchableOpacity
-          style={[styles.toggle, instant && styles.toggleActive]}
-          onPress={() => setInstant((v) => !v)}
-        >
-          <Text style={[styles.toggleLabel, instant && styles.toggleLabelActive]}>Instant book</Text>
+
+        <TouchableOpacity style={[styles.filterBtn, nFilters > 0 && styles.filterBtnOn]} onPress={() => setSheet("filters")}
+                          accessibilityLabel={nFilters ? `Filters, ${nFilters} on` : "Filters"} testID="search-filters">
+          <Ionicons name="options-outline" size={19} color={nFilters ? Colors.paper : Colors.charcoal} />
+          {nFilters > 0 && <View style={styles.badge}><Text style={styles.badgeText}>{nFilters}</Text></View>}
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.toggle, veg && styles.toggleActive]} onPress={() => setVeg((v) => !v)}>
-          <Text style={[styles.toggleLabel, veg && styles.toggleLabelActive]}>Veg kitchen</Text>
-        </TouchableOpacity>
-        {([["couples", "Couples welcome"], ["local_id", "Local ID accepted"], ["pet_friendly", "Pets welcome"], ["alcohol", "Alcohol allowed"]] as const).map(([k, label]) => (
-          <TouchableOpacity key={k} style={[styles.toggle, rules[k] && styles.toggleActive]}
-                            accessibilityRole="switch" accessibilityState={{ checked: !!rules[k] }}
-                            onPress={() => setRules((r) => ({ ...r, [k]: !r[k] }))}>
-            <Text style={[styles.toggleLabel, rules[k] && styles.toggleLabelActive]}>{label}</Text>
-          </TouchableOpacity>
-        ))}
       </View>
 
-      {/* dates + price */}
-      <View style={styles.filterRow}>
-        <TouchableOpacity style={[styles.toggle, !!checkIn && styles.toggleDates]} onPress={() => setDatesOpen(true)}>
-          <Text style={styles.toggleLabel}>
-            {checkIn && checkOut ? `${shortDate(checkIn)} → ${shortDate(checkOut)}` : "📅 Add dates"}
-          </Text>
-        </TouchableOpacity>
-        {!!checkIn && (
-          <TouchableOpacity onPress={() => { setCheckIn(""); setCheckOut(""); }} hitSlop={8}>
-            <Ionicons name="close-circle" size={18} color={Colors.charcoal3} />
-          </TouchableOpacity>
-        )}
-        <TextInput
-          value={priceMin}
-          onChangeText={(t) => setPriceMin(t.replace(/\D/g, ""))}
-          keyboardType="number-pad"
-          placeholder="₹ min"
-          placeholderTextColor={Colors.charcoal3}
-          style={styles.priceInput}
-        />
-        <TextInput
-          value={priceMax}
-          onChangeText={(t) => setPriceMax(t.replace(/\D/g, ""))}
-          keyboardType="number-pad"
-          placeholder="₹ max"
-          placeholderTextColor={Colors.charcoal3}
-          style={styles.priceInput}
-        />
-      </View>
-
-      {/* sort */}
-      <View style={styles.filterRow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.sortList} contentContainerStyle={styles.sortRow}>
         {SORTS.map((s) => {
           const active = sort === s.value;
           return (
-            <TouchableOpacity
-              key={s.value}
-              style={[styles.toggle, active && styles.sortActive]}
-              onPress={() => setSort(s.value)}
-            >
-              <Text style={[styles.toggleLabel, active && styles.toggleLabelActive]}>{s.label}</Text>
+            <TouchableOpacity key={s.value} style={[styles.sort, active && styles.sortActive]} onPress={() => setSort(s.value)}
+                              accessibilityState={{ selected: active }}>
+              <Text style={[styles.sortLabel, active && styles.sortLabelActive]}>{s.label}</Text>
             </TouchableOpacity>
           );
         })}
-      </View>
+      </ScrollView>
 
-      {datesOpen && (
-        <GlassSheet onClose={() => setDatesOpen(false)} title="Select dates">
-          <DateRangeCalendar
-            unavailable={[]}
-            minNights={1}
-            value={{ checkIn, checkOut }}
-            onChange={(v) => {
-              setCheckIn(v.checkIn);
-              setCheckOut(v.checkOut);
-              if (v.checkIn && v.checkOut) setDatesOpen(false);
-            }}
-          />
-        </GlassSheet>
-      )}
-
-      <TouchableOpacity style={styles.searchAction} onPress={runSearch}>
-        <Text style={styles.searchActionLabel}>Search</Text>
-      </TouchableOpacity>
-
-      {loading ? (
+      {loading && !results ? (
         <ActivityIndicator style={{ marginTop: 32 }} color={Colors.terra} />
       ) : results && results.length === 0 ? (
         <EmptyState icon="search-outline" title="No stays match yet" subtitle="Try a different place or clear a filter." />
@@ -269,6 +138,7 @@ export default function SearchScreen() {
           numColumns={2}
           columnWrapperStyle={styles.row}
           contentContainerStyle={styles.list}
+          style={loading ? { opacity: 0.5 } : undefined}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => <ListingCardItem listing={item} />}
           onEndReached={loadMore}
@@ -276,108 +146,47 @@ export default function SearchScreen() {
           ListFooterComponent={loadingMore ? <ActivityIndicator style={{ marginVertical: 16 }} color={Colors.terra} /> : null}
         />
       )}
+
+      <SearchSheet
+        visible={sheet !== null}
+        initial={query}
+        startStep={sheet ?? "where"}
+        onClose={() => setSheet(null)}
+        onApply={(q) => { setQuery(q); setSheet(null); }}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: Colors.cream },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+  header: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 12, paddingTop: 4, paddingBottom: 10 },
+  pill: {
+    flex: 1, paddingHorizontal: 18, paddingVertical: 8, borderRadius: Radius.full,
+    backgroundColor: Colors.paper, borderWidth: 1, borderColor: Colors.edge, ...Shadows.pill,
   },
-  headerTitle: { fontFamily: Fonts.display, fontSize: 18, fontWeight: "700", color: Colors.charcoal },
-  searchBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginHorizontal: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: Colors.edge,
-    backgroundColor: Colors.paper,
+  pillMain: { alignSelf: "stretch" },
+  pillWhere: { fontSize: 15, fontWeight: "800", color: Colors.charcoal },
+  pillSubRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 1 },
+  pillSub: { fontSize: 12.5, fontWeight: "600", color: Colors.charcoal3 },
+  pillSubOn: { color: Colors.charcoal2 },
+  pillDot: { fontSize: 12.5, color: Colors.charcoal3 },
+  filterBtn: {
+    width: 46, height: 46, borderRadius: 23, alignItems: "center", justifyContent: "center",
+    backgroundColor: Colors.paper, borderWidth: 1, borderColor: Colors.edge,
   },
-  searchInput: { flex: 1, fontSize: 15, color: Colors.charcoal, fontFamily: Fonts.regular },
-  chipList: { flexGrow: 0, flexShrink: 0 },
-  chipRow: { paddingHorizontal: 16, paddingVertical: 12, gap: 8, alignItems: "center" },
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: Colors.edge,
-    backgroundColor: Colors.paper,
+  filterBtnOn: { backgroundColor: Colors.charcoal, borderColor: Colors.charcoal },
+  badge: {
+    position: "absolute", top: -3, right: -3, minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 4,
+    backgroundColor: Colors.terra, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: Colors.cream,
   },
-  chipActive: { backgroundColor: Colors.terra, borderColor: Colors.terra },
-  chipLabel: { fontSize: 13, fontWeight: "700", color: Colors.charcoal },
-  chipLabelActive: { color: Colors.paper },
-  filterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-    flexWrap: "wrap",
-  },
-  stepper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: Colors.edge,
-    backgroundColor: Colors.paper,
-  },
-  stepBtn: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: Colors.warmBg,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepValue: { fontSize: 13, fontWeight: "700", color: Colors.charcoal },
-  toggle: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: Colors.edge,
-    backgroundColor: Colors.paper,
-  },
-  toggleActive: { backgroundColor: Colors.veg, borderColor: Colors.veg },
-  toggleDates: { borderColor: Colors.terra },
+  badgeText: { color: Colors.paper, fontSize: 10, fontWeight: "800" },
+  sortList: { flexGrow: 0, flexShrink: 0 },
+  sortRow: { paddingHorizontal: 16, paddingBottom: 12, gap: 8, alignItems: "center" },
+  sort: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.edge, backgroundColor: Colors.paper },
   sortActive: { backgroundColor: Colors.charcoal, borderColor: Colors.charcoal },
-  priceInput: {
-    width: 84,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: Radius.full,
-    borderWidth: 1,
-    borderColor: Colors.edge,
-    backgroundColor: Colors.paper,
-    fontSize: 12.5,
-    fontWeight: "700",
-    color: Colors.charcoal,
-  },
-  toggleLabel: { fontSize: 12.5, fontWeight: "700", color: Colors.charcoal },
-  toggleLabelActive: { color: Colors.paper },
-  searchAction: {
-    marginHorizontal: 16,
-    marginBottom: 12,
-    backgroundColor: Colors.terra,
-    borderRadius: Radius.md,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  searchActionLabel: { color: Colors.paper, fontSize: 14, fontWeight: "800" },
+  sortLabel: { fontSize: 12.5, fontWeight: "700", color: Colors.charcoal },
+  sortLabelActive: { color: Colors.paper },
   list: { paddingHorizontal: 16, paddingBottom: 24 },
   row: { gap: 16 },
 });
