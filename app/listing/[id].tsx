@@ -376,8 +376,9 @@ export default function ListingDetailScreen() {
             <Text style={styles.description}>{listing.description}</Text>
           </View>
 
-          {/* Weekend and special-date prices */}
-          {hasNightPrices(listing) ? (
+          {/* Weekend and special-date prices: only the host sees the list. Guests
+              get each night's price once they pick dates (calendar + breakdown). */}
+          {user && listing.host?.id === user.id && hasNightPrices(listing) ? (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Prices by night</Text>
               <QuoteLine label="Weeknights" value={inr(listing.price_inr)} />
@@ -387,7 +388,7 @@ export default function ListingDetailScreen() {
               {(listing.price_periods || []).slice(0, 8).map((p) => (
                 <QuoteLine key={`${p.start_date}-${p.label}`} label={`${p.label} · ${periodDates(p)}`} value={inr(p.price_inr)} />
               ))}
-              <Text style={{ fontSize: 12.5, color: Colors.charcoal3, marginTop: 6 }}>Your total adds up each night's price for your dates.</Text>
+              <Text style={{ fontSize: 12.5, color: Colors.charcoal3, marginTop: 6 }}>Only you see this list. Guests see each night's price once they pick dates.</Text>
             </View>
           ) : null}
 
