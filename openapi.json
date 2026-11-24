@@ -1256,6 +1256,20 @@
         "title": "BlockList",
         "type": "object"
       },
+      "Body_add_photo_api_intake__token__photos_post": {
+        "properties": {
+          "file": {
+            "format": "binary",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_add_photo_api_intake__token__photos_post",
+        "type": "object"
+      },
       "Body_apply_api_careers_jobs__slug__apply_post": {
         "properties": {
           "city": {
@@ -3325,6 +3339,177 @@
           }
         },
         "title": "HouseRulesIn",
+        "type": "object"
+      },
+      "IntakeIn": {
+        "description": "Every field is optional while saving; submit=True asks for the photo\nconsent. Free text is checked again (for phone numbers, links\u2026) when the\nteam converts it, so here it is only trimmed and capped.",
+        "properties": {
+          "about": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "About",
+            "type": "string"
+          },
+          "address": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Address",
+            "type": "string"
+          },
+          "amenities": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 40,
+            "title": "Amenities",
+            "type": "array"
+          },
+          "area": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Area",
+            "type": "string"
+          },
+          "baths": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baths"
+          },
+          "bedrooms": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bedrooms"
+          },
+          "city": {
+            "default": "",
+            "maxLength": 80,
+            "title": "City",
+            "type": "string"
+          },
+          "consent": {
+            "default": false,
+            "title": "Consent",
+            "type": "boolean"
+          },
+          "email": {
+            "default": "",
+            "maxLength": 254,
+            "title": "Email",
+            "type": "string"
+          },
+          "guests": {
+            "anyOf": [
+              {
+                "maximum": 50.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guests"
+          },
+          "owner_name": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Owner Name",
+            "type": "string"
+          },
+          "photo_categories": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Photo Categories",
+            "type": "object"
+          },
+          "photo_order": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 40,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Photo Order"
+          },
+          "price_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Inr"
+          },
+          "property_name": {
+            "default": "",
+            "maxLength": 160,
+            "title": "Property Name",
+            "type": "string"
+          },
+          "scene": {
+            "default": "",
+            "maxLength": 20,
+            "title": "Scene",
+            "type": "string"
+          },
+          "submit": {
+            "default": false,
+            "title": "Submit",
+            "type": "boolean"
+          },
+          "type": {
+            "default": "",
+            "maxLength": 60,
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "title": "IntakeIn",
+        "type": "object"
+      },
+      "IntakeLinkIn": {
+        "properties": {
+          "renew": {
+            "default": false,
+            "title": "Renew",
+            "type": "boolean"
+          }
+        },
+        "title": "IntakeLinkIn",
         "type": "object"
       },
       "ItemIn": {
@@ -7292,6 +7477,21 @@
           "reason"
         ],
         "title": "PhoneChange",
+        "type": "object"
+      },
+      "PhotoRef": {
+        "properties": {
+          "url": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "PhotoRef",
         "type": "object"
       },
       "PolicyIn": {
@@ -17934,6 +18134,128 @@
         ]
       }
     },
+    "/api/admin/leads/{lead_id}/intake-link": {
+      "delete": {
+        "description": "Turn the link off. What the owner sent stays on the lead.",
+        "operationId": "revoke_intake_link_api_admin_leads__lead_id__intake_link_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Intake Link",
+        "tags": [
+          "admin"
+        ]
+      },
+      "post": {
+        "description": "The owner's private link to send photos and details without signing in\n(services/lead_intake.py). Reuses a live link (and extends it) unless\nrenew is set; what the owner already sent is kept either way.",
+        "operationId": "make_intake_link_api_admin_leads__lead_id__intake_link_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lead_id",
+            "required": true,
+            "schema": {
+              "title": "Lead Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntakeLinkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Make Intake Link",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/admin/leads/{lead_id}/playbook": {
       "get": {
         "description": "Everything the playbook panel needs for one lead: the next step, each\nmessage filled in for this owner, and whether it can go out through\nWhatsApp Business or SMS right now (and if not, why).",
@@ -24950,6 +25272,210 @@
         "summary": "Host Analytics",
         "tags": [
           "host-analytics"
+        ]
+      }
+    },
+    "/api/intake/{token}": {
+      "get": {
+        "operationId": "get_intake_api_intake__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Intake",
+        "tags": [
+          "intake"
+        ]
+      },
+      "put": {
+        "operationId": "save_intake_api_intake__token__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntakeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save Intake",
+        "tags": [
+          "intake"
+        ]
+      }
+    },
+    "/api/intake/{token}/photos": {
+      "post": {
+        "operationId": "add_photo_api_intake__token__photos_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_add_photo_api_intake__token__photos_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Photo",
+        "tags": [
+          "intake"
+        ]
+      }
+    },
+    "/api/intake/{token}/photos/remove": {
+      "post": {
+        "operationId": "remove_photo_api_intake__token__photos_remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhotoRef"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Photo",
+        "tags": [
+          "intake"
         ]
       }
     },

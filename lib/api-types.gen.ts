@@ -1785,6 +1785,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/leads/{lead_id}/intake-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make Intake Link
+         * @description The owner's private link to send photos and details without signing in
+         *     (services/lead_intake.py). Reuses a live link (and extends it) unless
+         *     renew is set; what the owner already sent is kept either way.
+         */
+        post: operations["make_intake_link_api_admin_leads__lead_id__intake_link_post"];
+        /**
+         * Revoke Intake Link
+         * @description Turn the link off. What the owner sent stays on the lead.
+         */
+        delete: operations["revoke_intake_link_api_admin_leads__lead_id__intake_link_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/leads/{lead_id}/playbook": {
         parameters: {
             query?: never;
@@ -3880,6 +3906,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/intake/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Intake */
+        get: operations["get_intake_api_intake__token__get"];
+        /** Save Intake */
+        put: operations["save_intake_api_intake__token__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/intake/{token}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Photo */
+        post: operations["add_photo_api_intake__token__photos_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/intake/{token}/photos/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove Photo */
+        post: operations["remove_photo_api_intake__token__photos_remove_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/invoices/booking/{booking_id}": {
         parameters: {
             query?: never;
@@ -5649,6 +5727,14 @@ export interface components {
             /** Blocked Ids */
             blocked_ids: string[];
         };
+        /** Body_add_photo_api_intake__token__photos_post */
+        Body_add_photo_api_intake__token__photos_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
+        };
         /** Body_apply_api_careers_jobs__slug__apply_post */
         Body_apply_api_careers_jobs__slug__apply_post: {
             /**
@@ -6513,6 +6599,93 @@ export interface components {
             smoking?: string | null;
             /** Visitors Ok */
             visitors_ok?: boolean | null;
+        };
+        /**
+         * IntakeIn
+         * @description Every field is optional while saving; submit=True asks for the photo
+         *     consent. Free text is checked again (for phone numbers, links…) when the
+         *     team converts it, so here it is only trimmed and capped.
+         */
+        IntakeIn: {
+            /**
+             * About
+             * @default
+             */
+            about: string;
+            /**
+             * Address
+             * @default
+             */
+            address: string;
+            /** Amenities */
+            amenities?: string[];
+            /**
+             * Area
+             * @default
+             */
+            area: string;
+            /** Baths */
+            baths?: number | null;
+            /** Bedrooms */
+            bedrooms?: number | null;
+            /**
+             * City
+             * @default
+             */
+            city: string;
+            /**
+             * Consent
+             * @default false
+             */
+            consent: boolean;
+            /**
+             * Email
+             * @default
+             */
+            email: string;
+            /** Guests */
+            guests?: number | null;
+            /**
+             * Owner Name
+             * @default
+             */
+            owner_name: string;
+            /** Photo Categories */
+            photo_categories?: {
+                [key: string]: string | null;
+            };
+            /** Photo Order */
+            photo_order?: string[] | null;
+            /** Price Inr */
+            price_inr?: number | null;
+            /**
+             * Property Name
+             * @default
+             */
+            property_name: string;
+            /**
+             * Scene
+             * @default
+             */
+            scene: string;
+            /**
+             * Submit
+             * @default false
+             */
+            submit: boolean;
+            /**
+             * Type
+             * @default
+             */
+            type: string;
+        };
+        /** IntakeLinkIn */
+        IntakeLinkIn: {
+            /**
+             * Renew
+             * @default false
+             */
+            renew: boolean;
         };
         /** ItemIn */
         ItemIn: {
@@ -7940,6 +8113,11 @@ export interface components {
              * @default false
              */
             reset_kyc: boolean;
+        };
+        /** PhotoRef */
+        PhotoRef: {
+            /** Url */
+            url: string;
         };
         /** PolicyIn */
         PolicyIn: {
@@ -13045,6 +13223,76 @@ export interface operations {
             };
         };
     };
+    make_intake_link_api_admin_leads__lead_id__intake_link_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntakeLinkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_intake_link_api_admin_leads__lead_id__intake_link_delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     lead_playbook_api_admin_leads__lead_id__playbook_get: {
         parameters: {
             query?: never;
@@ -17031,6 +17279,144 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_intake_api_intake__token__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_intake_api_intake__token__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntakeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_photo_api_intake__token__photos_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_add_photo_api_intake__token__photos_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_photo_api_intake__token__photos_remove_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhotoRef"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
