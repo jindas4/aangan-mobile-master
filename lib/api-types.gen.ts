@@ -1946,6 +1946,52 @@ export interface paths {
         patch: operations["moderate_listing_api_admin_listings__listing_id__patch"];
         trace?: never;
     };
+    "/api/admin/listings/{listing_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Delete Listing
+         * @description Permanently delete a listing (duplicates, test listings, a host who
+         *     left). Refused once it has bookings: those, their payments, invoices and
+         *     payouts must keep pointing at it, so unpublish it instead. Audited with
+         *     a copy of what was deleted.
+         */
+        post: operations["admin_delete_listing_api_admin_listings__listing_id__delete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/listings/{listing_id}/edit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Admin Edit Listing
+         * @description Everything the host can edit on their listing (PATCH /listings/{id}),
+         *     for any listing: the team finishing a draft they set up for a host, or
+         *     correcting one. Publishing stays on PATCH /admin/listings/{id} (its KYC
+         *     gate and reasons). Audited with what changed.
+         */
+        patch: operations["admin_edit_listing_api_admin_listings__listing_id__edit_patch"];
+        trace?: never;
+    };
     "/api/admin/otp-status": {
         parameters: {
             query?: never;
@@ -5186,6 +5232,89 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /**
+         * AdminListingEdit
+         * @description Everything a host can edit, plus what only the team changes: the kind of
+         *     property, its setting and where it is (a new city/area is mapped again).
+         */
+        AdminListingEdit: {
+            /** Alcohol Ok */
+            alcohol_ok?: boolean | null;
+            /** Amenities */
+            amenities?: string[] | null;
+            /** Area */
+            area?: string | null;
+            /** Baths */
+            baths?: number | null;
+            /** Bedrooms */
+            bedrooms?: number | null;
+            /** Cancellation Policy */
+            cancellation_policy?: string | null;
+            /** Checkin Time */
+            checkin_time?: string | null;
+            /** Checkout Time */
+            checkout_time?: string | null;
+            /** City */
+            city?: string | null;
+            /** Cleaning Fee Inr */
+            cleaning_fee_inr?: number | null;
+            /** Couples Ok */
+            couples_ok?: boolean | null;
+            /** Description */
+            description?: string | null;
+            /** Guests */
+            guests?: number | null;
+            house_rules?: components["schemas"]["HouseRulesIn"] | null;
+            /** House Rules Set */
+            house_rules_set?: string[] | null;
+            /** Image Categories */
+            image_categories?: {
+                [key: string]: string | null;
+            } | null;
+            /** Images */
+            images?: string[] | null;
+            /** Instant Book */
+            instant_book?: boolean | null;
+            /** Jain Friendly */
+            jain_friendly?: boolean | null;
+            /** Local Id Ok */
+            local_id_ok?: boolean | null;
+            /** Master Bedroom No */
+            master_bedroom_no?: number | null;
+            meal_plans?: components["schemas"]["MealPlansIn"] | null;
+            /** Min Nights */
+            min_nights?: number | null;
+            /** Pet Friendly */
+            pet_friendly?: boolean | null;
+            /** Pincode */
+            pincode?: string | null;
+            /** Price Inr */
+            price_inr?: number | null;
+            /** Price Periods */
+            price_periods?: components["schemas"]["PricePeriodIn"][] | null;
+            /** Published */
+            published?: boolean | null;
+            /** Registration No */
+            registration_no?: string | null;
+            /** Scene */
+            scene?: string | null;
+            /** State Code */
+            state_code?: string | null;
+            /** Tags */
+            tags?: string[] | null;
+            /** Title */
+            title?: string | null;
+            /** Type */
+            type?: string | null;
+            /** Veg Kitchen */
+            veg_kitchen?: boolean | null;
+            /** Videos */
+            videos?: components["schemas"]["ListingVideoIn"][] | null;
+            /** Weekend Days */
+            weekend_days?: number[] | null;
+            /** Weekend Price Inr */
+            weekend_price_inr?: number | null;
+        };
         /** AdminRefundRequest */
         AdminRefundRequest: {
             /** Reason */
@@ -7167,6 +7296,11 @@ export interface components {
             weekend_days?: number[] | null;
             /** Weekend Price Inr */
             weekend_price_inr?: number | null;
+        };
+        /** ListingDeleteIn */
+        ListingDeleteIn: {
+            /** Reason */
+            reason: string;
         };
         /** ListingImageOut */
         ListingImageOut: {
@@ -13236,6 +13370,80 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ListingModerate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_delete_listing_api_admin_listings__listing_id__delete_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ListingDeleteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_edit_listing_api_admin_listings__listing_id__edit_patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminListingEdit"];
             };
         };
         responses: {
