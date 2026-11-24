@@ -4874,6 +4874,45 @@
       },
       "ListingModerate": {
         "properties": {
+          "baths": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baths"
+          },
+          "bedrooms": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bedrooms"
+          },
+          "cleaning_fee_inr": {
+            "anyOf": [
+              {
+                "maximum": 100000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cleaning Fee Inr"
+          },
           "confirm_location": {
             "default": false,
             "title": "Confirm Location",
@@ -4913,6 +4952,19 @@
             ],
             "title": "Flagged Reason"
           },
+          "guests": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Guests"
+          },
           "image_categories": {
             "anyOf": [
               {
@@ -4949,6 +5001,17 @@
             ],
             "title": "Images"
           },
+          "instant_book": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instant Book"
+          },
           "master_bedroom_no": {
             "anyOf": [
               {
@@ -4961,6 +5024,19 @@
               }
             ],
             "title": "Master Bedroom No"
+          },
+          "min_nights": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Nights"
           },
           "override_unverified_host": {
             "default": false,
@@ -4978,6 +5054,33 @@
               }
             ],
             "title": "Pincode"
+          },
+          "price_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Inr"
+          },
+          "price_periods": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PricePeriodIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Periods"
           },
           "published": {
             "anyOf": [
@@ -5051,6 +5154,34 @@
               }
             ],
             "title": "Videos"
+          },
+          "weekend_days": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 7,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Days"
+          },
+          "weekend_price_inr": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekend Price Inr"
           }
         },
         "title": "ListingModerate",
@@ -27247,6 +27378,55 @@
           }
         },
         "summary": "Resized Image",
+        "tags": [
+          "media"
+        ]
+      }
+    },
+    "/api/media/videos/{owner}/{filename}": {
+      "get": {
+        "operationId": "listing_video_api_media_videos__owner___filename__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "owner",
+            "required": true,
+            "schema": {
+              "title": "Owner",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "title": "Filename",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Listing Video",
         "tags": [
           "media"
         ]

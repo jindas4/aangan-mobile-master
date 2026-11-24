@@ -4601,6 +4601,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/media/videos/{owner}/{filename}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Listing Video */
+        get: operations["listing_video_api_media_videos__owner___filename__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/outreach/claim": {
         parameters: {
             query?: never;
@@ -7170,6 +7187,12 @@ export interface components {
         };
         /** ListingModerate */
         ListingModerate: {
+            /** Baths */
+            baths?: number | null;
+            /** Bedrooms */
+            bedrooms?: number | null;
+            /** Cleaning Fee Inr */
+            cleaning_fee_inr?: number | null;
             /**
              * Confirm Location
              * @default false
@@ -7181,14 +7204,20 @@ export interface components {
             flagged?: boolean | null;
             /** Flagged Reason */
             flagged_reason?: string | null;
+            /** Guests */
+            guests?: number | null;
             /** Image Categories */
             image_categories?: {
                 [key: string]: string | null;
             } | null;
             /** Images */
             images?: string[] | null;
+            /** Instant Book */
+            instant_book?: boolean | null;
             /** Master Bedroom No */
             master_bedroom_no?: number | null;
+            /** Min Nights */
+            min_nights?: number | null;
             /**
              * Override Unverified Host
              * @default false
@@ -7196,6 +7225,10 @@ export interface components {
             override_unverified_host: boolean;
             /** Pincode */
             pincode?: string | null;
+            /** Price Inr */
+            price_inr?: number | null;
+            /** Price Periods */
+            price_periods?: components["schemas"]["PricePeriodIn"][] | null;
             /** Published */
             published?: boolean | null;
             /** Reason */
@@ -7208,6 +7241,10 @@ export interface components {
             title?: string | null;
             /** Videos */
             videos?: components["schemas"]["ListingVideoIn"][] | null;
+            /** Weekend Days */
+            weekend_days?: number[] | null;
+            /** Weekend Price Inr */
+            weekend_price_inr?: number | null;
         };
         /** ListingOut */
         ListingOut: {
@@ -18348,6 +18385,38 @@ export interface operations {
             path: {
                 owner: string;
                 size: string;
+                filename: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    listing_video_api_media_videos__owner___filename__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                owner: string;
                 filename: string;
             };
             cookie?: never;
