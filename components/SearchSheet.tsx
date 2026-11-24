@@ -10,7 +10,7 @@ import {
   View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, ScrollView,
   LayoutAnimation, Platform, UIManager, KeyboardAvoidingView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { api, Scene } from "@/lib/api";
 import { Colors, Fonts } from "@/constants/Colors";
@@ -150,6 +150,8 @@ export function SearchSheet({ visible, initial, startStep, onClose, onApply }: {
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onClose}>
+      {/* A modal is its own native root: it needs its own provider to know the insets. */}
+      <SafeAreaProvider>
       <SafeAreaView style={s.safe} edges={["top", "bottom"]}>
         <View style={s.top}>
           <TouchableOpacity onPress={onClose} style={s.close} accessibilityLabel="Close search" hitSlop={8}>
@@ -197,6 +199,7 @@ export function SearchSheet({ visible, initial, startStep, onClose, onApply }: {
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
+      </SafeAreaProvider>
     </Modal>
   );
 }
