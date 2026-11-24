@@ -669,6 +669,7 @@ function PayoutStepForm({ onDone, change = false }: { onDone: () => void; change
       </View>
 
       {tab === "upi" ? (
+        <>
         <TextInput
           value={vpa}
           onChangeText={setVpa}
@@ -677,6 +678,10 @@ function PayoutStepForm({ onDone, change = false }: { onDone: () => void; change
           placeholderTextColor={Colors.charcoal3}
           style={styles.formInput}
         />
+        <Text style={[styles.stepHint, { marginTop: 6, marginBottom: 6 }]}>
+          When you save, we send ₹1 to this UPI ID to confirm the bank account behind it is in your name. The ₹1 is yours to keep.
+        </Text>
+        </>
       ) : (
         <>
           <TextInput
