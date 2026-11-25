@@ -3,7 +3,7 @@
 // Steps come from the server (phone, email, Aadhaar, PAN, payout), then GST and
 // a review. Steps don't depend on each other: any segment of the bar opens its
 // step, and a step can be left for later. Opens on the first one still to do.
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentRef } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,7 +34,7 @@ export default function HostVerifyScreen() {
   const [status, setStatus] = useState<VerificationStatus | null>(null);
   const [gstDone, setGstDone] = useState<boolean | null>(null);
   const [at, setAt] = useState<string | null>(null);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
 
   const load = useCallback(() => api<VerificationStatus>("/api/me/account/verification")
     .then((s) => { setStatus(s); return s; }).catch(() => null), []);

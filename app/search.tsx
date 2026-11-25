@@ -143,7 +143,7 @@ export default function SearchScreen() {
           renderItem={({ item }) => <ListingCardItem listing={item} />}
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}
-          ListFooterComponent={loadingMore ? <ActivityIndicator style={{ marginVertical: 16 }} color={Colors.terra} /> : null}
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={{ marginVertical: 16 }} color={Colors.terra} /> : undefined}
         />
       )}
 

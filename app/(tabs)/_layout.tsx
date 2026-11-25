@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs } from "expo-router/js-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { Colors, Glass } from "@/constants/Colors";
@@ -36,7 +36,7 @@ export default function TabLayout() {
           tabBarButtonTestID: "tab-explore",
           tabBarAccessibilityLabel: "Explore",
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "search" : "search-outline"} size={size} color={color} />
+            <Ionicons name={focused ? "search" : "search-outline"} size={size} color={color as string} />
           ),
         }}
       />
@@ -47,7 +47,7 @@ export default function TabLayout() {
           tabBarButtonTestID: "tab-wishlist",
           tabBarAccessibilityLabel: "Wishlist",
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "heart" : "heart-outline"} size={size} color={color} />
+            <Ionicons name={focused ? "heart" : "heart-outline"} size={size} color={color as string} />
           ),
         }}
       />
@@ -58,7 +58,7 @@ export default function TabLayout() {
           tabBarButtonTestID: "tab-trips",
           tabBarAccessibilityLabel: "Trips",
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "airplane" : "airplane-outline"} size={size} color={color} />
+            <Ionicons name={focused ? "airplane" : "airplane-outline"} size={size} color={color as string} />
           ),
         }}
       />
@@ -69,7 +69,7 @@ export default function TabLayout() {
           tabBarButtonTestID: "tab-messages",
           tabBarAccessibilityLabel: "Messages",
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "chatbubble" : "chatbubble-outline"} size={size} color={color} />
+            <Ionicons name={focused ? "chatbubble" : "chatbubble-outline"} size={size} color={color as string} />
           ),
         }}
       />
@@ -80,7 +80,7 @@ export default function TabLayout() {
           tabBarButtonTestID: "tab-profile",
           tabBarAccessibilityLabel: "Profile",
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "person" : "person-outline"} size={size} color={color} />
+            <Ionicons name={focused ? "person" : "person-outline"} size={size} color={color as string} />
           ),
         }}
       />

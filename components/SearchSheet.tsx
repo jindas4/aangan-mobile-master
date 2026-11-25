@@ -5,7 +5,7 @@
 //   the others fold into a one-line summary you can tap to reopen. Picking a
 //   place moves on to dates, picking check-out moves on to guests. The button
 //   counts matching stays as you go.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
 import {
   View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, ScrollView,
   LayoutAnimation, Platform, UIManager, KeyboardAvoidingView,
@@ -266,7 +266,7 @@ function WherePanel({ value, onChange, onPick }: { value: string; onChange: (v: 
   const [items, setItems] = useState<Suggestion[]>([]);
   const [hub, setHub] = useState(lastHub);
   const q = value.trim();
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   useEffect(() => {
     if (!q) { setItems([]); return; }

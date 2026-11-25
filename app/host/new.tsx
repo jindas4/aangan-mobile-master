@@ -4,7 +4,7 @@
 // open the food questions, the state unlocks its registration field, the
 // price shows its GST band. Progress is kept on the phone so a host can leave
 // and come back.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
 import {
   View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert,
   KeyboardAvoidingView, Platform, LayoutAnimation,
@@ -107,7 +107,7 @@ type AiPrice = { low_inr: number; high_inr: number; suggested_price_inr: number;
 
 export default function NewListingScreen() {
   const router = useRouter();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const [form, setForm] = useState<Form>(EMPTY);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [masterNo, setMasterNo] = useState<number | null>(null);   // which bedroom is the master

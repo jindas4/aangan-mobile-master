@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ComponentRef } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { Colors, Radius } from "@/constants/Colors";
@@ -23,7 +23,7 @@ export default function AccountDeleteScreen() {
   const [status, setStatus] = useState<DeletionStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirmText, setConfirmText] = useState("");
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const [busy, setBusy] = useState<"req" | "cancel" | null>(null);
   const [err, setErr] = useState<string | null>(null);
 

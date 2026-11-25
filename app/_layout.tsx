@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
 import * as Sentry from "@sentry/react-native";
-import type { EventSubscription } from "expo-modules-core";
+import type { EventSubscription } from "expo";
 import { useAuth, useWishlist } from "@/lib/auth";
 import { Colors } from "@/constants/Colors";
 import { AnimatedSplash } from "@/components/AnimatedSplash";

@@ -152,7 +152,7 @@ const RING_SIZE = 100;
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: Colors.cream,
     alignItems: "center",
     justifyContent: "center",

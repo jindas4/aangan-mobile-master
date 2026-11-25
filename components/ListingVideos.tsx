@@ -13,7 +13,7 @@ import { fmtDuration, type ListingVideo } from "@/lib/nightPrices";
 function NativePlayer({ url }: { url: string }) {
   const { useVideoPlayer, VideoView } = expoVideo!;
   const player = useVideoPlayer(url, (p) => { p.play(); });
-  return <VideoView player={player} style={StyleSheet.absoluteFill} nativeControls contentFit="contain" allowsFullscreen />;
+  return <VideoView player={player} style={StyleSheet.absoluteFill} nativeControls contentFit="contain" fullscreenOptions={{ enable: true }} />;
 }
 
 export function VideoPlayerModal({ url, onClose }: { url: string | null; onClose: () => void }) {

@@ -2,12 +2,11 @@
   "expo": {
     "name": "Aangan Stay",
     "slug": "aangan",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "aangan",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -16,11 +15,6 @@
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 3000
-    },
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FDFBF7"
     },
     "ios": {
       "supportsTablet": false,
@@ -125,6 +119,7 @@
     },
     "plugins": [
       "expo-router",
+      ["expo-splash-screen", { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#FDFBF7" }],
       ["expo-secure-store", { "faceIDPermission": false }],
       ["expo-image-picker", { "microphonePermission": false }],
       "expo-asset",

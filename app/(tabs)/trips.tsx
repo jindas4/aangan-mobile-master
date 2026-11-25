@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { RemoteImage } from "@/components/RemoteImage";
 import { useRouter, useFocusEffect } from "expo-router";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useBottomTabBarHeight } from "expo-router/js-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { api, BookingWithListing, CancelResponse } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";

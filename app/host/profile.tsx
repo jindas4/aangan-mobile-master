@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   avatarOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(31,41,55,0.5)",
     alignItems: "center",
     justifyContent: "center",

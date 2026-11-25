@@ -133,7 +133,7 @@ export default function BlogScreen() {
                 {filtered ? "Try another section, or a different search." : "Check back soon for guides, homestay stories and festival picks."}
               </Text>
             </View>
-          ) : null
+          ) : undefined
         }
         ListFooterComponent={more ? <ActivityIndicator color={Colors.terra} style={{ marginVertical: 20 }} /> : <View style={{ height: 32 }} />}
         onEndReached={loadMore}

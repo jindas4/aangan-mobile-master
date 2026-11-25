@@ -2,7 +2,7 @@
 // categories, lib/photoCategories.ts), with untagged photos last. Tapping a
 // photo opens the full-screen viewer in the same order. The viewer is rendered
 // inside this modal: iOS can't present a second sibling modal on top.
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ComponentRef } from "react";
 import { View, Text, StyleSheet, Modal, ScrollView, TouchableOpacity, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,7 +23,7 @@ export function PhotoTour({ images, visible, onClose, masterBedroomNo }: {
   const label = (g: (typeof groups)[number]) => (g.code ? roomLabel(g.images[0], masterBedroomNo) : null) || "More photos";
   const order = useMemo(() => groups.flatMap((g) => g.images), [groups]);
   const [viewerAt, setViewerAt] = useState<number | null>(null);
-  const scroller = useRef<ScrollView>(null);
+  const scroller = useRef<ComponentRef<typeof ScrollView>>(null);
   const offsets = useRef<Record<string, number>>({});
   const showHeads = groups.length > 1;
 

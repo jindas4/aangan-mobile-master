@@ -84,7 +84,7 @@ export function PhotoViewer({ images, visible, initialIndex, onClose, onIndexCha
 
   return (
     <Modal visible={visible} animationType="fade" statusBarTranslucent transparent onShow={() => setIndex(initialIndex)}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" />
       <Animated.View style={[styles.container, { opacity }]}>
         <Animated.View
           style={[styles.imageLayer, { transform: [{ translateY }] }]}
