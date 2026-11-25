@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Platform, View } from "react-native";
+import * as Device from "expo-device";
 import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
 import * as Sentry from "@sentry/react-native";
@@ -73,6 +75,7 @@ function RootLayout() {
   return (
     <ErrorBoundary>
       <StatusBar style="dark" />
+      <View style={{ flex: 1, paddingTop: WINDOW_CONTROLS_INSET, backgroundColor: Colors.cream }}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -100,12 +103,22 @@ function RootLayout() {
         <Stack.Screen name="blog/index" />
         <Stack.Screen name="blog/[slug]" />
       </Stack>
+      </View>
       <ChatFab />
       <EnvBadge />
       {showSplash && <AnimatedSplash onFinish={() => setShowSplash(false)} />}
     </ErrorBoundary>
   );
 }
+
+// iPhone app running on an iPad (iPadOS 26+ windowing): the system window
+// controls float over the top-left corner and swallow taps on our floating
+// back buttons, and the safe area doesn't include them. Start the app below
+// that strip there; on iPhone this is 0.
+const ON_IPAD =
+  Platform.OS === "ios" &&
+  (Device.osName === "iPadOS" || /iPad/.test(Device.modelId ?? "") || /iPad/.test(Device.modelName ?? ""));
+const WINDOW_CONTROLS_INSET = ON_IPAD ? 40 : 0;
 
 // Sentry.wrap adds touch-event breadcrumbs + native-crash context around the
 // root component. No-op when the DSN is blank.
