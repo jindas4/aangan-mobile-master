@@ -234,7 +234,9 @@ export default function HostBookingDetailScreen() {
             <PriceRow label={(booking.meals_inr ?? 0) > 0 ? "Your earnings (nights + cleaning + meals)" : "Your earnings (nights + cleaning)"} value={inr(booking.host_earnings.earnings_inr)} />
             {booking.host_earnings.fee_inr > 0 ? (
               <>
-                <PriceRow label={`Aangan Stay fee (${booking.host_earnings.fee_pct}%)`} value={`− ${inr(booking.host_earnings.fee_inr)}`} />
+                <PriceRow label={booking.host_earnings.fee_offer === "launch50"
+                  ? `Aangan Stay fee (${booking.host_earnings.fee_pct}%, launch offer: half of 15.5%)`
+                  : `Aangan Stay fee (${booking.host_earnings.fee_pct}%)`} value={`− ${inr(booking.host_earnings.fee_inr)}`} />
                 <PriceRow label="GST on the fee (18%)" value={`− ${inr(booking.host_earnings.fee_gst_inr)}`} />
               </>
             ) : null}

@@ -397,6 +397,8 @@ export interface HostEarnings {
   payout_inr: number;
   /** Who introduced the guest: Aangan Stay ("marketplace") or the host's own link ("direct"). */
   introduced_by?: "marketplace" | "direct";
+  /** "launch50" when the launch offer halved the fee on this booking. */
+  fee_offer?: string | null;
 }
 
 export interface AvailabilityResponse {

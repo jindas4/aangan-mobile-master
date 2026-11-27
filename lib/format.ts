@@ -63,6 +63,14 @@ export function imageVariantUrl(url: string, size: "thumb" | "medium" | "large")
  *  Keep in step with backend/app/services/pricing.py. */
 export const HOST_FEE_PCT = 15.5;
 export const HOST_FEE_DIRECT_PCT = 8;
+/** Launch offer (backend services/launch_offer.py): half the 15.5% fee on a
+ *  host's first booking, first 100 hosts, bookings made up to 31 March 2027. */
+export const LAUNCH_OFFER = { hosts: 100, pct: HOST_FEE_PCT / 2, endsISO: "2027-03-31", ends: "31 March 2027" };
+/** Is the launch offer still open (India date)? */
+export function launchOfferOpen(now: Date = new Date()): boolean {
+  const ist = new Date(now.getTime() + 330 * 60_000).toISOString().slice(0, 10);
+  return ist <= LAUNCH_OFFER.endsISO;
+}
 /** What a host keeps from an amount after the fee and the 18% GST on it (before TDS). */
 export function hostTakeHome(amount: number, feePct: number = HOST_FEE_PCT): number {
   return Math.round((amount || 0) * (1 - (feePct / 100) * 1.18));

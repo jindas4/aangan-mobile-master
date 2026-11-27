@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { api, ListingCard as LC, BookingWithListing, HostAnalytics, WEB_BASE } from "@/lib/api";
 import { Colors, Radius } from "@/constants/Colors";
 import { useAuth } from "@/lib/auth";
-import { inr, imageUrl } from "@/lib/format";
+import { inr, imageUrl, LAUNCH_OFFER, launchOfferOpen } from "@/lib/format";
 import { Button } from "@/components/Button";
 import { ShareKit } from "@/components/ShareKit";
 
@@ -89,6 +89,11 @@ export default function HostDashboardScreen() {
             Post it on WhatsApp, Instagram, anywhere.{"\n"}
             Free to list — bring your own guests and pay about half the fee: 8% on your link, 15.5% when we bring the guest.
           </Text>
+          {launchOfferOpen() && (
+            <Text style={{ marginTop: 12, fontSize: 13.5, fontWeight: "700", color: Colors.terra, textAlign: "center" }}>
+              Launch offer: our first {LAUNCH_OFFER.hosts} hosts pay {LAUNCH_OFFER.pct}% instead of 15.5% on their first booking. Until {LAUNCH_OFFER.ends}.
+            </Text>
+          )}
           <View style={styles.pitchFeatures}>
             <FeatureItem icon="link-outline" title="Your own URL" sub="aanganstay.com/p/your-home" />
             <FeatureItem icon="cash-outline" title="Free to list" sub="Pay only per booking" />

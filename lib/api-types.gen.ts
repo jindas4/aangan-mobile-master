@@ -6532,6 +6532,8 @@ export interface components {
             fee_gst_inr: number;
             /** Fee Inr */
             fee_inr: number;
+            /** Fee Offer */
+            fee_offer?: string | null;
             /** Fee Pct */
             fee_pct: number;
             /**
