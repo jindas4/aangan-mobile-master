@@ -68,6 +68,10 @@ export default function HostDashboardScreen() {
           <Text style={styles.pitchTitle}>Get your own booking website</Text>
           <Text style={styles.pitchSub}>List your home free, earn in ₹. You pay a fee only when you get a booking.</Text>
           <Button title="Log in to start" onPress={() => router.push("/login")} full style={{ marginTop: 20 }} />
+          <Text style={{ fontSize: 13.5, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline", textAlign: "center", marginTop: 14 }}
+                accessibilityRole="link" onPress={() => Linking.openURL(`${WEB_BASE}/host/guide`)}>
+            New to hosting? Read the step-by-step host guide
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -106,6 +110,10 @@ export default function HostDashboardScreen() {
           />
           <EarningsCalculator />
           <Text style={{ fontSize: 13.5, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline", textAlign: "center", marginTop: 14 }}
+                accessibilityRole="link" onPress={() => Linking.openURL(`${WEB_BASE}/host/guide`)}>
+            New to hosting? Read the step-by-step host guide
+          </Text>
+          <Text style={{ fontSize: 13.5, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline", textAlign: "center", marginTop: 14 }}
                 accessibilityRole="link" onPress={() => Linking.openURL(`${WEB_BASE}/host/payouts`)}>
             How and when you get paid, and who to contact
           </Text>
@@ -122,6 +130,10 @@ export default function HostDashboardScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.terra} />}
       >
         <Text style={styles.dashTitle}>Host Studio</Text>
+        <Text style={{ fontSize: 13.5, fontWeight: "700", color: Colors.terra, textDecorationLine: "underline", marginHorizontal: 16, marginBottom: 8 }}
+              accessibilityRole="link" onPress={() => Linking.openURL(`${WEB_BASE}/host/guide`)}>
+          Host guide: setup, bookings and payouts
+        </Text>
         <HostTaxNudges />
 
         {/* Analytics cards */}
