@@ -83,7 +83,7 @@ export default function HostDashboardScreen() {
         <Header onBack={() => router.back()} />
         <ScrollView contentContainerStyle={styles.pitchWrap} keyboardShouldPersistTaps="handled">
           <Text style={styles.pitchKicker}>FOR HOMEOWNERS</Text>
-          <Text style={styles.pitchTitle}>A booking website for your home. In 5 minutes.</Text>
+          <Text style={styles.pitchTitle}>A booking website for your home. In about 10 minutes.</Text>
           <Text style={styles.pitchSub}>
             Every home on Aangan Stay gets a shareable page at aanganstay.com/p/your-home.{"\n"}
             Post it on WhatsApp, Instagram, anywhere.{"\n"}
